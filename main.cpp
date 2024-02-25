@@ -42,7 +42,9 @@ int main()
         else cout << "□ = R; △ = T; ◯ = C; ◇ = D"; 
         cout << endl;
         
-        cout << state.get_string() << endl << "Input: ";
+        cout << state.get_print_string() << endl << "Input: ";
+        cout << state.fix_shape_order().get_print_string() << endl << "Input: ";
+
 
         string input;
         std::cin >> input;
