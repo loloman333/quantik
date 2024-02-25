@@ -1,116 +1,36 @@
-#include <iostream>
-#include <string>
-#include <cassert>
-#include <algorithm>
-#include <map>
+#include "state.cpp"
 
-using 
-    std::string, 
-    std::cout,
-    std::endl;
+char ascii_1 = 49;
+char ascii_4 = 52;
+char ascii_C = 67;
+char ascii_D = 68;
+char ascii_R = 82;
+char ascii_T = 84;
 
-/*
-    0 -> empty
-    1 -> ■
-    2 -> □
-    3 -> ▲
-    4 -> △
-    5 -> ●
-    6 -> ◯
-    7 -> ◆
-    8 -> ◇
-*/
-string pieces[9] = {"-", "■", "□", "▲", "△", "●", "◯", "◆", "◇"};
-
-string get_piece_from_index(char i)
-{
-    return pieces[i];
-}
-
-char get_index_from_piece(string piece)
-{
-    char i = 0;
-    for (string p : pieces)
-    {
-        if (p == piece)
-        {
-            return i;
-        }
-        i++;
-    }
-    assert(false);
-}
-
-struct State
-{
-    char board[4][4];
-
-    string get_string()
-    {
-        string result = "\n  | 1 2 3 4\n–––––––––––\n";
-
-        for (char i = 0; i < 4; i++)
-        {
-            result += std::to_string(i + 1) + " | ";
-            for (char j = 0; j < 4; j++)
-            {
-                assert(board[i][j] >= 0 && board[i][j] <= 8);
-                result += get_piece_from_index(board[i][j]);
-                result += " ";
-            }
-            result += "\n";
-        }
-
-        return result;
-    }
-
-    int encode_base_9()
-    {
-        int code = 0;
-        int mult = 1;
-        for (char i = 15; i >= 0; i--)
-        {
-            code += *(&board[0][0] + i) * mult;
-            mult *= 9;
-        }
-        return code;
-    }
-
-    State mirror()
-    {
-        State state{};
-        for (int i = 0; i < 4; ++i)
-        {
-            for (int j = 0; j < 4; ++j)
-            {
-                state.board[i][j] = board[3 - i][j];
-            }
-        }
-        return state;
-    }
-
-
-};
-
-// TODO: check for only valid characters
 bool is_valid_input(string input)
 {
-    if (input.length() != 3)
-    {
-        return false;
-    }
+    if (input.length() != 3) return false;
+
+    char row = input[0];
+    if (row < ascii_1 || row > ascii_4) return false;
+
+    char col = input[1];
+    if (col < ascii_1 || col > ascii_4) return false;
+
+    char shape = toupper(input[2]);
+    if (shape != ascii_C && shape != ascii_D && shape != ascii_R && shape != 84) return false;
+
     return true;
 }
-
-using std::map;
 
 int main()
 {
     State state{};
     char turn = 0;
-    std::map<string, string> player_1_mapping = {{"R", "■"}, {"T", "▲"}, {"C", "●"}, {"D", "◆"}};
-    std::map<string, string> player_2_mapping = {{"R", "□"}, {"T", "△"}, {"C", "◯"}, {"D", "◇"}};
-    std::map<string, string> piece_mapping[2] = {player_1_mapping, player_2_mapping};
+
+    map<char, string> player_1_mapping = {{ascii_R, "■"}, {ascii_T, "▲"}, {ascii_C, "●"}, {ascii_D, "◆"}};
+    map<char, string> player_2_mapping = {{ascii_R, "□"}, {ascii_T, "△"}, {ascii_C, "◯"}, {ascii_D, "◇"}};
+    map<char, string> piece_mapping[2] = {player_1_mapping, player_2_mapping};
     
     while (true) // TODO: Check for win
     {
@@ -135,7 +55,16 @@ int main()
 
         char row_index = std::stoi(input.substr(0, 1)) - 1;
         char col_index = std::stoi(input.substr(1, 1)) - 1;
-        string shape = input.substr(2, 1);
+        
+        if (state.board[row_index][col_index] != 0 )
+        {      
+           cout << endl << "Please choose and empty sqaure!" << endl << endl;
+           continue;
+        }
+
+        // TODO: check max 2 of each shape
+
+        char shape = toupper(input[2]);
 
         state.board[row_index][col_index] = get_index_from_piece(piece_mapping[turn][shape]);
         turn = turn == 0 ? 1 : 0;
