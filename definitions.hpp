@@ -9,7 +9,10 @@ using
     std::string, 
     std::cout,
     std::endl,
-    std::map;
+    std::map,
+    std::vector;
+
+enum class SwapType { ROWS, COLUMNS };
 
 /*
     0 -> empty
