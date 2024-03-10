@@ -50,17 +50,22 @@ void manual_play()
             cout << "□ = R; △ = T; ◯ = C; ◇ = D";
         cout << endl;
 
-        cout << state.get_print_string() << endl
-             << "Input: ";
+        cout << state.get_print_string() << endl;
 
-        // vector<State> states{state};
-        // add_mirror_states(states);
-        // add_rotate_states(states);
-        // add_swap_cols_states(states);
-        // add_swap_rows_states(states);
-        // for (State& state : states) state = state.fix_shape_order();
-        // for (State& s : states) cout << s.get_print_string() << endl;
-        // cout << states.size() << endl;
+
+        // cout << "Transformations: " << endl;
+        // state_map states{{state.encode_base_9(), state}};
+        // //add_mirror_states(states);
+        // // add_rotate_states(states);
+        // // add_swap_cols_states(states);
+        // // add_swap_rows_states(states);
+        // for (auto& p : states) cout << p.second.get_print_string() << endl;
+        // cout << "Amount: " << states.size() << endl;
+
+
+        cout << "Canonical: \n" << compute_canonical(state).get_print_string() << endl;
+
+        cout << "Input: " << endl;
 
         string input;
         std::cin >> input;

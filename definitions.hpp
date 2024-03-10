@@ -4,15 +4,24 @@
 #include <algorithm>
 #include <map>
 #include <cctype>
+#include <unordered_map>
 
 using 
     std::string, 
     std::cout,
     std::endl,
     std::map,
+    std::unordered_map,
     std::vector;
 
+struct State;
+
+typedef uint64_t encoding;
+typedef unordered_map<encoding, State> state_map;
+
 enum class SwapType { ROWS, COLUMNS };
+
+bool DEBUG = false;
 
 /*
     0 -> empty

@@ -1,7 +1,15 @@
 #include "definitions.hpp"
 
+#include <cstring>
+
 struct State
 {
+
+    State() = default;
+    State(const State& other) {
+        // Copy the contents of the board from the other State object
+        memcpy(board, other.board, sizeof(board));
+    }
 
     // Members
 
@@ -29,11 +37,11 @@ struct State
         return result;
     }
 
-    int encode_base_9() { return State::encode_base_9(*this); }
-    static int encode_base_9(State &state)
+    encoding encode_base_9() { return State::encode_base_9(*this); }
+    static encoding encode_base_9(State &state)
     {
-        int code = 0;
-        int mult = 1;
+        encoding code = 0;
+        size_t mult = 1;
         for (char i = 15; i >= 0; i--)
         {
             code += *(&(state.board[0][0]) + i) * mult;
