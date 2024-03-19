@@ -1,7 +1,5 @@
-//#include "definitions.hpp"
 #include "state.cpp"
 
-// TODO: maybe transform all these functions to one which takes a function pointer to transformation
 
 void print_state_map(state_map& map)
 {
@@ -12,6 +10,7 @@ void print_state_map(state_map& map)
     }
 }
 
+// TODO: maybe transform all the add_... functions to one which takes a function pointer to transformation
 void add_mirror_states(state_map& states)
 {
     state_map newStates;

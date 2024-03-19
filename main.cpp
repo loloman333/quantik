@@ -52,19 +52,7 @@ void manual_play()
 
         cout << state.get_print_string() << endl;
 
-
-        // cout << "Transformations: " << endl;
-        // state_map states{{state.encode_base_9(), state}};
-        // //add_mirror_states(states);
-        // // add_rotate_states(states);
-        // // add_swap_cols_states(states);
-        // // add_swap_rows_states(states);
-        // for (auto& p : states) cout << p.second.get_print_string() << endl;
-        // cout << "Amount: " << states.size() << endl;
-
-
         cout << "Canonical: \n" << compute_canonical(state).get_print_string() << endl;
-
         cout << "Input: " << endl;
 
         string input;
@@ -84,7 +72,7 @@ void manual_play()
         if (state.board[row_index][col_index] != 0)
         {
             cout << endl
-                 << "Please choose and empty sqaure!" << endl
+                 << "Please choose an empty square!" << endl
                  << endl;
             continue;
         }

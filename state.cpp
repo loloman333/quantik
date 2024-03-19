@@ -1,11 +1,10 @@
 #include "definitions.hpp"
 
-#include <cstring>
-
 struct State
 {
 
     State() = default;
+    // TOOD: needed???
     State(const State& other) {
         // Copy the contents of the board from the other State object
         memcpy(board, other.board, sizeof(board));
