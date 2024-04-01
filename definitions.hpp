@@ -1,3 +1,5 @@
+// Includes
+
 #include <string>
 #include <iostream>
 #include <cassert>
@@ -7,6 +9,7 @@
 #include <unordered_map>
 #include <cstring>
 
+// Namespace useages
 using 
     std::string, 
     std::cout,
@@ -16,16 +19,19 @@ using
     std::vector;
 
 struct State;
-enum class PieceType;
 
+// Typedefs
 typedef uint64_t encoding;
 typedef unordered_map<encoding, State> state_map;
 typedef unordered_map<PieceType, vector<std::pair<char, char>>> pieces_map; 
 
+// Predefs
+// TODO: add more / all?
+struct State;
+enum class PieceType;
+
+// Enums
 enum class SwapType { ROWS, COLUMNS };
-
-bool DEBUG = false;
-
 enum class PieceType {
     EMPTY, 
     WHITE_SQUARE, 
@@ -37,7 +43,6 @@ enum class PieceType {
     WHITE_DIAMOND, 
     BLACK_DIAMOND
 };
-string _pieces[9] = {"-", "■", "□", "▲", "△", "●", "◯", "◆", "◇"};
 
 PieceType get_counterpart_piece(PieceType piece)
 {
@@ -49,21 +54,42 @@ PieceType get_counterpart_piece(PieceType piece)
     return counterpart;
 }
 
-string get_piece_from_index(char i)
-{
-    return _pieces[i];
-}
+// Globals
 
-char get_index_from_piece(string piece)
+bool DEBUG = false;
+
+unordered_map<PieceType, string> _piece_type_to_str
 {
-    char i = 0;
-    for (string p : _pieces)
-    {
-        if (p == piece)
-        {
-            return i;
-        }
-        i++;
-    }
-    assert(false);
-}
+    {PieceType::EMPTY, "-"},
+    {PieceType::WHITE_SQUARE, "■"},
+    {PieceType::BLACK_SQUARE, "□"},
+    {PieceType::WHITE_TRIANGLE, "▲"},
+    {PieceType::BLACK_TRIANGLE, "△"},
+    {PieceType::WHITE_CIRCLE, "●"},
+    {PieceType::BLACK_CIRCLE, "◯"},
+    {PieceType::WHITE_DIAMOND, "◆"},
+    {PieceType::BLACK_DIAMOND, "◇"},
+};
+unordered_map<std::string, PieceType> _piece_str_to_type {
+    {"-", PieceType::EMPTY},
+    {"■", PieceType::WHITE_SQUARE},
+    {"□", PieceType::BLACK_SQUARE},
+    {"▲", PieceType::WHITE_TRIANGLE},
+    {"△", PieceType::BLACK_TRIANGLE},
+    {"●", PieceType::WHITE_CIRCLE},
+    {"◯", PieceType::BLACK_CIRCLE},
+    {"◆", PieceType::WHITE_DIAMOND},
+    {"◇", PieceType::BLACK_DIAMOND}
+};
+
+vector<PieceType> _piece_types
+{ 
+    PieceType::WHITE_SQUARE, 
+    PieceType::BLACK_SQUARE, 
+    PieceType::WHITE_TRIANGLE, 
+    PieceType::BLACK_TRIANGLE, 
+    PieceType::WHITE_CIRCLE, 
+    PieceType::BLACK_CIRCLE, 
+    PieceType::WHITE_DIAMOND, 
+    PieceType::BLACK_DIAMOND
+};

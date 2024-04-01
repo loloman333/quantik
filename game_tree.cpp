@@ -1,5 +1,6 @@
 #include "definitions.hpp"
 #include "state.cpp"
+#include "move_generator.cpp"
 
 struct GameTreeNode;
 
@@ -67,6 +68,8 @@ struct GameTreeNode
     node_ptr_map& generate_children(const node_ptr_map& all_nodes)
     {
         // TODO: generate all possible moves and create new state for each
+        compute_following_states(this->state);
+
         // TODO: convert new state to canonical
         // TODO: check if canonical already in existing nodes; if no: add to all_nodes; else: just add reference
         // TODO: set and return children
