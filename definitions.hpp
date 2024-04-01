@@ -16,9 +16,11 @@ using
     std::vector;
 
 struct State;
+enum class PieceType;
 
 typedef uint64_t encoding;
 typedef unordered_map<encoding, State> state_map;
+typedef unordered_map<PieceType, vector<std::pair<char, char>>> pieces_map; 
 
 enum class SwapType { ROWS, COLUMNS };
 
@@ -36,6 +38,16 @@ enum class PieceType {
     BLACK_DIAMOND
 };
 string _pieces[9] = {"-", "■", "□", "▲", "△", "●", "◯", "◆", "◇"};
+
+PieceType get_counterpart_piece(PieceType piece)
+{
+    if (piece == PieceType::EMPTY) return piece;
+
+    bool is_white = ((int) piece % 2) == 1;
+    PieceType counterpart = (PieceType) (is_white ? (int) piece + 1 : (int) piece - 1);
+    
+    return counterpart;
+}
 
 string get_piece_from_index(char i)
 {

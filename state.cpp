@@ -5,7 +5,8 @@ struct State
 
     State() = default;
     // TOOD: needed???
-    State(const State& other) {
+    State(const State& other)
+    {
         // Copy the contents of the board from the other State object
         memcpy(board, other.board, sizeof(board));
     }
@@ -13,8 +14,25 @@ struct State
     // Members
 
     char board[4][4];
+    pieces_map placed_pieces;
 
     // Methods
+
+    void _update_placed_pieces()
+    {
+        this->placed_pieces = pieces_map{};
+
+        for (char i = 0; i < 4; i++)
+        {
+            for (char j = 0; i < 4; i++)
+            {
+                if (this->board[i][j] != 0)
+                {
+
+                }
+            }
+        }
+    }
 
     string get_print_string() { return State::get_print_string(*this); }
     static string get_print_string(State &state)
@@ -103,7 +121,7 @@ struct State
     State fix_shape_order() { return State::fix_shape_order(*this); }
     static State fix_shape_order(State &state)
     {
-        State fixedState;
+        State fixed_state;
         char order_mapping[9]{};
         char next_shape = 1;
 
@@ -121,11 +139,11 @@ struct State
                     next_shape += 2;
                 }
 
-                fixedState.board[i][j] = order_mapping[value];
+                fixed_state.board[i][j] = order_mapping[value];
             }
         }
 
-        return fixedState;
+        return fixed_state;
     }
 
     // TODO: "hardcode" swapping
@@ -150,4 +168,5 @@ struct State
 
         return swappedState;
     }
+
 };

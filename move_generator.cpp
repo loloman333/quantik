@@ -1,6 +1,12 @@
 #include "state.cpp"
+#include "move.cpp"
 
 state_map compute_following_moves(State& state)
 {
-    // TODO
+    
+}
+
+bool is_legal_move(Move& move, State& state)
+{
+    
 }
