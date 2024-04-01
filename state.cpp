@@ -4,7 +4,7 @@ struct State
 {
 
     State() = default;
-    // TOOD: needed???
+    // TOOD: needed??? !!!???!?!??!?
     State(const State& other) {
         // Copy the contents of the board from the other State object
         memcpy(board, other.board, sizeof(board));
@@ -12,7 +12,9 @@ struct State
 
     // Members
 
-    char board[4][4];
+    PieceType board[4][4];
+    bool whiteTurn;
+    PieceMap placedPieces;
 
     // Methods
 
@@ -26,8 +28,7 @@ struct State
             result += std::to_string(i + 1) + " | ";
             for (char j = 0; j < 4; j++)
             {
-                assert(state.board[i][j] >= 0 && state.board[i][j] <= 8);
-                result += get_piece_from_index(state.board[i][j]);
+                result += _piece_type_to_str[state.board[i][j]];
                 result += " ";
             }
             result += "\n";
@@ -43,7 +44,7 @@ struct State
         size_t mult = 1;
         for (char i = 15; i >= 0; i--)
         {
-            code += *(&(state.board[0][0]) + i) * mult;
+            code += ((char) *(&(state.board[0][0]) + i)) * mult;
             mult *= 9;
         }
         return code;
@@ -58,11 +59,25 @@ struct State
         {
             remainder = encoding % 9;
             encoding /= 9;
-            state.board[i / 4][i % 4] = remainder;
+            state.board[i / 4][i % 4] = (PieceType)remainder;
+            // TODO: cast fine? 
         }
 
         return state;
     }
+
+    void updateStructure() { State::updateStructure(*this); }
+    static void updateStructure(State& state) 
+    {
+        for (int i = 0; i < 4; ++i)
+        {
+            for (int j = 0; j < 4; ++j)
+            {
+                state.board[i][j];
+            }
+        }
+    }
+
 
     // TODO: "hardcode" symmetries
     State mirror() { return State::mirror(*this); }
@@ -112,7 +127,7 @@ struct State
             for (int j = 0; j < 4; ++j)
             {
 
-                char value = state.board[i][j];
+                char value = (char) state.board[i][j];
                 if (value != 0 && order_mapping[value] == 0)
                 {
                     char index = value - (1 - value % 2);
@@ -121,7 +136,7 @@ struct State
                     next_shape += 2;
                 }
 
-                fixedState.board[i][j] = order_mapping[value];
+                fixedState.board[i][j] = (PieceType) order_mapping[value];
             }
         }
 
