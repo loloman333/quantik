@@ -18,17 +18,16 @@ using
     std::unordered_map,
     std::vector;
 
+// Predefs
+// TODO: add more / all?
 struct State;
+enum class PieceType;
 
 // Typedefs
 typedef uint64_t encoding;
 typedef unordered_map<encoding, State> state_map;
 typedef unordered_map<PieceType, vector<std::pair<char, char>>> pieces_map; 
 
-// Predefs
-// TODO: add more / all?
-struct State;
-enum class PieceType;
 
 // Enums
 enum class SwapType { ROWS, COLUMNS };

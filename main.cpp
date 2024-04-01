@@ -91,7 +91,7 @@ void manual_play()
 
         char shape = toupper(input[2]);
 
-        state.board[row_index][col_index] = piece_mapping[turn][shape];
+        state.make_move(Move{row_index, col_index, piece_mapping[turn][shape]});
         turn = turn == 0 ? 1 : 0;
     }
 }

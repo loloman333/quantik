@@ -1,4 +1,5 @@
 #include "definitions.hpp"
+#include "move.cpp"
 
 struct State
 {
@@ -6,9 +7,10 @@ struct State
     State() = default;
 
     // TOOD: needed??? !!!???!?!??!?
-    State(const State& other) {
-        // Copy the contents of the board from the other State object
+    State(const State& other) 
+    {
         memcpy(board, other.board, sizeof(board));
+        update_placed_pieces();
     }
 
     // Members
@@ -19,20 +21,12 @@ struct State
 
     // Methods
 
-    void _update_placed_pieces()
+    void make_move(Move move) { State::make_move(*this, move); }
+    static void make_move(State& state, Move move)
     {
-        this->placed_pieces = pieces_map{};
-
-        for (char i = 0; i < 4; i++)
-        {
-            for (char j = 0; i < 4; i++)
-            {
-                if (this->board[i][j] != PieceType::EMPTY)
-                {
-
-                }
-            }
-        }
+        // TODO: check if legal???
+        state.board[move.row_index][move.col_index] = move.piece;
+        state.placed_pieces[move.piece].push_back({move.row_index, move.col_index});
     }
 
     string get_print_string() { return State::get_print_string(*this); }
@@ -80,17 +74,23 @@ struct State
             // TODO: cast fine? 
         }
 
+        state.update_placed_pieces();
         return state;
     }
 
-    void updateStructure() { State::updateStructure(*this); }
-    static void updateStructure(State& state) 
+    void update_placed_pieces() { State::update_placed_pieces(*this); }
+    static void update_placed_pieces(State& state) 
     {
+        state.placed_pieces = pieces_map{};
+
         for (int i = 0; i < 4; ++i)
         {
             for (int j = 0; j < 4; ++j)
             {
-                state.board[i][j];
+                if (state.board[i][j] != PieceType::EMPTY)
+                {
+                    state.placed_pieces[state.board[i][j]].push_back({i, j});
+                }
             }
         }
     }
@@ -108,6 +108,7 @@ struct State
                 mirrored_state.board[i][j] = state.board[3 - i][j];
             }
         }
+        mirrored_state.update_placed_pieces();
         return mirrored_state;
     }
 
@@ -123,6 +124,7 @@ struct State
                 rotatedState.board[j][3 - i] = state.board[i][j];
             }
         }
+        rotatedState.update_placed_pieces();
         return rotatedState;
     }
 
@@ -157,13 +159,14 @@ struct State
             }
         }
 
+        fixed_state.update_placed_pieces();
         return fixed_state;
     }
 
     // TODO: "hardcode" swapping
     State swap_rows_or_cols(SwapType type, char index1, char index2) {return State::swap_rows_or_cols(*this, type, index1, index2); }
     static State swap_rows_or_cols(State &state, SwapType type, char index1, char index2) {
-        State swappedState;
+        State swapped_state;
 
         for (int i = 0; i < 4; ++i) {
             for (int j = 0; j < 4; ++j) {
@@ -176,11 +179,12 @@ struct State
                     col_index = (j == index1) ? index2 : (j == index2) ? index1 : j;
                 }
 
-                swappedState.board[i][j] = state.board[row_index][col_index];
+                swapped_state.board[i][j] = state.board[row_index][col_index];
             }
         }
 
-        return swappedState;
+        swapped_state.update_placed_pieces();
+        return swapped_state;
     }
 
 };

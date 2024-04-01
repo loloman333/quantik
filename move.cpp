@@ -23,7 +23,7 @@ struct Move
         string result = 
             std::to_string(move.row_index) + 
             std::to_string(move.col_index) +
-            _pieces[(int) move.piece];
+            _piece_type_to_str[move.piece];
         return result;
     }
 };
