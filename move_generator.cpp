@@ -35,16 +35,16 @@ vector<Move> compute_possible_moves(State& state)
     return legal_moves;
 }
 
-state_map compute_following_states(State& state)
+vector<State> compute_following_states(State& state)
 {
-    state_map following_states{};
+    vector<State> following_states{};
 
     vector<Move> legal_moves = compute_possible_moves(state);
     for (Move& move : legal_moves)
     {
         State new_state{state};
         new_state.make_move(move);
-        following_states.emplace(new_state.encode_base_9(), new_state);
+        following_states.push_back(new_state);
     }
 
     return following_states;

@@ -1,5 +1,4 @@
-#include "state.cpp"
-
+#include "move_generator.cpp"
 
 void print_state_map(state_map& map)
 {

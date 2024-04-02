@@ -1,6 +1,6 @@
 #include "definitions.hpp"
 #include "state.cpp"
-#include "move_generator.cpp"
+#include "canonical_generator.cpp"
 
 struct GameTreeNode;
 
@@ -39,8 +39,8 @@ struct GameTree
         for (auto& pair : this->leaf_nodes)
         {
             assert(pair.second->children.size() == 0); // TODO: is this condition always true?
-            node_ptr_map& children = pair.second->generate_children(this->all_nodes);
-            for (auto& child : this->leaf_nodes)
+            pair.second->generate_children(this->all_nodes);
+            for (auto& child : pair.second->children)
             {
                 new_leaf_nodes.insert(child);
             }
@@ -65,15 +65,38 @@ struct GameTreeNode
 
     // Methods
 
-    node_ptr_map& generate_children(const node_ptr_map& all_nodes)
+    node_ptr_map& generate_children(node_ptr_map& all_nodes)
     {
         // TODO: generate all possible moves and create new state for each
-        compute_following_states(this->state);
+        // TODO: why do I need ref here???
+        vector<State> following_states{compute_following_states(this->state)};
 
         // TODO: convert new state to canonical
+        vector<State> canonical_states{};
+        for (State& state : following_states)
+        {
+            canonical_states.push_back(compute_canonical(state));
+        }
+
         // TODO: check if canonical already in existing nodes; if no: add to all_nodes; else: just add reference
-        // TODO: set and return children
+        for (State& canonical : canonical_states)
+        {
+            encoding code = canonical.encode_base_9();
+            auto node = all_nodes.find(code);
+
+            if (node != all_nodes.end())
+            {
+                children.emplace(code, node->second);
+            }
+            else 
+            {
+                GameTreeNode* new_node = new GameTreeNode(canonical);
+                children.emplace(code, new_node);
+                all_nodes.emplace(code, new_node);
+            }
+            
+        }
         
-        return children;
+        return this->children;
     }
 };
