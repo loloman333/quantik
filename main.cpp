@@ -1,6 +1,4 @@
-//#include "state.cpp"
-#include "canonical_generator.cpp"
-
+#include "game_tree.cpp"
 
 char ascii_1 = 49;
 char ascii_4 = 52;
@@ -96,7 +94,28 @@ void manual_play()
     }
 }
 
+void compute_tree_oida()
+{
+    GameTree tree{};
+
+    cout << "Beginning to compute the tree..." << endl;
+    cout << "Layer 0 ..." << endl;
+    cout << "Leaf Nodes: " << tree.leaf_nodes.size();
+    cout << "Total Nodes: " << tree.all_nodes.size();
+
+    for (int i = 1; i <= 4; i++)
+    {
+        cout << "Layer " << i << " ..." << endl;
+
+        tree.compute_next_layer();
+
+        cout << "Leaf Nodes: " << tree.leaf_nodes.size();
+        cout << "Total Nodes: " << tree.all_nodes.size() << endl;
+    }
+}
+
 int main()
 {
-    manual_play();    
+    // manual_play();
+    compute_tree_oida();    
 }

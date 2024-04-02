@@ -1,4 +1,3 @@
-#include "definitions.hpp"
 #include "move.cpp"
 
 struct State

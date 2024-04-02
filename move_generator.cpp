@@ -1,5 +1,4 @@
 #include "state.cpp"
-#include "move.cpp"
 
 // TODO: make vector only once
 vector<Move> compute_all_moves()
@@ -14,10 +13,26 @@ vector<Move> compute_all_moves()
                 all_moves.push_back(Move{row, col, type});
             }
         }
-
     }
     return all_moves;
 };
+
+bool is_legal_move(Move& move, State& state)
+{
+    if (move.piece == PieceType::EMPTY) return false;
+    if (move.col_index >= 4 || move.row_index >= 4) return false;
+
+    if (state.board[move.row_index][move.col_index] != PieceType::EMPTY) return false;
+    if (state.placed_pieces[move.piece].size() >= 2) return false;
+
+    PieceType counterpart = get_counterpart_piece(move.piece);
+    for (auto pos : state.placed_pieces[counterpart])
+    {
+        if (pos.first == move.row_index || pos.second == move.col_index) return false;
+    }
+
+    return true;
+}
 
 vector<Move> compute_possible_moves(State& state)
 {
@@ -48,21 +63,4 @@ vector<State> compute_following_states(State& state)
     }
 
     return following_states;
-}
-
-bool is_legal_move(Move& move, State& state)
-{
-    if (move.piece == PieceType::EMPTY) return false;
-    if (move.col_index >= 4 || move.row_index >= 4) return false;
-
-    if (state.board[move.row_index][move.col_index] != PieceType::EMPTY) return false;
-    if (state.placed_pieces[move.piece].size() >= 2) return false;
-
-    PieceType counterpart = get_counterpart_piece(move.piece);
-    for (auto pos : state.placed_pieces[counterpart])
-    {
-        if (pos.first == move.row_index || pos.second == move.col_index) return false;
-    }
-
-    return true;
 }
