@@ -1,4 +1,6 @@
-#include "game_tree.cpp"
+#include "quantik.hpp"
+#include "State.hpp"
+#include "GameTree.hpp"
 
 char ascii_1 = 49;
 char ascii_4 = 52;
@@ -60,7 +62,7 @@ void manual_play()
 
         cout << state.get_print_string() << endl;
 
-        cout << "Canonical: \n" << compute_canonical(state).get_print_string() << endl;
+        cout << "Canonical: \n" << state.compute_canonical().get_print_string() << endl;
         cout << "Input: " << endl;
 
         string input;
@@ -77,15 +79,17 @@ void manual_play()
         char row_index = std::stoi(input.substr(0, 1)) - 1;
         char col_index = std::stoi(input.substr(1, 1)) - 1;
 
-        if (state.board[row_index][col_index] != PieceType::EMPTY)
-        {
-            cout << endl
-                 << "Please choose an empty square!" << endl
-                 << endl;
-            continue;
-        }
+        // TODO: fix ?
+        // if (state.board[row_index][col_index] != PieceType::EMPTY)
+        // {
+        //     cout << endl
+        //          << "Please choose an empty square!" << endl
+        //          << endl;
+        //     continue;
+        // }
 
         // TODO: check max 2 of each shape
+        // Done in "is_legal_move" -> use this function
 
         char shape = toupper(input[2]);
 
@@ -94,28 +98,8 @@ void manual_play()
     }
 }
 
-void compute_tree_oida()
-{
-    GameTree tree{};
-
-    cout << "Beginning to compute the tree..." << endl;
-    cout << "Layer 0 ..." << endl;
-    cout << "Leaf Nodes: " << tree.leaf_nodes.size();
-    cout << "Total Nodes: " << tree.all_nodes.size();
-
-    for (int i = 1; i <= 4; i++)
-    {
-        cout << "Layer " << i << " ..." << endl;
-
-        tree.compute_next_layer();
-
-        cout << "Leaf Nodes: " << tree.leaf_nodes.size();
-        cout << "Total Nodes: " << tree.all_nodes.size() << endl;
-    }
-}
-
 int main()
 {
     // manual_play();
-    compute_tree_oida();    
+    GameTree::compute_tree(3);    
 }
