@@ -1,7 +1,5 @@
 #include "CanonicalGenerator.hpp"
 
-bool CanonicalGenerator::DEBUG_PRINTS = false;
-
 void CanonicalGenerator::add_mirror_states(state_map& states)
 {
     state_map newStates;
@@ -70,41 +68,44 @@ void CanonicalGenerator::add_swap_rows_states(state_map& states)
 }
 
 // TODO: ???
-void print_state_map(state_map& map)
+string get_state_map_str(state_map& map)
 {
+    std::stringstream ss;
     for (auto& pair : map)
     {
-        cout << "Encoding: " << pair.first << endl;
-        cout << "State " << pair.second.get_print_string() << endl;
+        ss << "Encoding: " << pair.first << endl;
+        ss << "State " << pair.second.get_print_string() << endl;
     }
+
+    return ss.str();
 }
 
 State CanonicalGenerator::compute_canonical(State& state)
 {
-    if (CanonicalGenerator::DEBUG_PRINTS) cout << "Begin computing the canonical..." << endl;
+    DBGMSG(DBG_CANONICAL_GENERATOR, "Begin computing the canonical...\n");
     state_map states{{state.encode(), state}};
 
     // Mirror
     add_mirror_states(states);
-    if (CanonicalGenerator::DEBUG_PRINTS) cout << "Amount after mirroring: " << states.size() << endl;
-    if (CanonicalGenerator::DEBUG_PRINTS) print_state_map(states);
+    DBGMSG(DBG_CANONICAL_GENERATOR, "Amount after mirroring: " + STR(states.size()) + "\n");
+    DBGMSG(DBG_CANONICAL_GENERATOR_DETAILED, get_state_map_str(states));
 
     // Rotate
     add_rotate_states(states);
-    if (CanonicalGenerator::DEBUG_PRINTS) cout << "Amount after rotating: " << states.size() << endl;
-    if (CanonicalGenerator::DEBUG_PRINTS) print_state_map(states);
+    DBGMSG(DBG_CANONICAL_GENERATOR, "Amount after rotating: " + STR(states.size()) + "\n");
+    DBGMSG(DBG_CANONICAL_GENERATOR_DETAILED, get_state_map_str(states));
 
     // Swap Columns
     add_swap_cols_states(states);
-    if (CanonicalGenerator::DEBUG_PRINTS) cout << "Amount after swapping cols: " << states.size() << endl;
-    if (CanonicalGenerator::DEBUG_PRINTS) print_state_map(states);
+    DBGMSG(DBG_CANONICAL_GENERATOR, "Amount swapping cols: " + STR(states.size()) + "\n");
+    DBGMSG(DBG_CANONICAL_GENERATOR_DETAILED, get_state_map_str(states));
 
     // Swap Rows
     add_swap_rows_states(states);
-    if (CanonicalGenerator::DEBUG_PRINTS) cout << "Amount after swapping rows: " << states.size() << endl;
-    if (CanonicalGenerator::DEBUG_PRINTS) print_state_map(states);
+    DBGMSG(DBG_CANONICAL_GENERATOR, "Amount swapping rows: " + STR(states.size()) + "\n");
+    DBGMSG(DBG_CANONICAL_GENERATOR_DETAILED, get_state_map_str(states));
 
-    if (CanonicalGenerator::DEBUG_PRINTS) cout << "Fixing shapes and looking for the largest..." << endl;
+    DBGMSG(DBG_CANONICAL_GENERATOR, "Fixing shapes and looking for the largest...\n");
 
     // Fix shape order and select max
     encoding max_encoding = 0;
@@ -120,7 +121,7 @@ State CanonicalGenerator::compute_canonical(State& state)
         }
     }
 
-    if (CanonicalGenerator::DEBUG_PRINTS) cout << "Found the canonical!" << endl;
+    DBGMSG(DBG_CANONICAL_GENERATOR, "Found the canonical:" + canonicalState.get_print_string());
 
     return canonicalState;
 }

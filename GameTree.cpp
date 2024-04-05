@@ -38,19 +38,20 @@ GameTree GameTree::compute_tree(char depth)
 {
     GameTree tree{};
 
-    cout << "Beginning to compute the tree..." << endl;
-    cout << "Layer 0 ... ";
-    cout << "Leaf Nodes: " << tree.leaf_nodes.size() << " | ";
-    cout << "Total Nodes: " << tree.all_nodes.size() << endl;;
+    DBGMSG(DBG_COMPUTE_GAMETREE, "Beginning to compute the tree...\n");
+    DBGMSG(DBG_COMPUTE_GAMETREE, "Level 0 ... ");
+    DBGMSG(DBG_COMPUTE_GAMETREE, STR(tree.all_nodes.size()) + " Total Nodes | ");
+    DBGMSG(DBG_COMPUTE_GAMETREE, STR(tree.leaf_nodes.size()) + " Leaf Nodes\n");
 
     for (int i = 1; i <= depth; i++)
     {
         cout << "Layer " << i << " ... ";
+        DBGMSG(DBG_COMPUTE_GAMETREE, "Level " + STR(i) + " ... ");
 
         tree.compute_next_layer();
-
-        cout << "Leaf Nodes: " << tree.leaf_nodes.size() << " | ";
-        cout << "Total Nodes: " << tree.all_nodes.size() << endl;
+        
+        DBGMSG(DBG_COMPUTE_GAMETREE, STR(tree.all_nodes.size()) + " Total Nodes | ");
+        DBGMSG(DBG_COMPUTE_GAMETREE, STR(tree.leaf_nodes.size()) + " Leaf Nodes\n");
     }
     
     return tree;

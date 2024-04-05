@@ -9,6 +9,7 @@
 #include <map>
 #include <iostream>
 #include <algorithm>
+#include <sstream>
 
 // --- Namespace Useages ---
 using 
@@ -45,3 +46,12 @@ typedef uint64_t encoding;
 typedef unordered_map<encoding, State> state_map;
 typedef unordered_map<PieceType, vector<std::pair<char, char>>> pieces_map;
 typedef unordered_map<encoding, GameTreeNode*> node_ptr_map;
+
+// --- Defines ---
+
+#define STR(x) std::to_string(x)
+#define DBGMSG(var, msg) if (var) cout << msg
+
+#define DBG_CANONICAL_GENERATOR false
+#define DBG_CANONICAL_GENERATOR_DETAILED false
+#define DBG_COMPUTE_GAMETREE true

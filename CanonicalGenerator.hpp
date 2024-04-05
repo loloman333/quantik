@@ -9,8 +9,6 @@ class CanonicalGenerator
 {
     public: 
 
-    static bool DEBUG_PRINTS;
-
     // -------------
     // Static Stuff
     // -------------
