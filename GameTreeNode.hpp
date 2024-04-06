@@ -28,6 +28,8 @@ class GameTreeNode
 
     // --- Methods ---
 
+    string get_print_string();
+
     node_ptr_map& get_children();
 
     node_ptr_map& generate_children(node_ptr_map& all_nodes);

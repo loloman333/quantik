@@ -55,3 +55,4 @@ typedef unordered_map<encoding, GameTreeNode*> node_ptr_map;
 #define DBG_CANONICAL_GENERATOR false
 #define DBG_CANONICAL_GENERATOR_DETAILED false
 #define DBG_COMPUTE_GAMETREE true
+#define DBG_COMPUTE_GAMETREE_DETAILED true

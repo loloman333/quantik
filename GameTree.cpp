@@ -34,6 +34,18 @@ void GameTree::compute_next_layer()
     this->leaf_nodes = new_leaf_nodes;
 }
 
+string get_node_ptr_map_str(node_ptr_map& map)
+{
+    std::stringstream ss;
+    for (auto& pair : map)
+    {
+        ss << "Encoding: " << pair.first << endl;
+        ss << "State " << pair.second->get_print_string() << endl;
+    }
+
+    return ss.str();
+}
+
 GameTree GameTree::compute_tree(char depth)
 {
     GameTree tree{};
@@ -42,16 +54,17 @@ GameTree GameTree::compute_tree(char depth)
     DBGMSG(DBG_COMPUTE_GAMETREE, "Level 0 ... ");
     DBGMSG(DBG_COMPUTE_GAMETREE, STR(tree.all_nodes.size()) + " Total Nodes | ");
     DBGMSG(DBG_COMPUTE_GAMETREE, STR(tree.leaf_nodes.size()) + " Leaf Nodes\n");
+    DBGMSG(DBG_COMPUTE_GAMETREE_DETAILED, get_node_ptr_map_str(tree.all_nodes));
 
     for (int i = 1; i <= depth; i++)
     {
-        cout << "Layer " << i << " ... ";
         DBGMSG(DBG_COMPUTE_GAMETREE, "Level " + STR(i) + " ... ");
 
         tree.compute_next_layer();
         
         DBGMSG(DBG_COMPUTE_GAMETREE, STR(tree.all_nodes.size()) + " Total Nodes | ");
         DBGMSG(DBG_COMPUTE_GAMETREE, STR(tree.leaf_nodes.size()) + " Leaf Nodes\n");
+        DBGMSG(DBG_COMPUTE_GAMETREE_DETAILED, get_node_ptr_map_str(tree.all_nodes));
     }
     
     return tree;

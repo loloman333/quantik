@@ -82,7 +82,8 @@ string get_state_map_str(state_map& map)
 
 State CanonicalGenerator::compute_canonical(State& state)
 {
-    DBGMSG(DBG_CANONICAL_GENERATOR, "Begin computing the canonical...\n");
+    DBGMSG(DBG_CANONICAL_GENERATOR, "Begin computing the canonical of:\n");
+    DBGMSG(DBG_CANONICAL_GENERATOR, state.get_print_string());
     state_map states{{state.encode(), state}};
 
     // Mirror

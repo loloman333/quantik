@@ -3,15 +3,22 @@
 
 State::State(const State& other)
 {
+    this->black_turn = other.black_turn;
+    memcpy(this->board, other.board, sizeof(char) * 16);
     update_placed_pieces();
 }
 
 void State::make_move(Move move)
 {
     // TODO: check if legal???
+    // cout << "OIIDAAAA" << endl;
+
+    // cout << this->get_print_string();
     this->board[move.row_index][move.col_index] = move.piece;
     this->placed_pieces[move.piece].push_back({move.row_index, move.col_index});
     this->black_turn = !this->black_turn;
+    // cout << this->get_print_string();
+
 }
 
 string State::get_print_string() 
@@ -179,7 +186,6 @@ vector<State> State::compute_following_states()
 
     for (Move& move : Move::get_all_moves(this->black_turn))
     {
-        cout << move.get_print_string() << endl;
         if (this->is_legal_move(move))
         {
             State new_state{*this};
