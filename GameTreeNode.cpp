@@ -17,6 +17,7 @@ node_ptr_map &GameTreeNode::get_children()
 
 node_ptr_map &GameTreeNode::generate_children(node_ptr_map &all_nodes)
 {
+    assert(this->children.size() == 0);
 
     // TODO: let "compute_following_states" return map instead already with canonicals ???
     vector<State> canonical_states{};
@@ -30,14 +31,15 @@ node_ptr_map &GameTreeNode::generate_children(node_ptr_map &all_nodes)
         encoding code = canonical.encode();
         auto node = all_nodes.find(code);
 
+        // TODO: stopped here with debugging, smth is off why is the empty state in the children array???
         if (node != all_nodes.end())
         {
-            children.emplace(code, node->second);
+            this->children.emplace(code, node->second);
         }
         else
         {
             GameTreeNode *new_node = new GameTreeNode(canonical);
-            children.emplace(code, new_node);
+            this->children.emplace(code, new_node);
             all_nodes.emplace(code, new_node);
         }
     }

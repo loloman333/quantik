@@ -20,13 +20,17 @@ GameTree::~GameTree()
 void GameTree::compute_next_layer()
 {  
     node_ptr_map new_leaf_nodes{};
+    for (auto& pair : this->leaf_nodes) assert(pair.second->get_children().size() == 0);
     for (auto& pair : this->leaf_nodes)
     {
         node_ptr_map& children = pair.second->get_children();
-        // assert(children.size() == 0); // TODO: is this condition always true?
         pair.second->generate_children(this->all_nodes);
         for (auto& child : children)
         {
+            if (child.first == 0) 
+            {
+                cout << "???" << endl;
+            }
             new_leaf_nodes.insert(child);
         }
     }
