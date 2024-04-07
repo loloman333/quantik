@@ -101,5 +101,5 @@ void manual_play()
 int main()
 {
     // manual_play();
-    GameTree::compute_tree(8);    
+    GameTree::compute_tree(10);    
 }

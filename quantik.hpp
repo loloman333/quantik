@@ -10,6 +10,7 @@
 #include <iostream>
 #include <algorithm>
 #include <sstream>
+#include <set>
 
 // --- Namespace Useages ---
 using 
@@ -39,6 +40,15 @@ enum class PieceType {
     WHITE_DIAMOND, 
     BLACK_DIAMOND
 };
+enum class PieceShape {
+    NONE,
+    SQUARE,
+    TRIANGLE,
+    CIRCLE,
+    DIAMOND
+};
+
+// TODO: enum class PieceColor ???
 
 // --- Typedefs ---
 

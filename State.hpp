@@ -37,10 +37,13 @@ class State
     // --- Methods ---
 
     void make_move(Move move);
-
     bool is_legal_move(Move& move); 
 
+    bool is_final_state(); // TODO: calculate once, then just return var ?
+
     vector<State> compute_following_states();
+
+    vector<vector<PieceType*>> get_sectors();
 
     string get_print_string();
 

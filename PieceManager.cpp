@@ -49,3 +49,13 @@ bool PieceManager::is_black(PieceType piece)
     return ((int) piece % 2) == 0;
 }
 
+
+PieceShape PieceManager::get_piece_shape(PieceType piece)
+{
+    if (piece == PieceType::EMPTY) return PieceShape::NONE;
+    if (piece == PieceType::WHITE_SQUARE || piece == PieceType::BLACK_SQUARE) return PieceShape::SQUARE;
+    if (piece == PieceType::WHITE_TRIANGLE || piece == PieceType::BLACK_TRIANGLE) return PieceShape::TRIANGLE;
+    if (piece == PieceType::WHITE_CIRCLE || piece == PieceType::BLACK_CIRCLE) return PieceShape::CIRCLE;
+    if (piece == PieceType::WHITE_DIAMOND || piece == PieceType::BLACK_DIAMOND) return PieceShape::DIAMOND;
+    assert(false);
+}

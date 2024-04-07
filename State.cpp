@@ -162,7 +162,7 @@ State State::swap_rows_or_cols(SwapType type, char index1, char index2)
 }
 
 bool State::is_legal_move(Move& move)
-{
+{   
     if (move.piece == PieceType::EMPTY) return false;
     if (move.col_index >= 4 || move.row_index >= 4) return false;
     if (PieceManager::is_black(move.piece) != this->black_turn) return false;
@@ -173,11 +173,74 @@ bool State::is_legal_move(Move& move)
     PieceType counterpart = PieceManager::get_counterpart_piece(move.piece);
     for (auto pos : this->placed_pieces[counterpart])
     {
-        if (pos.first == move.row_index || pos.second == move.col_index) return false;
+        if (pos.first == move.row_index) return false;
+        if (pos.second == move.col_index) return false;
+        // TODO: improve performance of this check 
+        for (auto& sector : get_sectors())
+        {   
+            bool correct_sector = false;
+            bool has_counterpart = false;
+            for (PieceType* piece_ptr : sector)
+            {
+                if (piece_ptr == &(this->board[move.row_index][move.col_index])) correct_sector = true;
+                if (*piece_ptr == counterpart) has_counterpart = true;
+            }
+            if (correct_sector && has_counterpart) return false;
+        }
     }
 
+    if (is_final_state()) return false;
+
     return true;
-}  
+}
+
+bool State::is_final_state()
+{
+    for (char i = 0; i < 4; i++)
+    {
+        std::set<PieceShape> shapes_in_row;
+        std::set<PieceShape> shapes_in_col;
+        for (char j = 0; j < 4; j++)
+        {
+            PieceShape shape = PieceManager::get_piece_shape(this->board[i][j]);
+            if (shape != PieceShape::NONE)
+            {
+                shapes_in_row.insert(shape);
+                shapes_in_col.insert(shape);
+            }
+        }
+        if (shapes_in_row.size() == 4) return true;
+        if (shapes_in_col.size() == 4) return true;
+    }
+
+    for (auto& sector : get_sectors())
+    {   
+        std::set<PieceShape> shapes_in_sector;
+        for (PieceType* piece_ptr : sector)
+        {
+            PieceShape shape = PieceManager::get_piece_shape(*piece_ptr);
+            if (shape != PieceShape::NONE)
+            {
+                shapes_in_sector.insert(shape);
+            }
+        }
+        if (shapes_in_sector.size() == 4) return true;
+    }
+
+    return false;
+}
+
+vector<vector<PieceType*>> State::get_sectors()
+{
+    return 
+    {
+        vector<PieceType*>{&(this->board[0][0]), &(this->board[1][0]), &(this->board[0][1]), &(this->board[1][1])},
+        vector<PieceType*>{&(this->board[2][0]), &(this->board[3][0]), &(this->board[2][1]), &(this->board[3][1])},
+        vector<PieceType*>{&(this->board[0][2]), &(this->board[1][2]), &(this->board[0][3]), &(this->board[1][3])},
+        vector<PieceType*>{&(this->board[2][2]), &(this->board[3][2]), &(this->board[2][3]), &(this->board[3][3])},
+    };
+}
+
 
 vector<State> State::compute_following_states()
 {

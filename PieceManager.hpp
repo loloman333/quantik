@@ -34,6 +34,7 @@ class PieceManager
     static vector<PieceType> _piece_types;
 
     // --- Methods ---
+    static PieceShape get_piece_shape(PieceType piece);
     static PieceType get_counterpart_piece(PieceType piece);
     static bool is_black(PieceType piece);
 };
