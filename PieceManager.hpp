@@ -35,4 +35,5 @@ class PieceManager
 
     // --- Methods ---
     static PieceType get_counterpart_piece(PieceType piece);
+    static bool is_black(PieceType piece);
 };

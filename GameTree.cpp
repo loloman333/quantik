@@ -23,14 +23,10 @@ void GameTree::compute_next_layer()
     for (auto& pair : this->leaf_nodes) assert(pair.second->get_children().size() == 0);
     for (auto& pair : this->leaf_nodes)
     {
-        node_ptr_map& children = pair.second->get_children();
-        pair.second->generate_children(this->all_nodes);
+        node_ptr_map& children = pair.second->generate_children(this->all_nodes);
         for (auto& child : children)
         {
-            if (child.first == 0) 
-            {
-                cout << "???" << endl;
-            }
+            assert(child.first != 0);
             new_leaf_nodes.insert(child);
         }
     }
@@ -58,7 +54,7 @@ GameTree GameTree::compute_tree(char depth)
     DBGMSG(DBG_COMPUTE_GAMETREE, "Level 0 ... ");
     DBGMSG(DBG_COMPUTE_GAMETREE, STR(tree.all_nodes.size()) + " Total Nodes | ");
     DBGMSG(DBG_COMPUTE_GAMETREE, STR(tree.leaf_nodes.size()) + " Leaf Nodes\n");
-    DBGMSG(DBG_COMPUTE_GAMETREE_DETAILED, get_node_ptr_map_str(tree.all_nodes));
+    DBGMSG(DBG_COMPUTE_GAMETREE_DETAILED, "All leaf nodes: \n" + get_node_ptr_map_str(tree.leaf_nodes));
 
     for (int i = 1; i <= depth; i++)
     {
@@ -68,7 +64,7 @@ GameTree GameTree::compute_tree(char depth)
         
         DBGMSG(DBG_COMPUTE_GAMETREE, STR(tree.all_nodes.size()) + " Total Nodes | ");
         DBGMSG(DBG_COMPUTE_GAMETREE, STR(tree.leaf_nodes.size()) + " Leaf Nodes\n");
-        DBGMSG(DBG_COMPUTE_GAMETREE_DETAILED, get_node_ptr_map_str(tree.all_nodes));
+        DBGMSG(DBG_COMPUTE_GAMETREE_DETAILED, "All leaf nodes: \n" + get_node_ptr_map_str(tree.leaf_nodes));
     }
     
     return tree;

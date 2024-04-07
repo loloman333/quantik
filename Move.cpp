@@ -11,8 +11,8 @@ Move::Move(char row, char col, PieceType piece)
 string Move::get_print_string() 
 {
     string result = 
-        std::to_string(this->row_index) + 
-        std::to_string(this->col_index) +
+        std::to_string(this->row_index + 1) + 
+        std::to_string(this->col_index + 1) +
         PieceManager::_piece_type_to_str[this->piece];
     return result;
 }

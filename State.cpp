@@ -1,24 +1,26 @@
 #include "State.hpp"
 #include "PieceManager.hpp"
 
-State::State(const State& other)
-{
-    this->black_turn = other.black_turn;
-    memcpy(this->board, other.board, sizeof(char) * 16);
-    update_placed_pieces();
-}
+// State::State(const State& other)
+// {
+//     this->black_turn = other.black_turn;
+//     memcpy(this->board, other.board, sizeof(this->board));
+//     update_placed_pieces(); // TODO: why not just copy it?
+// }
 
 void State::make_move(Move move)
 {
     // TODO: check if legal???
-    // cout << "OIIDAAAA" << endl;
 
-    // cout << this->get_print_string();
+    // cout << "BEFORE:" << get_print_string() << endl;
+
+    // cout << "MOVE: " << move.get_print_string() << endl;
+
     this->board[move.row_index][move.col_index] = move.piece;
     this->placed_pieces[move.piece].push_back({move.row_index, move.col_index});
     this->black_turn = !this->black_turn;
-    // cout << this->get_print_string();
 
+    // cout << "AFTER:" << get_print_string() << endl;
 }
 
 string State::get_print_string() 
@@ -83,7 +85,7 @@ void State::update_placed_pieces()
         }
     }
 }
-
+// TODO: make two functions "mirror" <- should keep placed_pieces and black_turn consistent; "mirror(smth)" <- doesn't
 State State::mirror() 
 {
     State mirrored_state{};
@@ -94,7 +96,6 @@ State State::mirror()
             mirrored_state.board[i][j] = this->board[3 - i][j];
         }
     }
-    mirrored_state.update_placed_pieces(); // TODO: don't make this default to save performance???
     return mirrored_state;
 }
 
@@ -108,7 +109,6 @@ State State::rotate_90()
             rotatedState.board[j][3 - i] = this->board[i][j];
         }
     }
-    rotatedState.update_placed_pieces(); // TODO: don't make this default to save performance???
     return rotatedState;
 }
 
@@ -136,7 +136,6 @@ State State::fix_shape_order()
         }
     }
 
-    fixed_state.update_placed_pieces();
     return fixed_state;
 }
 
@@ -159,7 +158,6 @@ State State::swap_rows_or_cols(SwapType type, char index1, char index2)
         }
     }
 
-    swapped_state.update_placed_pieces();
     return swapped_state;
 }
 
@@ -167,6 +165,7 @@ bool State::is_legal_move(Move& move)
 {
     if (move.piece == PieceType::EMPTY) return false;
     if (move.col_index >= 4 || move.row_index >= 4) return false;
+    if (PieceManager::is_black(move.piece) != this->black_turn) return false;
 
     if (this->board[move.row_index][move.col_index] != PieceType::EMPTY) return false;
     if (this->placed_pieces[move.piece].size() >= 2) return false;

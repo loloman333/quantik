@@ -124,5 +124,9 @@ State CanonicalGenerator::compute_canonical(State& state)
 
     DBGMSG(DBG_CANONICAL_GENERATOR, "Found the canonical:" + canonicalState.get_print_string());
 
+    // Set correct turn and update placed pieces
+    canonicalState.update_placed_pieces();
+    canonicalState.black_turn = state.black_turn;
+
     return canonicalState;
 }

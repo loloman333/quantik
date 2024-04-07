@@ -7,6 +7,8 @@
 
 class State
 {
+    friend class CanonicalGenerator;
+    
     // -------------
     // Private Stuff
     // -------------
@@ -30,7 +32,7 @@ class State
     // --- Constructors ---
 
     State() = default;
-    State(const State& other);
+    State(const State& other) = default;
 
     // --- Methods ---
 

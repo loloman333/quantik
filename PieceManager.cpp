@@ -40,9 +40,12 @@ vector<PieceType> PieceManager::_piece_types
 PieceType PieceManager::get_counterpart_piece(PieceType piece)
 {
     if (piece == PieceType::EMPTY) return piece;
-
-    bool is_black = ((int) piece % 2) == 0;
-    PieceType counterpart = (PieceType) (is_black ? (int) piece + 1 : (int) piece - 1);
-
+    PieceType counterpart = (PieceType) (is_black(piece) ? (int) piece - 1 : (int) piece + 1);
     return counterpart;
 }
+
+bool PieceManager::is_black(PieceType piece)
+{
+    return ((int) piece % 2) == 0;
+}
+

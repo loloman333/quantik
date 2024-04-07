@@ -31,7 +31,6 @@ node_ptr_map &GameTreeNode::generate_children(node_ptr_map &all_nodes)
         encoding code = canonical.encode();
         auto node = all_nodes.find(code);
 
-        // TODO: stopped here with debugging, smth is off why is the empty state in the children array???
         if (node != all_nodes.end())
         {
             this->children.emplace(code, node->second);
