@@ -2,6 +2,8 @@
 #include "State.hpp"
 #include "GameTree.hpp"
 
+#include "TransformationGenerator.cpp"
+
 char ascii_1 = 49;
 char ascii_4 = 52;
 char ascii_C = 67;
@@ -29,6 +31,7 @@ bool is_valid_input(string input)
     return true;
 }
 
+// TODO: repair and check for win
 void manual_play()
 {
     State state{};
@@ -48,7 +51,7 @@ void manual_play()
     };
     map<char, PieceType> piece_mapping[2] = {player_1_mapping, player_2_mapping};
 
-    while (true) // TODO: Check for win
+    while (true)
     {
         cout << "Player " << std::to_string(turn) << "'s turn:" << endl;
         cout << "Enter move like: [row][col][shape]" << endl;
@@ -79,7 +82,6 @@ void manual_play()
         char row_index = std::stoi(input.substr(0, 1)) - 1;
         char col_index = std::stoi(input.substr(1, 1)) - 1;
 
-        // TODO: fix ?
         // if (state.board[row_index][col_index] != PieceType::EMPTY)
         // {
         //     cout << endl
@@ -100,22 +102,8 @@ void manual_play()
 
 int main()
 {
-    // GameTree* tree1{GameTree::compute_tree(6)};
-    // State some_lvl_6;
-    // for (auto& pair : tree1->leaf_nodes)
-    // {
-    //     State state = pair.second->state;
-    //     if (! state.is_final_state())
-    //     {
-    //         some_lvl_6 = state;
-    //         break;
-    //     }
-    // }
-    // delete tree1;
-
-    // GameTree* tree2{GameTree::compute_tree(10, some_lvl_6)};
-    // delete tree2;
-
     GameTree* tree{GameTree::compute_tree(16)};
     delete tree;
+
+    // cout << generate_mirror_function() << endl;
 }

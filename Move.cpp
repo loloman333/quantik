@@ -13,7 +13,7 @@ string Move::get_print_string()
     string result = 
         std::to_string(this->row_index + 1) + 
         std::to_string(this->col_index + 1) +
-        PieceManager::_piece_type_to_str[this->piece];
+        PieceManager::piece_type_to_str[this->piece];
     return result;
 }
 
@@ -26,7 +26,7 @@ void Move::compute_all_moves()
     {
         for (char col = 0; col < 4; col++)
         {
-            for (PieceType type : PieceManager::_piece_types)
+            for (PieceType type : PieceManager::piece_types)
             {
                 bool is_black = ((int) type % 2) == 0;
                 if (is_black) Move::all_black_moves.push_back(Move{row, col, type});

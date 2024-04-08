@@ -1,6 +1,6 @@
 #include "PieceManager.hpp"
 
-unordered_map<PieceType, string> PieceManager::_piece_type_to_str
+unordered_map<PieceType, string> PieceManager::piece_type_to_str
 {
     {PieceType::EMPTY, "-"},
     {PieceType::WHITE_SQUARE, "■"},
@@ -13,7 +13,7 @@ unordered_map<PieceType, string> PieceManager::_piece_type_to_str
     {PieceType::BLACK_DIAMOND, "◇"},
 };
 
-unordered_map<std::string, PieceType> PieceManager::_piece_str_to_type {
+unordered_map<std::string, PieceType> PieceManager::piece_str_to_type {
     {"-", PieceType::EMPTY},
     {"■", PieceType::WHITE_SQUARE},
     {"□", PieceType::BLACK_SQUARE},
@@ -25,7 +25,7 @@ unordered_map<std::string, PieceType> PieceManager::_piece_str_to_type {
     {"◇", PieceType::BLACK_DIAMOND}
 };
 
-vector<PieceType> PieceManager::_piece_types
+vector<PieceType> PieceManager::piece_types
 { 
     PieceType::WHITE_SQUARE, 
     PieceType::BLACK_SQUARE, 

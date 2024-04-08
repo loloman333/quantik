@@ -1,5 +1,17 @@
 #include "CanonicalGenerator.hpp"
 
+string get_state_map_str(state_map& map)
+{
+    std::stringstream ss;
+    for (auto& pair : map)
+    {
+        ss << "Encoding: " << pair.first << endl;
+        ss << "State " << pair.second.get_print_string() << endl;
+    }
+
+    return ss.str();
+}
+
 void CanonicalGenerator::add_mirror_states(state_map& states)
 {
     state_map newStates;
@@ -67,19 +79,6 @@ void CanonicalGenerator::add_swap_rows_states(state_map& states)
     states.insert(newStates.begin(), newStates.end());
 }
 
-// TODO: ???
-string get_state_map_str(state_map& map)
-{
-    std::stringstream ss;
-    for (auto& pair : map)
-    {
-        ss << "Encoding: " << pair.first << endl;
-        ss << "State " << pair.second.get_print_string() << endl;
-    }
-
-    return ss.str();
-}
-
 State CanonicalGenerator::compute_canonical(State& state)
 {
     DBGMSG(DBG_CANONICAL_GENERATOR, "Begin computing the canonical of:\n");
@@ -104,7 +103,7 @@ State CanonicalGenerator::compute_canonical(State& state)
     // Swap Rows
     add_swap_rows_states(states);
     DBGMSG(DBG_CANONICAL_GENERATOR, "Amount swapping rows: " + STR(states.size()) + "\n");
-    DBGMSG(DBG_CANONICAL_GENERATOR_DETAILED, get_state_map_str(states));
+    DBGMSG(DBG_CANONICAL_GENERATOR_DETAILED, get_state_map_str(states));  
 
     DBGMSG(DBG_CANONICAL_GENERATOR, "Fixing shapes and looking for the largest...\n");
 

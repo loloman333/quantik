@@ -2,16 +2,8 @@
 
 #include "quantik.hpp"
 
-// TODO: remove class ????
 class Move
 {
-    // -------------
-    // Private Stuff
-    // -------------
-    private: 
-
-    // --- Methods ---
-
     // -------------
     // Public Stuff
     // -------------
@@ -19,7 +11,6 @@ class Move
 
     // --- Members ---
 
-    // TODO: make private + getter and setter (or remove class)
     char row_index{};
     char col_index{};
     PieceType piece{};

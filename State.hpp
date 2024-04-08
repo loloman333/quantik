@@ -52,8 +52,8 @@ class State
     // TODO: "hardcode" symmetries
     State mirror();
     State rotate_90();
-    State rotate_180() { return this->rotate_90().rotate_90(); }
-    State rotate_270() { return this->rotate_90().rotate_90().rotate_90(); }
+    State rotate_180();
+    State rotate_270();
     State fix_shape_order();
     State swap_rows_or_cols(SwapType type, char index1, char index2);
 

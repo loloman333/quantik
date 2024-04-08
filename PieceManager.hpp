@@ -28,10 +28,9 @@ class PieceManager
     // -------------
 
     // --- Members ---
-    // TODO rename those
-    static unordered_map<PieceType, string> _piece_type_to_str;
-    static unordered_map<std::string, PieceType> _piece_str_to_type;
-    static vector<PieceType> _piece_types;
+    static unordered_map<PieceType, string> piece_type_to_str;
+    static unordered_map<std::string, PieceType> piece_str_to_type;
+    static vector<PieceType> piece_types;
 
     // --- Methods ---
     static PieceShape get_piece_shape(PieceType piece);
