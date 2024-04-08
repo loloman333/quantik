@@ -6,6 +6,7 @@
 
 class GameTree 
 {
+    friend int main(); //TODO: remove?
 
     // -------------
     // Private Stuff
@@ -27,16 +28,18 @@ class GameTree
 
     // --- Constructors ---
 
-    GameTree();
+    GameTree(State root_state = State{});
+    GameTree(const GameTree& other) = delete;
     ~GameTree();
 
     // --- Methods ---
 
     void compute_next_layer();
+    string get_print_string();
 
     // -------------
     // Static Stuff
     // -------------
 
-    static GameTree compute_tree(char depth);
+    static GameTree* compute_tree(char depth, State root_state = State{});
 };

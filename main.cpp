@@ -100,6 +100,22 @@ void manual_play()
 
 int main()
 {
-    // manual_play();
-    GameTree::compute_tree(10);    
+    // GameTree* tree1{GameTree::compute_tree(6)};
+    // State some_lvl_6;
+    // for (auto& pair : tree1->leaf_nodes)
+    // {
+    //     State state = pair.second->state;
+    //     if (! state.is_final_state())
+    //     {
+    //         some_lvl_6 = state;
+    //         break;
+    //     }
+    // }
+    // delete tree1;
+
+    // GameTree* tree2{GameTree::compute_tree(10, some_lvl_6)};
+    // delete tree2;
+
+    GameTree* tree{GameTree::compute_tree(16)};
+    delete tree;
 }

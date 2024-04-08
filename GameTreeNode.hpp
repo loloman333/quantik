@@ -5,6 +5,8 @@
 
 class GameTreeNode
 {
+    friend int main(); //TODO: remove?
+
     // -------------
     // Private Stuff
     // -------------
@@ -33,9 +35,4 @@ class GameTreeNode
     node_ptr_map& get_children();
 
     node_ptr_map& generate_children(node_ptr_map& all_nodes);
-
-    // -------------
-    // Static Stuff
-    // -------------
-
 };
