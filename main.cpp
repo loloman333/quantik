@@ -118,7 +118,7 @@ void generate_all_transformation_functions()
 
 int main()
 {
-    GameTree* tree{GameTree::compute_tree(16)};
+    GameTree* tree{GameTree::compute_tree(2)};
     delete tree;
 
     // generate_all_transforamtion_functions();
