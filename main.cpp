@@ -99,7 +99,7 @@ void manual_play()
     }
 }
 
-void generate_all_transforamtion_functions()
+void generate_all_transformation_functions()
 {
     cout << TransformationGenerator::generate_mirror_function() << endl;
 

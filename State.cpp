@@ -1,6 +1,7 @@
 #include "State.hpp"
 #include "PieceManager.hpp"
 
+// TODO: bool ret val if legal
 void State::make_move(Move move)
 {
     // TODO: check if legal???
@@ -120,7 +121,7 @@ State State::old_mirror()
 
 State State::mirror()
 {
-    State transformed_state{};
+    State transformed_state;
     transformed_state.board[0][0] = this->board[3][0];
     transformed_state.board[0][1] = this->board[3][1];
     transformed_state.board[0][2] = this->board[3][2];
@@ -144,7 +145,7 @@ State State::mirror()
 
 State State::rotate_90()
 {
-    State transformed_state{};
+    State transformed_state;
     transformed_state.board[0][3] = this->board[0][0];
     transformed_state.board[1][3] = this->board[0][1];
     transformed_state.board[2][3] = this->board[0][2];
@@ -207,7 +208,7 @@ State State::old_rotate_270()
 
 State State::rotate_180()
 {
-    State transformed_state{};
+    State transformed_state;
     transformed_state.board[3][3] = this->board[0][0];
     transformed_state.board[3][2] = this->board[0][1];
     transformed_state.board[3][1] = this->board[0][2];
@@ -234,7 +235,7 @@ State State::rotate_180()
 
 State State::rotate_270()
 {
-    State transformed_state{};
+    State transformed_state;
     transformed_state.board[3][0] = this->board[0][0];
     transformed_state.board[2][0] = this->board[0][1];
     transformed_state.board[1][0] = this->board[0][2];
@@ -260,7 +261,7 @@ State State::rotate_270()
 
 State State::swap_rows_0_1()
 {
-    State transformed_state{};
+    State transformed_state;
     transformed_state.board[0][0] = this->board[1][0];
     transformed_state.board[0][1] = this->board[1][1];
     transformed_state.board[0][2] = this->board[1][2];
@@ -284,7 +285,7 @@ State State::swap_rows_0_1()
 
 State State::swap_rows_2_3()
 {
-    State transformed_state{};
+    State transformed_state;
     transformed_state.board[0][0] = this->board[0][0];
     transformed_state.board[0][1] = this->board[0][1];
     transformed_state.board[0][2] = this->board[0][2];
@@ -308,7 +309,7 @@ State State::swap_rows_2_3()
 
 State State::swap_rows_both()
 {
-    State transformed_state{};
+    State transformed_state;
     transformed_state.board[0][0] = this->board[1][0];
     transformed_state.board[0][1] = this->board[1][1];
     transformed_state.board[0][2] = this->board[1][2];
@@ -334,7 +335,7 @@ State State::swap_rows_both()
 
 State State::swap_cols_0_1()
 {
-    State transformed_state{};
+    State transformed_state;
     transformed_state.board[0][0] = this->board[0][1];
     transformed_state.board[0][1] = this->board[0][0];
     transformed_state.board[0][2] = this->board[0][2];
@@ -358,7 +359,7 @@ State State::swap_cols_0_1()
 
 State State::swap_cols_2_3()
 {
-    State transformed_state{};
+    State transformed_state;
     transformed_state.board[0][0] = this->board[0][0];
     transformed_state.board[0][1] = this->board[0][1];
     transformed_state.board[0][2] = this->board[0][3];
@@ -382,7 +383,7 @@ State State::swap_cols_2_3()
 
 State State::swap_cols_both()
 {
-    State transformed_state{};
+    State transformed_state;
     transformed_state.board[0][0] = this->board[0][1];
     transformed_state.board[0][1] = this->board[0][0];
     transformed_state.board[0][2] = this->board[0][3];
