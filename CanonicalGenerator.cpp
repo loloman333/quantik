@@ -49,9 +49,13 @@ void CanonicalGenerator::add_swap_cols_states(state_map& states)
 
     for (auto& pair : states)
     {
-        State newStateFirst = pair.second.swap_rows_or_cols(SwapType::COLUMNS, 0, 1);
-        State newStateSecond = pair.second.swap_rows_or_cols(SwapType::COLUMNS, 2, 3);
-        State newStateBoth = newStateFirst.swap_rows_or_cols(SwapType::COLUMNS, 2, 3);
+        // State newStateFirst = pair.second.swap_rows_or_cols(SwapType::COLUMNS, 0, 1);
+        // State newStateSecond = pair.second.swap_rows_or_cols(SwapType::COLUMNS, 2, 3);
+        // State newStateBoth = newStateFirst.swap_rows_or_cols(SwapType::COLUMNS, 2, 3);
+
+        State newStateFirst = pair.second.swap_cols_0_1();
+        State newStateSecond = pair.second.swap_cols_2_3();
+        State newStateBoth = newStateFirst.swap_cols_both();
 
         newStates.emplace(newStateFirst.encode(), newStateFirst);
         newStates.emplace(newStateSecond.encode(), newStateSecond);
@@ -67,9 +71,13 @@ void CanonicalGenerator::add_swap_rows_states(state_map& states)
 
     for (auto& pair : states)
     {
-        State newStateFirst = pair.second.swap_rows_or_cols(SwapType::ROWS, 0, 1);
-        State newStateSecond = pair.second.swap_rows_or_cols(SwapType::ROWS, 2, 3);
-        State newStateBoth = newStateFirst.swap_rows_or_cols(SwapType::ROWS, 2, 3);
+        // State newStateFirst = pair.second.swap_rows_or_cols(SwapType::ROWS, 0, 1);
+        // State newStateSecond = pair.second.swap_rows_or_cols(SwapType::ROWS, 2, 3);
+        // State newStateBoth = newStateFirst.swap_rows_or_cols(SwapType::ROWS, 2, 3);
+
+        State newStateFirst = pair.second.swap_rows_0_1();
+        State newStateSecond = pair.second.swap_rows_2_3();
+        State newStateBoth = newStateFirst.swap_rows_both();
 
         newStates.emplace(newStateFirst.encode(), newStateFirst);
         newStates.emplace(newStateSecond.encode(), newStateSecond);

@@ -2,9 +2,6 @@
 
 #include "State.hpp"
 #include "quantik.hpp"
-
-#define PRINT if (CanonicalGenerator::DEBUG_PRINTS)
-
 class CanonicalGenerator
 {
     public: 

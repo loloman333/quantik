@@ -1,8 +1,7 @@
 #include "quantik.hpp"
 #include "State.hpp"
 #include "GameTree.hpp"
-
-#include "TransformationGenerator.cpp"
+#include "TransformationGenerator.hpp"
 
 char ascii_1 = 49;
 char ascii_4 = 52;
@@ -100,10 +99,27 @@ void manual_play()
     }
 }
 
+void generate_all_transforamtion_functions()
+{
+    cout << TransformationGenerator::generate_mirror_function() << endl;
+
+    cout << TransformationGenerator::generate_rotate_90_function() << endl;
+    cout << TransformationGenerator::generate_rotate_180_function() << endl;
+    cout << TransformationGenerator::generate_rotate_270_function() << endl;
+
+    cout << TransformationGenerator::generate_swap_rows_or_cols_function(SwapType::ROWS, 0, 1) << endl;
+    cout << TransformationGenerator::generate_swap_rows_or_cols_function(SwapType::ROWS, 2, 3) << endl;
+    cout << TransformationGenerator::generate_swap_rows_or_cols_function(SwapType::ROWS, 0, 1, true, 2, 3) << endl;
+
+    cout << TransformationGenerator::generate_swap_rows_or_cols_function(SwapType::COLUMNS, 0, 1) << endl;
+    cout << TransformationGenerator::generate_swap_rows_or_cols_function(SwapType::COLUMNS, 2, 3) << endl;
+    cout << TransformationGenerator::generate_swap_rows_or_cols_function(SwapType::COLUMNS, 0, 1, true, 2, 3) << endl;
+}
+
 int main()
 {
     GameTree* tree{GameTree::compute_tree(16)};
     delete tree;
 
-    // cout << generate_mirror_function() << endl;
+    // generate_all_transforamtion_functions();
 }
