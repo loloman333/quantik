@@ -79,7 +79,7 @@ void State::update_placed_pieces()
     }
 }
 
-State old_swap_rows_or_cols(State& state, SwapType type, char index1, char index2)
+State State::old_swap_rows_or_cols(SwapType type, char index1, char index2)
 {
     State swapped_state;
 
@@ -99,7 +99,7 @@ State old_swap_rows_or_cols(State& state, SwapType type, char index1, char index
                 col_index = (j == index1) ? index2 : (j == index2) ? index1 : j;
             }
 
-            swapped_state.board[i][j] = state.board[row_index][col_index];
+            swapped_state.board[i][j] = this->board[row_index][col_index];
         }
     }
 
@@ -278,7 +278,7 @@ State State::swap_rows_0_1()
     transformed_state.board[3][1] = this->board[3][1];
     transformed_state.board[3][2] = this->board[3][2];
     transformed_state.board[3][3] = this->board[3][3];
-    State cmp = old_swap_rows_or_cols(*this, SwapType::ROWS, 0, 1);
+    State cmp = old_swap_rows_or_cols(SwapType::ROWS, 0, 1);
     assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
     return transformed_state;
 }
@@ -302,7 +302,7 @@ State State::swap_rows_2_3()
     transformed_state.board[3][1] = this->board[2][1];
     transformed_state.board[3][2] = this->board[2][2];
     transformed_state.board[3][3] = this->board[2][3];
-    State cmp = old_swap_rows_or_cols(*this, SwapType::ROWS, 2, 3);
+    State cmp = old_swap_rows_or_cols(SwapType::ROWS, 2, 3);
     assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
     return transformed_state;
 }
@@ -326,8 +326,8 @@ State State::swap_rows_both()
     transformed_state.board[3][1] = this->board[2][1];
     transformed_state.board[3][2] = this->board[2][2];
     transformed_state.board[3][3] = this->board[2][3];
-    State cmp = old_swap_rows_or_cols(*this, SwapType::ROWS, 0, 1);
-    cmp = old_swap_rows_or_cols(cmp, SwapType::ROWS, 2, 3);
+    State cmp = old_swap_rows_or_cols(SwapType::ROWS, 0, 1);
+    cmp = cmp.old_swap_rows_or_cols(SwapType::ROWS, 2, 3);
     assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
     
     return transformed_state;
@@ -352,7 +352,7 @@ State State::swap_cols_0_1()
     transformed_state.board[3][1] = this->board[3][0];
     transformed_state.board[3][2] = this->board[3][2];
     transformed_state.board[3][3] = this->board[3][3];
-    State cmp = old_swap_rows_or_cols(*this, SwapType::COLUMNS, 0, 1);
+    State cmp = old_swap_rows_or_cols(SwapType::COLUMNS, 0, 1);
     assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
     return transformed_state;
 }
@@ -376,7 +376,7 @@ State State::swap_cols_2_3()
     transformed_state.board[3][1] = this->board[3][1];
     transformed_state.board[3][2] = this->board[3][3];
     transformed_state.board[3][3] = this->board[3][2];
-    State cmp = old_swap_rows_or_cols(*this, SwapType::COLUMNS, 2, 3);
+    State cmp = old_swap_rows_or_cols(SwapType::COLUMNS, 2, 3);
     assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
     return transformed_state;
 }
@@ -400,8 +400,8 @@ State State::swap_cols_both()
     transformed_state.board[3][1] = this->board[3][0];
     transformed_state.board[3][2] = this->board[3][3];
     transformed_state.board[3][3] = this->board[3][2];
-    State cmp = old_swap_rows_or_cols(*this, SwapType::COLUMNS, 0, 1);
-    cmp = old_swap_rows_or_cols(cmp, SwapType::COLUMNS, 2, 3);
+    State cmp = old_swap_rows_or_cols(SwapType::COLUMNS, 0, 1);
+    cmp = cmp.old_swap_rows_or_cols(SwapType::COLUMNS, 2, 3);
     assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
     return transformed_state;
 }

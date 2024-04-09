@@ -70,6 +70,7 @@ class State
     State old_rotate_180();
     State old_rotate_270();
     State old_mirror();
+    State old_swap_rows_or_cols(SwapType type, char index1, char index2);
 
     State compute_canonical();
 

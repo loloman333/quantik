@@ -75,7 +75,7 @@ GameTree* GameTree::compute_tree(char depth, State root_state)
         tree->compute_next_layer();
         auto tn = std::chrono::steady_clock::now();
 
-        std::chrono::duration<double> duration = tn- t0;
+        std::chrono::duration<double> duration = tn - t0;
         
         DBGMSG(DBG_COMPUTE_GAMETREE, STR(duration.count()) + " seconds \n" + STR(tree->all_nodes.size()) + " Total Nodes | ");
         DBGMSG(DBG_COMPUTE_GAMETREE, STR(tree->leaf_nodes.size()) + " Leaf Nodes\n");
