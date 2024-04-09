@@ -226,6 +226,9 @@ State State::rotate_180()
     transformed_state.board[0][0] = this->board[3][3];
     State cmp = old_rotate_180();
     assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
+
+    cmp = old_rotate_90().old_rotate_90();
+    assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
     return transformed_state;
 }
 
@@ -249,6 +252,8 @@ State State::rotate_270()
     transformed_state.board[1][3] = this->board[3][2];
     transformed_state.board[0][3] = this->board[3][3];
     State cmp = old_rotate_270();
+    assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
+    cmp = old_rotate_90().old_rotate_90().old_rotate_90();
     assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
     return transformed_state;
 }
