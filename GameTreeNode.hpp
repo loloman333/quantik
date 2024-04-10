@@ -5,6 +5,8 @@
 
 class GameTreeNode
 {
+    friend int main();
+
     // -------------
     // Private Stuff
     // -------------

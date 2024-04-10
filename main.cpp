@@ -113,10 +113,42 @@ void generate_all_transformation_functions()
     cout << TransformationGenerator::generate_swap_rows_or_cols_function(SwapType::COLUMNS, 0, 1, true, 2, 3) << endl;
 }
 
+#include <iterator>
+#include <random>
+
+vector<GameTreeNode*> get_random_leaf_nodes(node_ptr_map& leaf_nodes, int amount)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<int> dist(0, leaf_nodes.size());
+
+    vector<GameTreeNode*> random_leafs;
+
+    for (int i = 0; i < amount; i++)
+    {
+        int random_index = dist(gen);
+        auto iter = leaf_nodes.begin();
+        std::advance(iter, random_index);
+        random_leafs.push_back(iter->second);
+    }
+
+    return random_leafs;
+}
+
 int main()
 {
-    GameTree* tree{GameTree::compute_tree(4)};
-    delete tree;
+    GameTree* tree{GameTree::compute_tree(7)};
 
-    // generate_all_transforamtion_functions();
+    // vector<GameTreeNode*> random_nodes = get_random_leaf_nodes(tree->leaf_nodes, 10);
+    // vector<State> random_states;
+    // for (auto& node : random_nodes) random_states.push_back(node->state);
+    
+    // vector<GameTree*> trees;
+    // for (State & state : random_states)
+    // {
+    //     trees.push_back(GameTree::compute_tree(9, state));
+    // }
+
+    delete tree;
+    // for (GameTree* t : trees) delete t;
 }

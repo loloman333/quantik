@@ -6,6 +6,8 @@
 
 class GameTree 
 {
+    friend int main();
+ 
     // -------------
     // Private Stuff
     // -------------
