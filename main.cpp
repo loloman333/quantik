@@ -137,7 +137,7 @@ vector<GameTreeNode*> get_random_leaf_nodes(node_ptr_map& leaf_nodes, int amount
 
 int main()
 {
-    GameTree* tree{GameTree::compute_tree(7)};
+    GameTree* tree{GameTree::compute_tree(16)};
 
     // vector<GameTreeNode*> random_nodes = get_random_leaf_nodes(tree->leaf_nodes, 10);
     // vector<State> random_states;
