@@ -89,9 +89,6 @@ void manual_play()
         //     continue;
         // }
 
-        // TODO: check max 2 of each shape
-        // Done in "is_legal_move" -> use this function
-
         char shape = toupper(input[2]);
 
         state.make_move(Move{row_index, col_index, piece_mapping[turn][shape]});
@@ -118,7 +115,7 @@ void generate_all_transformation_functions()
 
 int main()
 {
-    GameTree* tree{GameTree::compute_tree(2)};
+    GameTree* tree{GameTree::compute_tree(4)};
     delete tree;
 
     // generate_all_transforamtion_functions();

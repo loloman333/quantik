@@ -49,13 +49,9 @@ void CanonicalGenerator::add_swap_cols_states(state_map& states)
 
     for (auto& pair : states)
     {
-        // State newStateFirst = pair.second.swap_rows_or_cols(SwapType::COLUMNS, 0, 1);
-        // State newStateSecond = pair.second.swap_rows_or_cols(SwapType::COLUMNS, 2, 3);
-        // State newStateBoth = newStateFirst.swap_rows_or_cols(SwapType::COLUMNS, 2, 3);
-
         State newStateFirst = pair.second.swap_cols_0_1();
         State newStateSecond = pair.second.swap_cols_2_3();
-        State newStateBoth = newStateFirst.swap_cols_both();
+        State newStateBoth = pair.second.swap_cols_both();
 
         newStates.emplace(newStateFirst.encode(), newStateFirst);
         newStates.emplace(newStateSecond.encode(), newStateSecond);
@@ -65,19 +61,26 @@ void CanonicalGenerator::add_swap_cols_states(state_map& states)
     states.insert(newStates.begin(), newStates.end());
 }
 
+void CanonicalGenerator::add_transformation_states(state_map& states, State (State::*transformation)())
+{
+    state_map newStates;
+    for (auto& pair : states)
+    {
+        State transformed_state = (pair.second.*transformation)();
+        newStates.emplace(transformed_state.encode(), transformed_state);
+    }
+    states.insert(newStates.begin(), newStates.end());
+}
+
 void CanonicalGenerator::add_swap_rows_states(state_map& states)
 {
     state_map newStates;
 
     for (auto& pair : states)
     {
-        // State newStateFirst = pair.second.swap_rows_or_cols(SwapType::ROWS, 0, 1);
-        // State newStateSecond = pair.second.swap_rows_or_cols(SwapType::ROWS, 2, 3);
-        // State newStateBoth = newStateFirst.swap_rows_or_cols(SwapType::ROWS, 2, 3);
-
         State newStateFirst = pair.second.swap_rows_0_1();
         State newStateSecond = pair.second.swap_rows_2_3();
-        State newStateBoth = newStateFirst.swap_rows_both();
+        State newStateBoth = pair.second.swap_rows_both();
 
         newStates.emplace(newStateFirst.encode(), newStateFirst);
         newStates.emplace(newStateSecond.encode(), newStateSecond);
@@ -94,22 +97,28 @@ State CanonicalGenerator::compute_canonical(State& state)
     state_map states{{state.encode(), state}};
 
     // Mirror
-    add_mirror_states(states);
+    add_transformation_states(states, &State::mirror);
     DBGMSG(DBG_CANONICAL_GENERATOR, "Amount after mirroring: " + STR(states.size()) + "\n");
     DBGMSG(DBG_CANONICAL_GENERATOR_DETAILED, get_state_map_str(states));
 
     // Rotate
-    add_rotate_states(states);
+    add_transformation_states(states, &State::rotate_90);
+    add_transformation_states(states, &State::rotate_180);
+    // add_transformation_states(states, &State::rotate_270);
     DBGMSG(DBG_CANONICAL_GENERATOR, "Amount after rotating: " + STR(states.size()) + "\n");
     DBGMSG(DBG_CANONICAL_GENERATOR_DETAILED, get_state_map_str(states));
 
     // Swap Columns
-    add_swap_cols_states(states);
+    add_transformation_states(states, &State::swap_cols_0_1);
+    add_transformation_states(states, &State::swap_cols_2_3);
+    // add_transformation_states(states, &State::swap_cols_both);
     DBGMSG(DBG_CANONICAL_GENERATOR, "Amount swapping cols: " + STR(states.size()) + "\n");
     DBGMSG(DBG_CANONICAL_GENERATOR_DETAILED, get_state_map_str(states));
 
     // Swap Rows
-    add_swap_rows_states(states);
+    add_transformation_states(states, &State::swap_rows_0_1);
+    add_transformation_states(states, &State::swap_rows_2_3);
+    // add_transformation_states(states, &State::swap_rows_both);
     DBGMSG(DBG_CANONICAL_GENERATOR, "Amount swapping rows: " + STR(states.size()) + "\n");
     DBGMSG(DBG_CANONICAL_GENERATOR_DETAILED, get_state_map_str(states));  
 
@@ -120,12 +129,12 @@ State CanonicalGenerator::compute_canonical(State& state)
     State canonicalState{};
     for (auto& pair : states) 
     {
-        State fixedState = pair.second.fix_shape_order();
-        encoding enc = fixedState.encode();
+       pair.second.fix_shape_order();
+        encoding enc = pair.second.encode();
         if (enc > max_encoding)
         {
             max_encoding = enc;
-            canonicalState = fixedState;
+            canonicalState = pair.second;
         }
     }
 

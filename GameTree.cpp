@@ -60,7 +60,7 @@ GameTree* GameTree::compute_tree(char depth, State root_state)
 {
     GameTree* tree = new GameTree{root_state};
 
-    auto t0 = std::chrono::steady_clock::now();
+    auto tn = std::chrono::steady_clock::now();
 
     DBGMSG(DBG_COMPUTE_GAMETREE, "Beginning to compute the tree...\n");
     DBGMSG(DBG_COMPUTE_GAMETREE, "Level 0 ...\n");
@@ -73,11 +73,17 @@ GameTree* GameTree::compute_tree(char depth, State root_state)
         DBGMSG(DBG_COMPUTE_GAMETREE, "Level " + STR(i) + " ... ");
 
         tree->compute_next_layer();
-        auto tn = std::chrono::steady_clock::now();
 
-        std::chrono::duration<double> duration = tn - t0;
-        
-        DBGMSG(DBG_COMPUTE_GAMETREE, STR(duration.count()) + " seconds \n" + STR(tree->all_nodes.size()) + " Total Nodes | ");
+        auto tn_plus_1 = std::chrono::steady_clock::now();
+        std::chrono::duration<double> duration = tn_plus_1 - tn;
+        tn = tn_plus_1;
+        int minutes = static_cast<int>(duration.count()) / 60;
+        double seconds = duration.count() - minutes * 60;
+        string minute_info = minutes != 0 ? STR(minutes) + " minutes " : "";
+        string time_info = minute_info + STR(seconds) + " seconds \n";
+
+        DBGMSG(DBG_COMPUTE_GAMETREE, time_info);
+        DBGMSG(DBG_COMPUTE_GAMETREE, STR(tree->all_nodes.size()) + " Total Nodes | ");
         DBGMSG(DBG_COMPUTE_GAMETREE, STR(tree->leaf_nodes.size()) + " Leaf Nodes\n");
         DBGMSG(DBG_COMPUTE_GAMETREE_DETAILED, "All leaf nodes: \n" + get_node_ptr_map_str(tree->leaf_nodes));
     }

@@ -1,20 +1,12 @@
 #include "State.hpp"
 #include "PieceManager.hpp"
 
-// TODO: bool ret val if legal
+// omitted for performance TONOTDO: bool ret val if legal
 void State::make_move(Move move)
 {
-    // TODO: check if legal???
-
-    // cout << "BEFORE:" << get_print_string() << endl;
-
-    // cout << "MOVE: " << move.get_print_string() << endl;
-
     this->board[move.row_index][move.col_index] = move.piece;
     this->placed_pieces[move.piece].push_back({move.row_index, move.col_index});
     this->black_turn = !this->black_turn;
-
-    // cout << "AFTER:" << get_print_string() << endl;
 }
 
 string State::get_print_string()
@@ -79,46 +71,6 @@ void State::update_placed_pieces()
     }
 }
 
-State State::old_swap_rows_or_cols(SwapType type, char index1, char index2)
-{
-    State swapped_state;
-
-    for (int i = 0; i < 4; ++i)
-    {
-        for (int j = 0; j < 4; ++j)
-        {
-            char row_index = i;
-            char col_index = j;
-
-            if (type == SwapType::ROWS)
-            {
-                row_index = (i == index1) ? index2 : (i == index2) ? index1 : i;
-            }
-            else if (type == SwapType::COLUMNS)
-            {
-                col_index = (j == index1) ? index2 : (j == index2) ? index1 : j;
-            }
-
-            swapped_state.board[i][j] = this->board[row_index][col_index];
-        }
-    }
-
-    return swapped_state;
-}
-
-State State::old_mirror()
-{
-    State transformed_state{};
-    for (int i = 0; i < 4; ++i)
-    {
-        for (int j = 0; j < 4; ++j)
-        {
-            transformed_state.board[i][j] = this->board[3 - i][j];
-        }
-    }
-    return transformed_state;
-}
-
 State State::mirror()
 {
     State transformed_state;
@@ -138,8 +90,6 @@ State State::mirror()
     transformed_state.board[3][1] = this->board[0][1];
     transformed_state.board[3][2] = this->board[0][2];
     transformed_state.board[3][3] = this->board[0][3];
-    State cmp = old_mirror();
-    assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
     return transformed_state;
 }
 
@@ -162,48 +112,7 @@ State State::rotate_90()
     transformed_state.board[1][0] = this->board[3][1];
     transformed_state.board[2][0] = this->board[3][2];
     transformed_state.board[3][0] = this->board[3][3];
-    State cmp = old_rotate_90();
-    assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
     return transformed_state;
-}
-
-State State::old_rotate_90()
-{
-    State rotatedState;
-    for (int i = 0; i < 4; ++i)
-    {
-        for (int j = 0; j < 4; ++j)
-        {
-            rotatedState.board[j][3 - i] = this->board[i][j];
-        }
-    }
-    return rotatedState;
-}
-
-State State::old_rotate_180()
-{
-    State rotatedState;
-    for (int i = 0; i < 4; ++i)
-    {
-        for (int j = 0; j < 4; ++j)
-        {
-            rotatedState.board[3 - i][3 - j] = this->board[i][j];
-        }
-    }
-    return rotatedState;
-}
-
-State State::old_rotate_270()
-{
-    State rotatedState;
-    for (int i = 0; i < 4; ++i)
-    {
-        for (int j = 0; j < 4; ++j)
-        {
-            rotatedState.board[3 - j][i] = this->board[i][j];
-        }
-    }
-    return rotatedState;
 }
 
 State State::rotate_180()
@@ -225,11 +134,6 @@ State State::rotate_180()
     transformed_state.board[0][2] = this->board[3][1];
     transformed_state.board[0][1] = this->board[3][2];
     transformed_state.board[0][0] = this->board[3][3];
-    State cmp = old_rotate_180();
-    assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
-
-    cmp = old_rotate_90().old_rotate_90();
-    assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
     return transformed_state;
 }
 
@@ -252,10 +156,6 @@ State State::rotate_270()
     transformed_state.board[2][3] = this->board[3][1];
     transformed_state.board[1][3] = this->board[3][2];
     transformed_state.board[0][3] = this->board[3][3];
-    State cmp = old_rotate_270();
-    assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
-    cmp = old_rotate_90().old_rotate_90().old_rotate_90();
-    assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
     return transformed_state;
 }
 
@@ -278,8 +178,6 @@ State State::swap_rows_0_1()
     transformed_state.board[3][1] = this->board[3][1];
     transformed_state.board[3][2] = this->board[3][2];
     transformed_state.board[3][3] = this->board[3][3];
-    State cmp = old_swap_rows_or_cols(SwapType::ROWS, 0, 1);
-    assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
     return transformed_state;
 }
 
@@ -302,8 +200,6 @@ State State::swap_rows_2_3()
     transformed_state.board[3][1] = this->board[2][1];
     transformed_state.board[3][2] = this->board[2][2];
     transformed_state.board[3][3] = this->board[2][3];
-    State cmp = old_swap_rows_or_cols(SwapType::ROWS, 2, 3);
-    assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
     return transformed_state;
 }
 
@@ -325,11 +221,7 @@ State State::swap_rows_both()
     transformed_state.board[3][0] = this->board[2][0];
     transformed_state.board[3][1] = this->board[2][1];
     transformed_state.board[3][2] = this->board[2][2];
-    transformed_state.board[3][3] = this->board[2][3];
-    State cmp = old_swap_rows_or_cols(SwapType::ROWS, 0, 1);
-    cmp = cmp.old_swap_rows_or_cols(SwapType::ROWS, 2, 3);
-    assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
-    
+    transformed_state.board[3][3] = this->board[2][3];    
     return transformed_state;
 }
 
@@ -352,8 +244,6 @@ State State::swap_cols_0_1()
     transformed_state.board[3][1] = this->board[3][0];
     transformed_state.board[3][2] = this->board[3][2];
     transformed_state.board[3][3] = this->board[3][3];
-    State cmp = old_swap_rows_or_cols(SwapType::COLUMNS, 0, 1);
-    assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
     return transformed_state;
 }
 
@@ -376,8 +266,6 @@ State State::swap_cols_2_3()
     transformed_state.board[3][1] = this->board[3][1];
     transformed_state.board[3][2] = this->board[3][3];
     transformed_state.board[3][3] = this->board[3][2];
-    State cmp = old_swap_rows_or_cols(SwapType::COLUMNS, 2, 3);
-    assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
     return transformed_state;
 }
 
@@ -400,15 +288,11 @@ State State::swap_cols_both()
     transformed_state.board[3][1] = this->board[3][0];
     transformed_state.board[3][2] = this->board[3][3];
     transformed_state.board[3][3] = this->board[3][2];
-    State cmp = old_swap_rows_or_cols(SwapType::COLUMNS, 0, 1);
-    cmp = cmp.old_swap_rows_or_cols(SwapType::COLUMNS, 2, 3);
-    assert(std::memcmp(transformed_state.board, cmp.board, sizeof(transformed_state.board)) == 0);
     return transformed_state;
 }
 
-State State::fix_shape_order()
+void State::fix_shape_order()
 {
-    State fixed_state;
     char order_mapping[9]{};
     char next_shape = 1;
 
@@ -426,35 +310,46 @@ State State::fix_shape_order()
                 next_shape += 2;
             }
 
-            fixed_state.board[i][j] = (PieceType)order_mapping[value];
+            this->board[i][j] = (PieceType)order_mapping[value];
         }
     }
-
-    return fixed_state;
 }
 
 bool State::is_legal_move(Move &move)
 {
+    // Try to place empty Piece
     if (move.piece == PieceType::EMPTY)
         return false;
+
+    // Try to place outside of board
     if (move.col_index >= 4 || move.row_index >= 4)
         return false;
+
+    // Try to place piece of wrong color
     if (PieceManager::is_black(move.piece) != this->black_turn)
         return false;
 
+    // Try to place on top of another piece
     if (this->board[move.row_index][move.col_index] != PieceType::EMPTY)
         return false;
+
+    // Try to place a third of a shape
     if (this->placed_pieces[move.piece].size() >= 2)
         return false;
 
+    // Try to place in row, col or sector where opponent has one of same shape
     PieceType counterpart = PieceManager::get_counterpart_piece(move.piece);
     for (auto pos : this->placed_pieces[counterpart])
-    {
+    {   
+        // Row
         if (pos.first == move.row_index)
             return false;
+        
+        // Col
         if (pos.second == move.col_index)
             return false;
-        // TODO: improve performance of this check
+
+        // Sector
         for (auto &sector : get_sectors())
         {
             bool correct_sector = false;
@@ -466,11 +361,13 @@ bool State::is_legal_move(Move &move)
                 if (*piece_ptr == counterpart)
                     has_counterpart = true;
             }
-            if (correct_sector && has_counterpart)
+
+            if (correct_sector && has_counterpart) 
                 return false;
         }
     }
 
+    // Try to play on a final board
     if (is_final_state())
         return false;
 
@@ -526,9 +423,10 @@ vector<vector<PieceType *>> State::get_sectors()
     };
 }
 
-vector<State> State::compute_following_states()
+state_map State::compute_following_states()
 {
-    vector<State> following_states{};
+    state_map following_states{};
+    if (is_final_state()) return following_states;
 
     for (Move &move : Move::get_all_moves(this->black_turn))
     {
@@ -536,7 +434,8 @@ vector<State> State::compute_following_states()
         {
             State new_state{*this};
             new_state.make_move(move);
-            following_states.push_back(new_state);
+            State canonical = new_state.compute_canonical();
+            following_states.emplace(canonical.encode(), canonical);
         }
     }
 
@@ -547,3 +446,5 @@ State State::compute_canonical()
 {
     return CanonicalGenerator::compute_canonical(*this);
 }
+
+//TODO: Generally don't safe states but just their encodings and use decode more often ???
