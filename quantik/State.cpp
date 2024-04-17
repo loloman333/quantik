@@ -29,14 +29,14 @@ string State::get_print_string()
 
 encoding State::encode()
 {
-    encoding code = 0;
+    encoding encoding = 0;
     size_t mult = 1;
     for (char i = 15; i >= 0; i--)
     {
-        code += ((char)*(&(this->board[0][0]) + i)) * mult;
+        encoding += ((char)*(&(this->board[0][0]) + i)) * mult;
         mult *= 9;
     }
-    return code;
+    return encoding;
 }
 
 State State::decode(int encoding)
@@ -368,13 +368,13 @@ bool State::is_legal_move(Move &move)
     }
 
     // Try to play on a final board
-    if (is_final_state())
-        return false;
+    // if (is_winning_state()) // TONOTDO: this check was removed for performance!
+    //     return false;
 
     return true;
 }
 
-bool State::is_final_state()
+bool State::is_winning_state()
 {
     for (char i = 0; i < 4; i++)
     {
@@ -426,7 +426,6 @@ vector<vector<PieceType *>> State::get_sectors()
 state_map State::compute_following_states()
 {
     state_map following_states{};
-    if (is_final_state()) return following_states;
 
     for (Move &move : Move::get_all_moves(this->black_turn))
     {
@@ -447,4 +446,4 @@ State State::compute_canonical()
     return CanonicalGenerator::compute_canonical(*this);
 }
 
-//TODO: Generally don't safe states but just their encodings and use decode more often ???
+// TODO: Generally don't safe states but just their encodings and use decode more often ???

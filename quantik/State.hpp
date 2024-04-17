@@ -38,7 +38,7 @@ class State
 
     void make_move(Move move);
     bool is_legal_move(Move& move); 
-    bool is_final_state();
+    bool is_winning_state();
 
     state_map compute_following_states();
 

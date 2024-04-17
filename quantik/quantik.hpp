@@ -54,11 +54,16 @@ enum class PieceShape {
 // --- Typedefs ---
 
 typedef uint64_t encoding;
+typedef unsigned char node_code;
 typedef unordered_map<encoding, State> state_map;
 typedef unordered_map<PieceType, vector<std::pair<char, char>>> pieces_map;
 typedef unordered_map<encoding, GameTreeNode*> node_ptr_map;
 
 // --- Defines ---
+
+#define DRAW_CODE 20
+#define LOSE_CODE 0
+#define UNDEFINED_CODE 21
 
 #define STR(x) std::to_string(x)
 #define DBGMSG(var, msg) if (var) cout << msg

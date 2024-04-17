@@ -46,6 +46,11 @@ void GameTree::compute_next_layer()
     this->leaf_nodes = new_leaf_nodes;
 }
 
+void GameTree::compute_undefined_codes()
+{
+    this->root->compute_code();
+}
+
 string GameTree::get_print_string()
 {
     string s = "";

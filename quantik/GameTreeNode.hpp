@@ -13,7 +13,7 @@ class GameTreeNode
     private: 
 
     // --- Members ---
-
+    node_code code{UNDEFINED_CODE};
     State state{};
     node_ptr_map children{};
 
@@ -35,4 +35,6 @@ class GameTreeNode
     node_ptr_map& get_children();
 
     node_ptr_map& generate_children(node_ptr_map& all_nodes);
+
+    node_code compute_code();
 };

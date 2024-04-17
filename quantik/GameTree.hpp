@@ -35,6 +35,7 @@ class GameTree
     // --- Methods ---
 
     void compute_next_layer();
+    void compute_undefined_codes();
     string get_print_string();
 
     // -------------
