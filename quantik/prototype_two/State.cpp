@@ -29,26 +29,25 @@ string State::get_print_string()
 
 encoding State::encode()
 {
-    encoding encoding = 0;
+    encoding enc = 0;
     size_t mult = 1;
     for (char i = 15; i >= 0; i--)
     {
-        encoding += ((char)*(&(this->board[0][0]) + i)) * mult;
+        enc += ((char)*(&(this->board[0][0]) + i)) * mult;
         mult *= 9;
     }
-    return encoding;
+    return enc;
 }
 
-State State::decode(int encoding)
+State State::decode(encoding enc)
 {
     State state{};
 
-    int remainder;
     for (int i = 0; i < 16; ++i)
     {
-        remainder = encoding % 9;
-        encoding /= 9;
-        state.board[i / 4][i % 4] = (PieceType)remainder;
+        uint64_t remainder = enc % 9;
+        enc /= 9;
+        *(&(state.board[3][3]) - i) = (PieceType)remainder;
     }
 
     state.update_placed_pieces();

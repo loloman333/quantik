@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <sstream>
 #include <set>
+#include <map>
 #include <chrono>
 
 // --- Namespace Useages ---
@@ -15,6 +16,7 @@ using
     std::string, 
     std::cout,
     std::endl,
+    std::map,
     std::unordered_map,
     std::vector;
 
@@ -63,5 +65,5 @@ typedef unordered_map<PieceType, vector<std::pair<char, char>>> pieces_map;
 
 #define DBG_CANONICAL_GENERATOR false
 #define DBG_CANONICAL_GENERATOR_DETAILED false
-#define DBG_COMPUTE_GAMETREE true
-#define DBG_COMPUTE_GAMETREE_DETAILED false
+#define DBG_COMPUTE_STATES true
+#define DBG_COMPUTE_CODES true

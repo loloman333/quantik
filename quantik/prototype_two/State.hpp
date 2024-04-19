@@ -71,5 +71,5 @@ class State
     // Static Stuff
     // -------------
     
-    static State decode(int encoding);
+    static State decode(encoding encoding);
 };
