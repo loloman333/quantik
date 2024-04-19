@@ -9,14 +9,13 @@
 bool save_current_level(state_map& current_level, char depth)
 {
     string file_path = "level" + STR(depth) + ".qtk";
-
-    // Open the file in binary mode
     std::ofstream out_file(file_path, std::ios::out | std::ios::binary);
     if (! out_file.is_open()) return false;
 
     for (auto& pair : current_level)
     {
         out_file.write((const char*) &pair.first, sizeof(encoding));
+        out_file.write((const char*) &pair.second.code, sizeof(win_code));
     }
 
     out_file.close();
@@ -62,12 +61,18 @@ int main()
 
         for (auto& pair : current_level)
         {
-            
-            int piece_count = 0;
-            for (auto& smth : pair.second.placed_pieces) piece_count += smth.second.size();
-            assert(piece_count == depth - 1);
+            if (pair.second.is_winning_state())
+            {
+                pair.second.code = LOSE_CODE;
+                continue;
+            }
 
             state_map children = pair.second.compute_following_states();
+            if (children.size() == 0)
+            {
+                pair.second.code = DRAW_CODE;
+            }
+
             next_level.insert(children.begin(), children.end());
         }
         

@@ -8,7 +8,6 @@
 class State
 {
     friend class CanonicalGenerator;
-    friend int main();
     
     // -------------
     // Private Stuff
@@ -29,6 +28,10 @@ class State
     // Public Stuff
     // -------------
     public: 
+
+    // --- Members ---
+
+    win_code code{UNDEFINED_CODE};
 
     // --- Constructors ---
 

@@ -445,5 +445,3 @@ State State::compute_canonical()
 {
     return CanonicalGenerator::compute_canonical(*this);
 }
-
-// TODO: Generally don't safe states but just their encodings and use decode more often ???

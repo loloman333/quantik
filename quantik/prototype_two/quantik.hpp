@@ -2,11 +2,8 @@
 
 // --- Standarad Library Includes ---
 
-#include <cctype>
-#include <cstring>
 #include <cassert>
 #include <unordered_map>
-#include <map>
 #include <iostream>
 #include <algorithm>
 #include <sstream>
@@ -18,7 +15,6 @@ using
     std::string, 
     std::cout,
     std::endl,
-    std::map,
     std::unordered_map,
     std::vector;
 
@@ -52,10 +48,9 @@ enum class PieceShape {
 // --- Typedefs ---
 
 typedef uint64_t encoding;
-typedef unsigned char node_code;
+typedef unsigned char win_code;
 typedef unordered_map<encoding, State> state_map;
 typedef unordered_map<PieceType, vector<std::pair<char, char>>> pieces_map;
-typedef unordered_map<encoding, GameTreeNode*> node_ptr_map;
 
 // --- Defines ---
 

@@ -4,25 +4,7 @@
 
 class PieceManager
 {
-
-    // -------------
-    // Private Stuff
-    // -------------
-    private: 
-
-    // --- Members ---
-
-    // --- Methods ---
-
-    // -------------
-    // Public Stuff
-    // -------------
     public: 
-
-    // --- Constructors ---
-
-    // --- Methods ---
-
     // -------------
     // Static Stuff
     // -------------
