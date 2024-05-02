@@ -51,12 +51,16 @@ State State::decode(encoding enc)
     }
 
     state.update_placed_pieces();
+
     return state;
 }
 
 void State::update_placed_pieces()
 {
     this->placed_pieces = pieces_map{};
+
+    char white_pieces = 0;
+    char black_pieces = 0;
 
     for (int i = 0; i < 4; ++i)
     {
@@ -65,9 +69,19 @@ void State::update_placed_pieces()
             if (this->board[i][j] != PieceType::EMPTY)
             {
                 this->placed_pieces[this->board[i][j]].push_back({i, j});
+                if (PieceManager::is_black(this->board[i][j]))
+                {
+                    black_pieces++;
+                }
+                else
+                {
+                    white_pieces++;
+                }
             }
         }
     }
+
+    black_turn = black_pieces < white_pieces;
 }
 
 State State::mirror()

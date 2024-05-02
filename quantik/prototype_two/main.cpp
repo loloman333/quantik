@@ -50,8 +50,8 @@ void prints(state_map& current_level, int total_nodes, std::chrono::_V2::steady_
 
     DBGMSG(DBG_COMPUTE_STATES, time_info);
 
-    DBGMSG(true, STR(total_nodes) + " Total Nodes | ");
-    DBGMSG(true, STR(current_level.size()) + " Leaf Nodes\n");
+    DBGMSG(DBG_COMPUTE_STATES, STR(total_nodes) + " Total Nodes | ");
+    DBGMSG(DBG_COMPUTE_STATES, STR(current_level.size()) + " Leaf Nodes\n");
 }
 
 bool generate_states(char max_depth)
@@ -59,6 +59,8 @@ bool generate_states(char max_depth)
     state_map current_level{};
     state_map next_level;
     int total_nodes = 0;
+
+    DBGMSG(DBG_COMPUTE_STATES, "Beginning to generate states...\n");
 
     State root_state{};
     current_level.emplace(root_state.encode(), root_state);
@@ -88,18 +90,15 @@ bool generate_states(char max_depth)
             if (children.size() == 0) pair.second.code = DRAW_CODE;
             next_level.insert(children.begin(), children.end());
         }
-        
+
         if (!save_current_level(current_level, depth)) return false;
-        total_nodes += next_level.size();
+        total_nodes += current_level.size();
+        prints(current_level, total_nodes, tn);
 
-        prints(next_level, total_nodes, tn);
-
+        if (depth == max_depth) assert(next_level.size() == 0);
         current_level = next_level;
         next_level.clear();
     }
-
-    // for (auto& leaf : current_level) leaf.second.code = DRAW_CODE;
-    // if (!save_current_level(current_level, max_depth)) return false;
 
     return true;
 }
@@ -144,38 +143,37 @@ bool read_level(char depth, map<encoding, win_code>& level)
 
 win_code compute_code(map<encoding, win_code>& children)
 {
-    win_code best_code = UNDEFINED_CODE;
+    win_code best_child_code = UNDEFINED_CODE;
     for (auto& child : children) 
     {
         win_code child_code = child.second;
+        assert(child_code != UNDEFINED_CODE);
 
         // Still undefined
-        if (best_code == UNDEFINED_CODE) 
+        if (best_child_code == UNDEFINED_CODE) 
         {
-            best_code = child_code;
-            continue;
-        }
-        // Win code
-        else if (child_code % 2 == 0)
-        {
-            if (best_code == DRAW_CODE) best_code = child_code;
-            if (best_code % 2 == 1) best_code = child_code;
-            else if (child_code < best_code) best_code = child_code;
+            best_child_code = child_code;
         }
         // Draw code
         else if (child_code == DRAW_CODE)
         { 
-            if (best_code % 2 == 1) best_code = child_code;
+            if (best_child_code % 2 == 1) best_child_code = DRAW_CODE;
+        }
+        // Win code
+        else if (child_code % 2 == 0)
+        {
+            if (best_child_code == DRAW_CODE || best_child_code % 2 == 1) best_child_code = child_code;
+            else if (child_code < best_child_code) best_child_code = child_code;
         }
         // Lose code
         else
         { 
-            if (child_code > best_code) best_code = child_code;
+            if (best_child_code % 2 == 1 && child_code > best_child_code) best_child_code = child_code;
         }
     }
 
-    assert(best_code != UNDEFINED_CODE); 
-    return (best_code == DRAW_CODE) ? DRAW_CODE : best_code + 1;
+    assert(best_child_code != UNDEFINED_CODE); 
+    return (best_child_code == DRAW_CODE) ? DRAW_CODE : best_child_code + 1;
 }
 
 bool generate_codes(char max_depth)
@@ -199,11 +197,14 @@ bool generate_codes(char max_depth)
                 assert(depth != max_depth);
 
                 State state = State::decode(pair.first);
+                
                 map<encoding, win_code> children; 
                 
                 for (auto& child : state.compute_following_states())
                 {
-                    children.emplace(child.first, last_level[child.first]);
+                    auto it = last_level.find(child.first);
+                    assert(it != last_level.end());
+                    children.emplace(child.first, it->second);
                 }
 
                 pair.second = compute_code(children);
@@ -221,7 +222,15 @@ bool generate_codes(char max_depth)
 
 int main()
 {
-    char depth = 8;
+    char depth = 7;
+
+    for (int i = 0; i <= MAX_DEPTH; i++)
+    {
+        string file1 = ("level" + STR(i) + ".qtk"); 
+        string file2 = ("_level" + STR(i) + ".qtk"); 
+        std::remove(file1.c_str());
+        std::remove(file2.c_str());
+    }
 
     if (! generate_states(depth)) return -1;
 
