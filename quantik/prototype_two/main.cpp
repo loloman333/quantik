@@ -1,6 +1,7 @@
 #include "quantik.hpp"
 
 #include "State.hpp"
+#include "TimeManager.hpp"
 
 // TODO: Move to quantik.hpp
 #include <fstream>
@@ -38,22 +39,6 @@ bool save_current_level(map<encoding, win_code>& current_level, char depth)
     return out_file.good();
 }
 
-void prints(state_map& current_level, int total_nodes, std::chrono::_V2::steady_clock::time_point& tn)
-{
-    auto tn_plus_1 = std::chrono::steady_clock::now();
-    std::chrono::duration<double> duration = tn_plus_1 - tn;
-    tn = tn_plus_1;
-    int minutes = static_cast<int>(duration.count()) / 60;
-    double seconds = duration.count() - minutes * 60;
-    string minute_info = minutes != 0 ? STR(minutes) + " minutes " : "";
-    string time_info = minute_info + STR(seconds) + " seconds | ";
-
-    DBGMSG(DBG_COMPUTE_STATES, time_info);
-
-    DBGMSG(DBG_COMPUTE_STATES, STR(total_nodes) + " Total Nodes | ");
-    DBGMSG(DBG_COMPUTE_STATES, STR(current_level.size()) + " Leaf Nodes\n");
-}
-
 bool generate_states(char max_depth)
 {
     state_map current_level{};
@@ -65,11 +50,12 @@ bool generate_states(char max_depth)
     State root_state{};
     current_level.emplace(root_state.encode(), root_state);
 
-    auto tn = std::chrono::steady_clock::now();
+    TimeManager::start();
 
     for (char depth = 0; depth <= max_depth; depth++)
     {
-        DBGMSG(true, "Level " + STR(depth) + " ... ");
+        DBGMSG(DBG_COMPUTE_STATES, "Level " + STR(depth) + " ... ");
+
         cout << std::flush;
 
         for (auto& pair : current_level)
@@ -93,7 +79,11 @@ bool generate_states(char max_depth)
 
         if (!save_current_level(current_level, depth)) return false;
         total_nodes += current_level.size();
-        prints(current_level, total_nodes, tn);
+
+        string time_info = TimeManager::to_string(TimeManager::step()) + " | ";
+        DBGMSG(DBG_COMPUTE_STATES, time_info);
+        DBGMSG(DBG_COMPUTE_STATES, STR(total_nodes) + " Total States | ");
+        DBGMSG(DBG_COMPUTE_STATES, STR(current_level.size()) + " Leaf States\n");
 
         if (depth == max_depth) assert(next_level.size() == 0);
         current_level = next_level;
@@ -183,12 +173,14 @@ bool generate_codes(char max_depth)
     map<encoding, win_code> current_level;
     map<encoding, win_code> last_level;
 
+    TimeManager::start(true);
+
     for (char depth = max_depth; depth >= 0; depth--)
     {
         DBGMSG(DBG_COMPUTE_CODES, "Level " + STR(depth) + " ... ");
+        cout << std::flush;
 
         if (!read_level(depth, current_level)) return false;
-        DBGMSG(DBG_COMPUTE_CODES, "read!\n");
 
         for (auto& pair : current_level)
         {
@@ -213,6 +205,10 @@ bool generate_codes(char max_depth)
 
         save_current_level(current_level, depth);
 
+        string time_info = TimeManager::to_string(TimeManager::step()) + " | ";
+        DBGMSG(DBG_COMPUTE_CODES, time_info);
+        DBGMSG(DBG_COMPUTE_CODES, STR(current_level.size()) + " states\n");
+
         last_level = current_level;
         current_level.clear();
     }
@@ -222,7 +218,7 @@ bool generate_codes(char max_depth)
 
 int main()
 {
-    char depth = 7;
+    char depth = 6;
 
     for (int i = 0; i <= MAX_DEPTH; i++)
     {
