@@ -2,42 +2,7 @@
 
 #include "State.hpp"
 #include "TimeManager.hpp"
-
-// TODO: Move to quantik.hpp
-#include <fstream>
-#define MAX_DEPTH 16 // TODO: 16
-
-bool save_current_level(state_map& current_level, char depth)
-{
-    string file_path = "_level" + STR(depth) + ".qtk";
-    std::ofstream out_file(file_path, std::ios::out | std::ios::binary);
-    if (! out_file.is_open()) return false;
-
-    for (auto& pair : current_level)
-    {
-        out_file.write((const char*) &pair.first, sizeof(encoding));
-        out_file.write((const char*) &pair.second.code, sizeof(win_code));
-    }
-
-    out_file.close();
-    return out_file.good();
-}
-
-bool save_current_level(map<encoding, win_code>& current_level, char depth)
-{
-    string file_path = "level" + STR(depth) + ".qtk";
-    std::ofstream out_file(file_path, std::ios::out | std::ios::binary);
-    if (! out_file.is_open()) return false;
-
-    for (auto& pair : current_level)
-    {
-        out_file.write((const char*) &pair.first, sizeof(encoding));
-        out_file.write((const char*) &pair.second, sizeof(win_code));
-    }
-
-    out_file.close();
-    return out_file.good();
-}
+#include "FileManager.hpp"
 
 bool generate_states(char max_depth)
 {
@@ -77,7 +42,7 @@ bool generate_states(char max_depth)
             next_level.insert(children.begin(), children.end());
         }
 
-        if (!save_current_level(current_level, depth)) return false;
+        if (! FileManager::save_level_tmp(current_level, depth)) return false;
         total_nodes += current_level.size();
 
         string time_info = TimeManager::to_string(TimeManager::step()) + " | ";
@@ -91,44 +56,6 @@ bool generate_states(char max_depth)
     }
 
     return true;
-}
-
-bool read_level(char depth, map<encoding, win_code>& level)
-{
-    string filename = "_level" + STR(depth) + ".qtk";
-    std::ifstream file(filename, std::ios::binary);
-
-    if (! file.is_open()) return false;
-
-    while (!file.eof())
-    {
-        encoding enc;
-        win_code code;
-
-        if (! file.read((char*) &enc, sizeof(encoding))) 
-        {
-            if (file.eof()) return true;
-            DBGMSG(DBG_COMPUTE_CODES, "Some read error...\n");
-            return false;
-        }
-
-        if (! file.read((char*) &code, sizeof(win_code)))
-        {
-            DBGMSG(DBG_COMPUTE_CODES, "Some read error 2...\n");
-            return false;
-        }
-
-        level.emplace(enc, code);
-
-        if (file.fail())
-        {
-            DBGMSG(DBG_COMPUTE_CODES, "Some read error 3...\n");
-            return false;
-        }
-    }
-
-    file.close();
-    return file.good();
 }
 
 win_code compute_code(map<encoding, win_code>& children)
@@ -180,7 +107,7 @@ bool generate_codes(char max_depth)
         DBGMSG(DBG_COMPUTE_CODES, "Level " + STR(depth) + " ... ");
         cout << std::flush;
 
-        if (!read_level(depth, current_level)) return false;
+        if (! FileManager::read_level(current_level, depth)) return false;
 
         for (auto& pair : current_level)
         {
@@ -203,7 +130,7 @@ bool generate_codes(char max_depth)
             }
         }
 
-        save_current_level(current_level, depth);
+        FileManager::save_level_final(current_level, depth);
 
         string time_info = TimeManager::to_string(TimeManager::step()) + " | ";
         DBGMSG(DBG_COMPUTE_CODES, time_info);

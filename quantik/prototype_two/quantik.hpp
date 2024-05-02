@@ -10,6 +10,7 @@
 #include <set>
 #include <map>
 #include <chrono>
+#include <fstream>
 
 // --- Namespace Useages ---
 using 
@@ -55,6 +56,8 @@ typedef unordered_map<encoding, State> state_map;
 typedef unordered_map<PieceType, vector<std::pair<char, char>>> pieces_map;
 
 // --- Defines ---
+
+#define MAX_DEPTH 16
 
 #define DRAW_CODE 20
 #define LOSE_CODE 0
