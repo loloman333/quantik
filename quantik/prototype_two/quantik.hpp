@@ -24,7 +24,6 @@ using
 // --- Forward Declarations ---
 
 class State;
-class GameTreeNode;
 
 // --- Enums ---
 

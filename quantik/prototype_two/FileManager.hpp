@@ -1,6 +1,7 @@
 #pragma once
 
 #include "quantik.hpp"
+#include "State.hpp"
 
 class FileManager
 {
@@ -25,4 +26,5 @@ class FileManager
     static bool save_level_tmp(state_map& current_level, char depth);
     static bool save_level_final(map<encoding, win_code>& current_level, char depth);
     static bool read_level(map<encoding, win_code>& level, char depth);
+    static void delete_all_files();
 };

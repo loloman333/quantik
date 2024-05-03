@@ -69,3 +69,14 @@ bool FileManager::read_level(map<encoding, win_code>& level, char depth)
     file.close();
     return file.good();
 }
+
+void FileManager::delete_all_files()
+{
+    for (int i = 0; i <= MAX_DEPTH; i++)
+    {
+        string file1 = ("level" + STR(i) + ".qtk"); 
+        string file2 = ("_level" + STR(i) + ".qtk"); 
+        std::remove(file1.c_str());
+        std::remove(file2.c_str());
+    }
+}

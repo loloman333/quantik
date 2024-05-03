@@ -145,15 +145,9 @@ bool generate_codes(char max_depth)
 
 int main()
 {
-    char depth = 6;
+    char depth = 16;
 
-    for (int i = 0; i <= MAX_DEPTH; i++)
-    {
-        string file1 = ("level" + STR(i) + ".qtk"); 
-        string file2 = ("_level" + STR(i) + ".qtk"); 
-        std::remove(file1.c_str());
-        std::remove(file2.c_str());
-    }
+    FileManager::delete_all_files();
 
     if (! generate_states(depth)) return -1;
 
