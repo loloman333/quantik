@@ -1,0 +1,174 @@
+body {
+	margin: 0 1em;
+	background: #FAF8EF;
+    min-width:610px;
+    width: auto;
+}
+
+
+h1 {
+	margin: 0.25em 0;
+	float: left;
+}
+
+#aboutlink {
+	margin: 1em !important;
+	float: right;
+
+}
+
+.about {
+	clear: both;
+	margin: 1em 1em;
+}
+
+h3 {
+	margin: 0;
+	margin-bottom: 0.5em;
+}
+
+nav {
+	width: 13em;
+}
+
+nav ul {
+	padding-left: 0em;
+}
+
+nav>ul>li>a, nav label, #messages, #aboutlink {
+	cursor: pointer;
+	display: block;
+	padding: 0.25em;
+	margin: 0.25em 0;
+	border-radius: 0.2em;
+	background: #BBADA0;
+	color: white;
+	text-decoration: none;
+}
+
+@media (min-width:1025px) {
+	nav>ul>li>a, nav label, #messages {
+		padding: 0.5em;
+		margin: 0.5em 0;
+		border-radius: 0.5em;
+	}
+}
+
+nav input[type="checkbox"] {
+	margin-right: 0.5em;
+}
+
+#loadgameList, #cleargameList {
+	list-style: inside;
+}
+
+.wrap {
+	overflow: hidden;
+	clear: both;
+}
+
+.wrap main {
+	float: left;
+	margin-right: 1em;
+	margin-bottom: 1em;
+}
+
+.wrap main #messages, .wrap main #gamedate {
+	margin-top: 1em;
+	overflow: hidden;
+}
+
+.wrap aside {
+	float: left;
+	margin-left: 1em;
+	margin-right: 1em;
+	margin-bottom: 1em;
+}
+
+#history {
+}
+
+#history li, #historyForward li {
+	margin-left: -1em;
+	padding: 0.2em 0.2em 0.2em;
+}
+
+.histvalue {
+	text-style: italic;
+}
+
+
+ #board {
+	border-collapse: separate;
+	border-spacing: 0.3em;
+	border-radius: 0.3em;
+	background: #BBADA0;
+	margin-top: 1em;
+}
+
+#board td {
+	width: 2.5em;
+	height: 2.5em;
+	background: #cdc0b4; /* #EEE4DA; */
+	border-radius: 0.1em;
+	text-align: center;
+}
+
+@media (min-width:1025px) {
+	#board {
+		border-spacing: 0.5em;
+		border-radius: 0.5em;
+	}
+	
+	#board td {
+		width: 3.5em;
+		height: 3.5em;
+		border-radius: 0.2em;
+	}
+}
+
+#board {
+	color: #fff;
+}
+
+#board .chip-b, #board .chip-a {
+	color: #ccc;
+}
+
+.chip-a {
+	background: red !important;
+}
+
+td.chip-a {
+	background: red !important;
+	background-image: linear-gradient(to right bottom, #FF0000 0%, #DD0000 100%) !important;
+}
+
+.chip-b {
+	background: yellow !important;
+}
+
+td.chip-b {
+	background: yellow !important;
+	background-image: linear-gradient(to right bottom, #FFFF66 0%, #FFFF00 100%) !important;
+}
+
+td.chip-rec {
+	background: black !important;
+}
+
+.highlight {
+	border: 2px solid black;
+	padding: 0.5em;
+	border-radius: 0.5em; 
+}
+
+#error, #info {
+	float: left;
+	margin-right: 1em;
+}
+
+#error {
+	color: red;
+}
+

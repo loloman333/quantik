@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Hexapawn</title>
+    <meta name="description" content="Play Hexapawn!">
+    <meta name="viewport" content="width=device-width">
+    <link href="css/normalize.css" rel="stylesheet" media="all">
+    <link href="css/style.css" rel="stylesheet" media="all">
+    
+    <script src="js/jquery-1.11.0.js" media="all"></script>
+    <script src="js/hexapawn.js" media="all"></script>
+    <script src="js/canvas.js" media="all"></script>
+    <script src="js/game.js" media="all"></script>
+    <script src="js/enums.js" media="all"></script>
+    <script src="js/output.js" media="all"></script>
+    <script src="js/storage.js" media="all"></script>
+    <script src="js/network.js" media="all"></script>
+</head>
+<body>
+    <noscript>Please activate JavaScript!</noscript>
+
+    <header role="banner">
+        <h1>Hexapawn</h1>
+        <a id="aboutlink" href="#">About</a>
+    </header>
+
+    <div class="about">
+        <p>
+            This is a web application to play the game <a href="https://en.wikipedia.org/wiki/Hexapawn" target="_blank">Hexapawn</a> which is a
+            variation of chess, where each player only has their backrow full of pawns, which can either move one square forward to a free
+            square or capture an opponent's pawn that is one square away on its diagonal. The first player to get one of their pawns into
+            the enemy backline wins. If a player has no more legal moves left, they lose.
+        </p>
+        <p>
+            This project was developed by Marvin Gutgesell as a bachelor thesis for computer science,
+            supervised by <a href="http://www.ist.tugraz.at/oaich/" target="_blank">Oswin Aichholzer</a>, at <a
+                href="http://www.tugraz.at/" target="_blank">Graz University of Technology</a>.
+            The java server and the webapp are based on a <a href="http://ninemensmorris.ist.tugraz.at:8080/" target="_blank">project</a> by Christoph
+            Reinisch.
+        </p>
+        <p>
+            The server is written in Java 11, using the <a href="https://spring.io" target="_blank">Spring framework</a>. The client is written in
+            HTML and JavaScript, using <a href="https://jquery.com" target="_blank">jQuery</a>. Compatibility was tested in Chromium and Mozilla
+            Firefox running on Linux, Android and Windows. Nevertheless the application should be compatible with any browser like
+            Microsoft Internet Explorer.
+        </p>
+        <h4>Features</h4>
+        <ul>
+            <li>Choose the number of rows and columns for the playing field</li>
+            <li>Either player (A and B) can be controlled by a human or the computer (AI)</li>
+            <li>Choose the level of the AI: &ldquo;Perfect&rdquo; will always make an optimal move (which might not be
+                unique), &ldquo;Just win&rdquo; will randomly choose a winning move (if available, and not necessary optimal),
+                &ldquo;Random&rdquo; will randomly pick a move</li>
+            <li>Move info: Optionally display the number of half-moves till the end of the game for the possible moves</li>
+            <li>Recommend move: Shows a perfect move for the current player</li>
+            <li>Undo/Redo: Revert or redo the last move made by either player</li>
+            <li>Save/Load: Saves the game (in local storage, provided by HTML5) to resume the game later on</li>
+        </ul>
+        <h4>Basics</h4>
+        <p>The AI of this game is based on an exhaustive evaluation of all possible game positions stored in a large data base.
+            For each possible board its status (current player win, opponent player win) is known, as well as as the maximum number of half
+            moves needed to force a win from this board. A green even number shows in how many further half-moves the game can be won
+            by taking this move (assuming optimal play of the opponent, otherwise you can win faster). A red odd
+            number shows the maximum number of half-moves you can delay the victory of the opponent (again assuming optimal
+            play of the opponent). So an even number shows a winning move, which guarantees a win for the current player (when continuing
+            to play optimal) in at most this number of half-moves. An optimal winning move is a move which guarantees the shortest
+            available sequence of half-moves till the player wins.</p>
+        </ul>
+        <h4>Control info</h4>
+        <p>Click on a selected piece a second time to deselect it.</p>
+
+    </div>
+
+    <div class="wrap">
+        <main role="main">
+        <h3 id="gameinfo"></h3>
+
+        <div class="board">
+            <canvas height="270" width="180" id="myCanvas" style="background: url('./images/2x2.png');  border: 4px solid #d3d3d3;">
+                Your browser does not support the HTML5 canvas tag.
+            </canvas>
+        </div>
+
+        <div id="messages">
+            <div id="error"></div>
+            <div id="info"></div>
+        </div>
+        <div id="gamedate"></div>
+        </main>
+
+        <aside>
+            <nav role="navigation">
+                <h3>Menu</h3>
+                <ul>
+                    <li><a href="#" id="restart">Restart game</a></li>
+                    <li><a href="#" id="togglemoveinfos">Toggle move infos</a></li>
+                    <li><a href="#" id="moverecommender">Recommend move</a></li>
+                    <li><a href="#" id="historyrevert">Undo last move</a></li>
+                    <li><a href="#" id="historyredo">Redo last move</a></li>
+                    <li><input id="savegameName" style="display: none" value="" size="15" type="text"> <a href="#"
+                        id="savegameStart">Save game &hellip;</a> <a href="#" style="display: none" id="savegameConfirm">Confirm</a> <a
+                        href="#" style="display: none" id="savegameCancel">Cancel</a></li>
+                    <li><a href="#" id="loadgame">Load game &hellip;</a>
+                        <ul id="loadgameList" style="display: none"></ul></li>
+                    <li><a href="#" id="cleargame">Delete game &hellip;</a>
+                        <ul id="cleargameList" style="display: none"></ul></li>
+                </ul>
+                <h3>Options</h3>
+                <form>
+                    <label for="rows">Rows &nbsp;<select id="rows">
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7" class="highRows">7</option>
+                        <option value="8" class="highRows">8</option>
+                        <option value="9" class="highRows">9</option>
+                        <option value="10" class="highRows">10</option>
+                    </select></label>
+                    <label for="cols">Columns &nbsp;<select id="cols">
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                    </select></label>
+                </form>
+                <form>
+                    <label for="optionsaia"> <input id="optionsaia" name="optionsaia" value="aia" type="checkbox">AI
+                        for Player A
+                    </label> <label for="optionsaialevel">AI Level A &nbsp;<select id="optionsaialevel">
+                            <option value="perfect">Perfect</option>
+                            <option value="justwin">Just win</option>
+                            <option value="random">Random</option>
+                    </select></label> <label for="optionsaib"> <input id="optionsaib" name="optionsaib" value="aib" type="checkbox">AI
+                        for Player B
+                    </label> <label for="optionsaiblevel">AI Level B &nbsp;<select id="optionsaiblevel">
+                            <option value="perfect">Perfect</option>
+                            <option value="justwin">Just win</option>
+                            <option value="random">Random</option>
+                    </select></label>
+                </form>
+            </nav>
+        </aside>
+
+        <aside class="hist">
+            <h3>History</h3>
+            <ol id="history"></ol>
+            <h3>History Redo</h3>
+            <ol id="historyForward"></ol>
+        </aside>
+    </div>
+</body>
+</html>
