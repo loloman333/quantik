@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Hexapawn</title>
-    <meta name="description" content="Play Hexapawn!">
+    <title>Quantik</title>
+    <meta name="description" content="Play Quantik!">
     <meta name="viewport" content="width=device-width">
     <link href="css/normalize.css" rel="stylesheet" media="all">
     <link href="css/style.css" rel="stylesheet" media="all">
@@ -21,24 +21,26 @@
     <noscript>Please activate JavaScript!</noscript>
 
     <header role="banner">
-        <h1>Hexapawn</h1>
+        <h1>Quantik</h1>
         <a id="aboutlink" href="#">About</a>
     </header>
 
     <div class="about">
         <p>
-            This is a web application to play the game <a href="https://en.wikipedia.org/wiki/Hexapawn" target="_blank">Hexapawn</a> which is a
-            variation of chess, where each player only has their backrow full of pawns, which can either move one square forward to a free
-            square or capture an opponent's pawn that is one square away on its diagonal. The first player to get one of their pawns into
-            the enemy backline wins. If a player has no more legal moves left, they lose.
+            This is a web application to play the game <a href="https://boardgamegeek.com/boardgame/286295/quantik" target="_blank">Quantik</a> 
+            by the publisher <a href="https://en.gigamic.com/" target="_blank">Gigamic</a>. It is an abstract strategy game, where on their 
+            turn a player will place a piece on an empty space of the board, respecting one single rule: They are not allowed to place a shape 
+            in a row, column, or region in which your opponent has a piece of the same shape. The first player to place the fourth different 
+            shape in a row, column, or region wins the game. 
         </p>
         <p>
-            This project was developed by Marvin Gutgesell as a bachelor thesis for computer science,
+            This project was developed by Lorenz Killer as a bachelor thesis for computer science,
             supervised by <a href="http://www.ist.tugraz.at/oaich/" target="_blank">Oswin Aichholzer</a>, at <a
                 href="http://www.tugraz.at/" target="_blank">Graz University of Technology</a>.
-            The java server and the webapp are based on a <a href="http://ninemensmorris.ist.tugraz.at:8080/" target="_blank">project</a> by Christoph
+            The webapp is based on a <a href="http://ninemensmorris.ist.tugraz.at:8080/" target="_blank">project</a> by Christoph
             Reinisch.
         </p>
+        <!-- TODO -->
         <p>
             The server is written in Java 11, using the <a href="https://spring.io" target="_blank">Spring framework</a>. The client is written in
             HTML and JavaScript, using <a href="https://jquery.com" target="_blank">jQuery</a>. Compatibility was tested in Chromium and Mozilla
@@ -67,9 +69,6 @@
             to play optimal) in at most this number of half-moves. An optimal winning move is a move which guarantees the shortest
             available sequence of half-moves till the player wins.</p>
         </ul>
-        <h4>Control info</h4>
-        <p>Click on a selected piece a second time to deselect it.</p>
-
     </div>
 
     <div class="wrap">
@@ -107,25 +106,6 @@
                         <ul id="cleargameList" style="display: none"></ul></li>
                 </ul>
                 <h3>Options</h3>
-                <form>
-                    <label for="rows">Rows &nbsp;<select id="rows">
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7" class="highRows">7</option>
-                        <option value="8" class="highRows">8</option>
-                        <option value="9" class="highRows">9</option>
-                        <option value="10" class="highRows">10</option>
-                    </select></label>
-                    <label for="cols">Columns &nbsp;<select id="cols">
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                    </select></label>
-                </form>
                 <form>
                     <label for="optionsaia"> <input id="optionsaia" name="optionsaia" value="aia" type="checkbox">AI
                         for Player A

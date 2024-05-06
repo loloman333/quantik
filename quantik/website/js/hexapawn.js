@@ -58,7 +58,7 @@ $(document).ready(function() {
     // canvas.onmousemove = mouseMove;
     // canvas.onclick = mouseClick;
     $(".about").hide();
-    initPawns();
+    // initPawns();
 	window.game = new Game();
 	window.game.init();
 	hideAllActions(true);
