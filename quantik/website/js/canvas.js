@@ -7,47 +7,46 @@ const PIECE_SIZE = 90
  * Reset and resize board, if sizes changed
  */
 function resizeBoard(){
-    window.canvas.height = 90 * rows;
-    window.canvas.width = 90 * cols;
-    window.game.base = 4 * window.game.nCr(rows, 2) + 2 * rows + 1
+    // window.canvas.height = PIECE_SIZE * rows;
+    // window.canvas.width = PIECE_SIZE * cols;
     drawBoard();
 }
 
 /**
  * Draws all pawns
  */
-function drawPawns(){
-    var cols = document.getElementById("cols").value;
-    var rows = document.getElementById("rows").value;
-    for(var i = 0; i < cols; i++){
-        drawPawn(white_pawn, PIECE_SIZE * i, (rows - 1) * PIECE_SIZE, "null");
-    }
-    for(var i = 0; i < cols; i++){
-        drawPawn(black_pawn, PIECE_SIZE * i, 0, "null");
-    }
-}
+// function drawPawns(){
+//     var cols = document.getElementById("cols").value;
+//     var rows = document.getElementById("rows").value;
+//     for(var i = 0; i < cols; i++){
+//         drawPawn(white_pawn, PIECE_SIZE * i, (rows - 1) * PIECE_SIZE, "null");
+//     }
+//     for(var i = 0; i < cols; i++){
+//         drawPawn(black_pawn, PIECE_SIZE * i, 0, "null");
+//     }
+// }
 
 /**
  * Initializes all pawns (should only be called once)
  */
-// function initPawns(){
-//     var cols = document.getElementById("cols").value;
-//     var rows = document.getElementById("rows").value;
-//     window.white_pawn = new Image();
-//     window.white_pawn.src = "images/Bauer_Weiss.png";
-//     window.white_pawn.onload = function(){
-//         for(var i = 0; i < cols; i++){
-//             drawPawn(window.white_pawn, PIECE_SIZE * i, (rows - 1) * PIECE_SIZE, "null");
-//         }
-//     }
-//     window.black_pawn = new Image();
-//     window.black_pawn.src = "images/Bauer_Schwarz.png";
-//     window.black_pawn.onload = function(){
-//         for(var i = 0; i < cols; i++){
-//             drawPawn(window.black_pawn, PIECE_SIZE * i, 0, "null");
-//         }
-//     }
-// }
+function initPieces(){
+    // var cols = document.getElementById("cols").value;
+    // var rows = document.getElementById("rows").value;
+    window.white_pawn = new Image();
+    window.white_pawn.src = "images/Bauer_Weiss.png";
+    // window.white_pawn.onload = function(){
+    //     for(var i = 0; i < cols; i++){
+    //         drawPawn(window.white_pawn, PIECE_SIZE * i, (rows - 1) * PIECE_SIZE, "null");
+    //     }
+    // }
+    window.black_pawn = new Image();
+    window.black_pawn.src = "images/Bauer_Schwarz.png";
+    // window.black_pawn.onload = function(){
+    //     for(var i = 0; i < cols; i++){
+    //         drawPawn(window.black_pawn, PIECE_SIZE * i, 0, "null");
+    //     }
+    // }
+}
 
 /**
  * Draw one pawn at position with backgroundcolor
@@ -304,7 +303,7 @@ function getNode(x_pos, y_pos) {
  */
 function getNodePosition(row, col) {
     return {
-        x: col * 90,
-        y: row * 90,
+        x: col * PIECE_SIZE,
+        y: row * PIECE_SIZE,
     };
 }

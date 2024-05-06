@@ -45,11 +45,11 @@ function Game() {
 	/**
 	 * Number of rows on board
 	 */
-  this.rows = window.rows;
+  this.rows = 4;
 	/**
 	 * Number of cols on board
 	 */
-  this.cols = window.cols;
+  this.cols = 4;
 	/**
 	 * Indicated if a move has already been done
 	 */
@@ -58,10 +58,6 @@ function Game() {
 	 * List of the Color of all nodes
 	 */
 	this.board = [];
-	/**
-	 * Base for encoding
-	 */
-  this.base = 0;
   /**
    * Row of the field the mouse is pointing to
    */
@@ -136,7 +132,6 @@ Game.prototype.init = function() {
   this.activeMove = new Move(-1, -1, -1, -1);
   this.mouseOverRow = -1;
   this.mouseOverCol = -1;
-  this.base = 4 * this.nCr(this.rows, 2) + 2 * this.rows + 1
 
 	this.network.requestMoveInfo();
 	window.output.showHistoryList();
@@ -521,50 +516,51 @@ Game.prototype.historyRedo = function() {
  * Encodes the board into an integer representing the state
  */
 Game.prototype.encode = function(state) {
-  var result = 0;
-  for(i = 0; i < cols; i++){
-    var found = false;
-    var start = 0;
-    for(j = 0; j < rows; j++) {
-      if (this.board[i][j] == 1) {
-        for (k = 0; k < rows - j - 1; k++) {
-          if (this.board[i][j + k + 1] == 1) {
-            result += (start + k + 1 + 2 * rows) * Math.pow(this.base, cols - 1 - i);
-            found = true;
-            break;
-          }
-          if (this.board[i][j + k + 1] == 2) {
-            result += (start + k + 1 + 2 * rows + this.nCr(rows, 2)) * Math.pow(this.base, cols - 1 - i);
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          result += (j + 1) * Math.pow(this.base, cols - 1 - i);
-        }
-        break;
-      } else if (this.board[i][j] == 2) {
-        for (k = 0; k < rows - j - 1; k++) {
-          if (this.board[i][j + k + 1] == 1) {
-            result += (start + k + 1 + 2 * rows + 2 * this.nCr(rows, 2)) * Math.pow(this.base, cols - 1 - i);
-            found = true;
-            break;
-          }
-          if (this.board[i][j + k + 1] == 2) {
-            result += (start + k + 1 + 2 * rows + 3 * this.nCr(rows, 2)) * Math.pow(this.base, cols - 1 - i);
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          result += (j + 1 + rows) * Math.pow(this.base, cols - 1 - i);
-        }
-        break;
-      }
-      start += (rows - j - 1);
-    }
-  }
-  return result;
+  // var result = 0;
+  // for(i = 0; i < cols; i++){
+  //   var found = false;
+  //   var start = 0;
+  //   for(j = 0; j < rows; j++) {
+  //     if (this.board[i][j] == 1) {
+  //       for (k = 0; k < rows - j - 1; k++) {
+  //         if (this.board[i][j + k + 1] == 1) {
+  //           result += (start + k + 1 + 2 * rows) * Math.pow(this.base, cols - 1 - i);
+  //           found = true;
+  //           break;
+  //         }
+  //         if (this.board[i][j + k + 1] == 2) {
+  //           result += (start + k + 1 + 2 * rows + this.nCr(rows, 2)) * Math.pow(this.base, cols - 1 - i);
+  //           found = true;
+  //           break;
+  //         }
+  //       }
+  //       if (!found) {
+  //         result += (j + 1) * Math.pow(this.base, cols - 1 - i);
+  //       }
+  //       break;
+  //     } else if (this.board[i][j] == 2) {
+  //       for (k = 0; k < rows - j - 1; k++) {
+  //         if (this.board[i][j + k + 1] == 1) {
+  //           result += (start + k + 1 + 2 * rows + 2 * this.nCr(rows, 2)) * Math.pow(this.base, cols - 1 - i);
+  //           found = true;
+  //           break;
+  //         }
+  //         if (this.board[i][j + k + 1] == 2) {
+  //           result += (start + k + 1 + 2 * rows + 3 * this.nCr(rows, 2)) * Math.pow(this.base, cols - 1 - i);
+  //           found = true;
+  //           break;
+  //         }
+  //       }
+  //       if (!found) {
+  //         result += (j + 1 + rows) * Math.pow(this.base, cols - 1 - i);
+  //       }
+  //       break;
+  //     }
+  //     start += (rows - j - 1);
+  //   }
+  // }
+  // TODO
+  return 100;
 }
 
 /**
