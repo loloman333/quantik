@@ -53,8 +53,8 @@ $(document).ready(function() {
     window.context = canvas.getContext("2d");
     canvas.onmousemove = mouseMove;
     canvas.onclick = mouseClick;
-    window.rows = 16;
-    window.cols = 16;
+    window.rows = 4;
+    window.cols = 4;
     $(".about").hide();
     initPieces();
 	window.game = new Game();

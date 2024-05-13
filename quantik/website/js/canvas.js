@@ -32,20 +32,32 @@ function resizeBoard(){
 function initPieces(){
     // var cols = document.getElementById("cols").value;
     // var rows = document.getElementById("rows").value;
-    window.white_pawn = new Image();
-    window.white_pawn.src = "images/Bauer_Weiss.png";
-    // window.white_pawn.onload = function(){
-    //     for(var i = 0; i < cols; i++){
-    //         drawPawn(window.white_pawn, PIECE_SIZE * i, (rows - 1) * PIECE_SIZE, "null");
-    //     }
-    // }
-    window.black_pawn = new Image();
-    window.black_pawn.src = "images/Bauer_Schwarz.png";
-    // window.black_pawn.onload = function(){
-    //     for(var i = 0; i < cols; i++){
-    //         drawPawn(window.black_pawn, PIECE_SIZE * i, 0, "null");
-    //     }
-    // }
+
+    window.piece_images = {};
+
+    window.piece_images[PieceType.WHITE_SQUARE] = new Image();
+    window.piece_images[PieceType.WHITE_SQUARE].src = "images/white_square.png";
+
+    window.piece_images[PieceType.WHITE_CIRCLE] = new Image();
+    window.piece_images[PieceType.WHITE_CIRCLE].src = "images/white_circle.png";
+
+    window.piece_images[PieceType.WHITE_TRIANGLE] = new Image();
+    window.piece_images[PieceType.WHITE_TRIANGLE].src = "images/white_triangle.png";
+
+    window.piece_images[PieceType.WHITE_DIAMOND] = new Image();
+    window.piece_images[PieceType.WHITE_DIAMOND].src = "images/white_diamond.png";
+
+    window.piece_images[PieceType.BLACK_SQUARE] = new Image();
+    window.piece_images[PieceType.BLACK_SQUARE].src = "images/black_square.png";
+
+    window.piece_images[PieceType.BLACK_CIRCLE] = new Image();
+    window.piece_images[PieceType.BLACK_CIRCLE].src = "images/black_circle.png";
+
+    window.piece_images[PieceType.BLACK_TRIANGLE] = new Image();
+    window.piece_images[PieceType.BLACK_TRIANGLE].src = "images/black_triangle.png";
+
+    window.piece_images[PieceType.BLACK_DIAMOND] = new Image();
+    window.piece_images[PieceType.BLACK_DIAMOND].src = "images/black_diamond.png";
 }
 
 /**
@@ -63,13 +75,20 @@ var drawPawn = function(image, x, y, color) {
  * Draw one classification at position
  */
 var drawEval = function(position, eval) {
-    if (window.game.recommendedMoveIndex !== -1)
+    let x = position.x + PIECE_SIZE * 0.5;
+    let y = position.y + PIECE_SIZE * 0.55;
+
+    if (eval.includes("x"))
+    {
+        window.context.fillStyle = "grey";
+    }   
+    else if (window.game.recommendedMoveIndex !== -1)
     {
         eval = "!";
         window.context.fillStyle = "red";
         window.context.font = "bold 20px Arial";
         window.context.textAlign = "center";
-        window.context.fillText(eval, position.x+10, position.y + 16);
+        window.context.fillText(eval, x, y);
         return;
     }
     else if (eval == -1)
@@ -89,9 +108,9 @@ var drawEval = function(position, eval) {
         }
     }
     if (eval == 1) eval = "Win";
-    window.context.font = "bold 12px Arial";
+    window.context.font = "bold 16px Arial";
     window.context.textAlign = "center";
-    window.context.fillText(eval, position.x + 10, position.y + 16);
+    window.context.fillText(eval, x, y);
 };
 
 /**
@@ -100,70 +119,80 @@ var drawEval = function(position, eval) {
 var drawBoard = function() {
     var activePlayer = window.game.turn;
     window.context.clearRect(0, 0, window.canvas.width, window.canvas.height);
-    if (window.game.activeMove.target_row !== -1)
+    // if (window.game.activeMove.target_row !== -1)
+    // {
+
+    for (let [_, val] of Object.entries(PieceType))
     {
-        for (var i = 0; i < window.game.cols; i++) {
-            for(var j = 0; j < window.game.rows; j++){
-                if (window.game.board[i][j] !== NodeColor.EMPTY)
-                {
-                    var position = getNodePosition(j, i);
-                    var image = window.game.board[i][j] == NodeColor.WHITE ? white_pawn : black_pawn;
-                    drawPawn(image, position.x, position.y, BackgroundColor.INACTIVE);
-                }
-            }
-        }
-        var position = getNodePosition(window.game.activeMove.target_row, window.game.activeMove.target_col);
-        var image = activePlayer == NodeColor.WHITE ? white_pawn : black_pawn;
-        drawPawn(image, position.x, position.y, BackgroundColor.INACTIVE);
+        if (val == PieceType.EMPTY) continue;
+        let pos = getSpareSquarePosition(val);
+        let image = window.piece_images[val];
+        drawPawn(image, pos.x, pos.y, BackgroundColor.INACTIVE);
+        drawEval(pos, "x2");
     }
-    else if(window.game.activeMove.source_row !== -1)
-    {
-        for (var i = 0; i < window.game.cols; i++) {
-            for(var j = 0; j < window.game.rows; j++){
-                if (window.game.board[i][j] !== NodeColor.EMPTY)
-                {
-                    var position = getNodePosition(j, i);
-                    var image = window.game.board[i][j] == NodeColor.WHITE ? white_pawn : black_pawn;
-                    drawPawn(image, position.x, position.y, BackgroundColor.INACTIVE);
-                }
-                if ((i == window.game.mouseOverCol) && (j == window.game.mouseOverRow) &&
-                    (window.game.isMouseOverLegalMove(j, i)))
-                {
-                    var position = getNodePosition(j, i);
-                    var image = activePlayer == NodeColor.WHITE ? white_pawn : black_pawn;
-                    drawPawn(image, position.x, position.y, BackgroundColor.POSSIBLE);
-                }
-            }
-        }
-        var position = getNodePosition(window.game.activeMove.source_row, window.game.activeMove.source_col);
-        var image = activePlayer == NodeColor.WHITE ? white_pawn : black_pawn;
-        drawPawn(image, position.x, position.y, BackgroundColor.ACTIVE);
-    }
-    else
-    {
-        for (var i = 0; i < window.game.cols; i++) {
-            for(var j = 0; j < window.game.rows; j++) {
-                if (window.game.board[i][j] !== NodeColor.EMPTY)
-                {
-                    var position = getNodePosition(j, i);
-                    var image = game.board[i][j] == NodeColor.WHITE ? white_pawn : black_pawn;
-                    var backgroundColor = BackgroundColor.INACTIVE;
-                    if  (window.game.isMouseOverLegalMove(j, i)){
-                        backgroundColor = BackgroundColor.POSSIBLE;
-                    }
-                    drawPawn(image, position.x, position.y, backgroundColor);
-                }
-                if ((i == window.game.mouseOverCol) && (j == window.game.mouseOverRow) &&
-                    (window.game.isMouseOverLegalMove(j, i)))
-                {
-                    var position = getNodePosition(j, i);
-                    var image = activePlayer == NodeColor.WHITE ? white_pawn : black_pawn;
-                    drawPawn(image, position.x, position.y, BackgroundColor.ACTIVE);
-                }
+
+    for (var i = 0; i < window.game.cols; i++) {
+        for(var j = 0; j < window.game.rows; j++){
+            if (window.game.board[i][j] !== PieceType.EMPTY)
+            {
+                var position = getSquarePosition(j, i);
+                var image = window.piece_images[window.game.board[i][j]];
+                drawPawn(image, position.x, position.y, BackgroundColor.INACTIVE);
             }
         }
     }
-    drawEvals();
+    // var position = getNodePosition(window.game.activeMove.target_row, window.game.activeMove.target_col);
+    // var image = window.piece_images[window.game.board[window.game.activeMove.target_row][window.game.activeMove.target_col]];
+    // drawPawn(image, position.x, position.y, BackgroundColor.INACTIVE);
+    // }
+    // else if(window.game.activeMove.source_row !== -1)
+    // {
+    //     for (var i = 0; i < window.game.cols; i++) {
+    //         for(var j = 0; j < window.game.rows; j++){
+    //             if (window.game.board[i][j] !== NodeColor.EMPTY)
+    //             {
+    //                 var position = getNodePosition(j, i);
+    //                 var image = window.game.board[i][j] == NodeColor.WHITE ? white_pawn : black_pawn;
+    //                 drawPawn(image, position.x, position.y, BackgroundColor.INACTIVE);
+    //             }
+    //             if ((i == window.game.mouseOverCol) && (j == window.game.mouseOverRow) &&
+    //                 (window.game.isMouseOverLegalMove(j, i)))
+    //             {
+    //                 var position = getNodePosition(j, i);
+    //                 var image = activePlayer == NodeColor.WHITE ? white_pawn : black_pawn;
+    //                 drawPawn(image, position.x, position.y, BackgroundColor.POSSIBLE);
+    //             }
+    //         }
+    //     }
+    //     var position = getNodePosition(window.game.activeMove.source_row, window.game.activeMove.source_col);
+    //     var image = activePlayer == NodeColor.WHITE ? white_pawn : black_pawn;
+    //     drawPawn(image, position.x, position.y, BackgroundColor.ACTIVE);
+    // }
+    // else
+    // {
+    //     for (var i = 0; i < window.game.cols; i++) {
+    //         for(var j = 0; j < window.game.rows; j++) {
+    //             if (window.game.board[i][j] !== NodeColor.EMPTY)
+    //             {
+    //                 var position = getNodePosition(j, i);
+    //                 var image = game.board[i][j] == NodeColor.WHITE ? white_pawn : black_pawn;
+    //                 var backgroundColor = BackgroundColor.INACTIVE;
+    //                 if  (window.game.isMouseOverLegalMove(j, i)){
+    //                     backgroundColor = BackgroundColor.POSSIBLE;
+    //                 }
+    //                 drawPawn(image, position.x, position.y, backgroundColor);
+    //             }
+    //             if ((i == window.game.mouseOverCol) && (j == window.game.mouseOverRow) &&
+    //                 (window.game.isMouseOverLegalMove(j, i)))
+    //             {
+    //                 var position = getNodePosition(j, i);
+    //                 var image = activePlayer == NodeColor.WHITE ? white_pawn : black_pawn;
+    //                 drawPawn(image, position.x, position.y, BackgroundColor.ACTIVE);
+    //             }
+    //         }
+    //     }
+    // }
+    // drawEvals();
 };
 
 /**
@@ -200,7 +229,7 @@ var drawEvals = function() {
                         ((window.game.possibleMoves[window.game.recommendedMoveIndex].target_col == i) && 
                         (window.game.possibleMoves[window.game.recommendedMoveIndex].target_row == j)))
                     {
-                        var position = getNodePosition(j, i);
+                        var position = getSquarePosition(j, i);
                         drawEval(position, bestEval[i][j]);
                     }
                 }
@@ -225,7 +254,7 @@ var drawEvals = function() {
                         ((window.game.possibleMoves[window.game.recommendedMoveIndex].target_col == i) && 
                         (window.game.possibleMoves[window.game.recommendedMoveIndex].target_row == j)))
                     {
-                        var position = getNodePosition(j, i);
+                        var position = getSquarePosition(j, i);
                         drawEval(position, bestEval[i][j]);
                     }
                 }
@@ -278,7 +307,7 @@ var mouseClick = function(e) {
 function getNode(x_pos, y_pos) {
     for (var i = 0; i < window.game.cols; i++) {
         for(var j = 0; j < window.game.rows; j++){
-            var position = getNodePosition(j, i);
+            var position = getSquarePosition(j, i);
             var top = position.y;
             var bottom = position.y + PIECE_SIZE;
             var left = position.x;
@@ -299,11 +328,26 @@ function getNode(x_pos, y_pos) {
 }
 
 /**
- * returns the position of the node with index
+ * returns the position of the spare piece with type
  */
-function getNodePosition(row, col) {
+function getSpareSquarePosition(type) {
+    if (type == PieceType.EMPTY) return;
+
+    let isBlack = (type % 2) == 0;
+    let posIndex = Math.ceil(type - (type / 2)) - 1;
+
     return {
-        x: col * PIECE_SIZE,
-        y: row * PIECE_SIZE,
+        x: isBlack ? PIECE_SIZE / 4 : PIECE_SIZE * window.game.cols + PIECE_SIZE * 1.75,
+        y: posIndex * PIECE_SIZE + PIECE_SIZE / 4
+    }
+}
+
+/**
+ * returns the position of the square with index
+ */
+function getSquarePosition(row, col) {
+    return {
+        x: (PIECE_SIZE + PIECE_SIZE / 2) + col * PIECE_SIZE,
+        y: (PIECE_SIZE / 4) + row * PIECE_SIZE,
     };
 }

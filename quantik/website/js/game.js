@@ -55,7 +55,7 @@ function Game() {
 	 */
   this.started = false;
 	/**
-	 * List of the Color of all nodes
+	 * List of the Color of all squares
 	 */
 	this.board = [];
   /**
@@ -81,7 +81,7 @@ function Game() {
   /**
    * Player to make the next move (we are starting with A)
    */
-  this.turn = NodeColor.WHITE;
+  this.turn = PieceColor.WHITE;
 	/**
 	 * List of Move objects to revert
 	 */
@@ -126,7 +126,7 @@ function Game() {
 Game.prototype.init = function() {
   this.initBoard();
 	this.calcMoves();
-	this.turn = NodeColor.WHITE;
+	this.turn = PieceColor.WHITE;
 	this.history = [];
 	this.historyForward = [];
   this.activeMove = new Move(-1, -1, -1, -1);
@@ -150,11 +150,10 @@ Game.prototype.init = function() {
 Game.prototype.initBoard = function(){
   this.board = [];
   for(var i = 0; i < window.cols; i++){
-    var col = [NodeColor.BLACK];
-    for(var j = 0; j < window.rows - 2; j++){
-      col.push(NodeColor.EMPTY);
+    var col = [PieceType.BLACK_SQUARE];
+    for(var j = 0; j < window.rows - 1; j++){
+      col.push(PieceType.EMPTY);
     }
-    col.push(NodeColor.WHITE);
     this.board.push(col);
   }
 }
@@ -165,61 +164,61 @@ Game.prototype.initBoard = function(){
 Game.prototype.calcMoves = function()
 {
   var activePlayer = this.turn;
-  var passivePlayer = NodeColor.WHITE;
-  if (activePlayer == NodeColor.WHITE)
-  {
-    passivePlayer = NodeColor.BLACK;
-  }
+  var passivePlayer = activePlayer == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
+
   var moves = [];
 
-  for(var col = 0; col < this.cols; col++){
-    if(this.board[col][0] == NodeColor.WHITE || this.board[col][this.rows - 1] == NodeColor.BLACK){
-      this.possibleMoves = moves;
-      return;
-    }
-  }
+  // for(var col = 0; col < this.cols; col++){
+  //   if(this.board[col][0] == NodeColor.WHITE || this.board[col][this.rows - 1] == NodeColor.BLACK){
+  //     this.possibleMoves = moves;
+  //     return;
+  //   }
+  // }
 
-  for(var col = 0; col < this.cols; col++){
-    for(var row = 0; row < this.rows; row++){
-      if(this.board[col][row] == activePlayer){
-        if(activePlayer == NodeColor.WHITE){
-          if(col > 0 && this.board[col - 1][row - 1] == passivePlayer)
-          {
-            var move = new Move(row, col, row - 1, col - 1);
-            moves.push(move);
-          }
-          if(this.board[col][row - 1] == 0)
-          {
-            var move = new Move(row, col, row - 1, col);
-            moves.push(move);
-          }
-          if(col < this.cols - 1 && this.board[col + 1][row - 1] == passivePlayer)
-          {
-            var move = new Move(row, col, row - 1, col + 1);
-            moves.push(move);
-          }
-        }
-        else
-        {
-          if(col > 0 && this.board[col - 1][row + 1] == passivePlayer)
-          {
-            var move = new Move(row, col, row + 1, col - 1);
-            moves.push(move);
-          }
-          if(this.board[col][row + 1] == 0)
-          {
-            var move = new Move(row, col, row + 1, col);
-            moves.push(move);
-          }
-          if(col < this.cols - 1 && this.board[col + 1][row + 1] == passivePlayer)
-          {
-            var move = new Move(row, col, row + 1, col + 1);
-            moves.push(move);
-          }
-        }
-      }
-    }
-  }
+  // TODO
+
+  // for(var col = 0; col < this.cols; col++){
+  //   for(var row = 0; row < this.rows; row++){
+  //     if(this.board[col][row] == activePlayer){
+  //       if(activePlayer == NodeColor.WHITE){
+  //         if(col > 0 && this.board[col - 1][row - 1] == passivePlayer)
+  //         {
+  //           var move = new Move(row, col, row - 1, col - 1);
+  //           moves.push(move);
+  //         }
+  //         if(this.board[col][row - 1] == 0)
+  //         {
+  //           var move = new Move(row, col, row - 1, col);
+  //           moves.push(move);
+  //         }
+  //         if(col < this.cols - 1 && this.board[col + 1][row - 1] == passivePlayer)
+  //         {
+  //           var move = new Move(row, col, row - 1, col + 1);
+  //           moves.push(move);
+  //         }
+  //       }
+  //       else
+  //       {
+  //         if(col > 0 && this.board[col - 1][row + 1] == passivePlayer)
+  //         {
+  //           var move = new Move(row, col, row + 1, col - 1);
+  //           moves.push(move);
+  //         }
+  //         if(this.board[col][row + 1] == 0)
+  //         {
+  //           var move = new Move(row, col, row + 1, col);
+  //           moves.push(move);
+  //         }
+  //         if(col < this.cols - 1 && this.board[col + 1][row + 1] == passivePlayer)
+  //         {
+  //           var move = new Move(row, col, row + 1, col + 1);
+  //           moves.push(move);
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+
   this.possibleMoves = moves;
 }
 
@@ -250,7 +249,7 @@ Game.prototype.takeMove = function(isNotRedoMove = true)
   }
 
   this.board[move.target_col][move.target_row] = this.turn;
-  this.board[move.source_col][move.source_row] = NodeColor.EMPTY;
+  this.board[move.source_col][move.source_row] = PieceColor.NONE;
 
   this.history.push(move);
   if (isNotRedoMove) this.historyForward = [];
@@ -266,17 +265,13 @@ Game.prototype.revertMove = function()
   var move = this.history.pop();
 
   var passivePlayer = this.turn;
-  var activePlayer = NodeColor.WHITE;
-  if (passivePlayer == NodeColor.WHITE)
-  {
-    activePlayer = NodeColor.BLACK;
-  }
+  var activePlayer = passivePlayer == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
 
   this.board[move.source_col][move.source_row] = activePlayer;
   if(move.target_col != move.source_col){
     this.board[move.target_col][move.target_row] = passivePlayer;
-  }else{
-    this.board[move.target_col][move.target_row] = NodeColor.EMPTY;
+  } else {
+    this.board[move.target_col][move.target_row] = PieceColor.NONE;
   }
 
   this.historyForward.push(move);

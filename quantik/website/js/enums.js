@@ -32,13 +32,29 @@ var uuid = (function() {
 })();
 
 /**
- * Enum for the color of all nodes
+ * Enum for the type of all pieces
  */
-var NodeColor = {
-    EMPTY : 0,
-    WHITE : 1,
-    BLACK : 2
+var PieceType = {
+    EMPTY: 0, 
+    WHITE_SQUARE: 1, 
+    BLACK_SQUARE: 2, 
+    WHITE_TRIANGLE: 3, 
+    BLACK_TRIANGLE: 4, 
+    WHITE_CIRCLE: 5, 
+    BLACK_CIRCLE: 6, 
+    WHITE_DIAMOND: 7, 
+    BLACK_DIAMOND: 8
 };
+
+/**
+ * Enum for the color of a piece
+ */
+var PieceColor= {
+    NONE: 0, 
+    WHITE: 1,
+	BLACK: 2 
+};
+
 /**
  * Enum for the color of the boarders of the pieces
  */
