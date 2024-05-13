@@ -1,22 +1,21 @@
 /**
  * Object to store a single move by a player (e.g. for history)
  */
-function Move(source_row, source_col, target_row, target_col, eval = -1)
+function Move(target_row, target_col, piece_type, eval = -1)
 {
-	this.source_row = source_row;
-	this.source_col = source_col;
+  this.piece_type = piece_type;
 	this.target_row = target_row;
 	this.target_col = target_col;
 	this.eval = eval;
 };
 
-/**
+/** TODO
  * Shows information about the move (player, col, row, value of move) in a list element for history
  */
 Move.prototype.toHistoryLi = function(player) {
 	var str = String.format("Player {0}", player);
-	str = str + String.format(" moved from {0}{1} to {2}{3}.", String.fromCharCode(65 + this.source_col), window.game.rows - this.source_row, 
-                                                             String.fromCharCode(65 + this.target_col), window.game.rows - this.target_row);
+	str = str + String.format(" moved from {0}{1} to {2}{3}.", String.fromCharCode(65 + this.source_col), window.game.ROWS - this.source_row, 
+                                                             String.fromCharCode(65 + this.target_col), window.game.ROWS - this.target_row);
 	if (this.eval !== -1) {
 		str = str + String.format("<span class='histvalue'> ({0})</span>", this.getStringForEval(this.eval));
 	}
@@ -45,11 +44,12 @@ function Game() {
 	/**
 	 * Number of rows on board
 	 */
-  this.rows = 4;
+  this.ROWS = 4;
 	/**
 	 * Number of cols on board
 	 */
-  this.cols = 4;
+  this.COLS = 4;
+
 	/**
 	 * Indicated if a move has already been done
 	 */
@@ -149,9 +149,9 @@ Game.prototype.init = function() {
  */
 Game.prototype.initBoard = function(){
   this.board = [];
-  for(var i = 0; i < window.cols; i++){
+  for(var i = 0; i < this.COLS; i++){
     var col = [PieceType.BLACK_SQUARE];
-    for(var j = 0; j < window.rows - 1; j++){
+    for(var j = 0; j < this.ROWS - 1; j++){
       col.push(PieceType.EMPTY);
     }
     this.board.push(col);

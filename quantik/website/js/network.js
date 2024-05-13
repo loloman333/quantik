@@ -23,8 +23,8 @@ Network.prototype.requestMoveInfo = function () {
 	window.lastRequest = new Date().getTime();
 	$.post('/moveinfo', {
 		board: this.game.encode(this.game.board),
-		rows: this.game.rows,
-		cols: this.game.cols,
+		// rows: this.game.rows,
+		// cols: this.game.cols,
 		timestamp: window.lastRequest,
 		//uuid: window.uuid
 	}).done(

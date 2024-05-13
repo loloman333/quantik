@@ -58,8 +58,8 @@ Storage.prototype.saveGame = function(action) {
 		}
 
 		localStorage["ninemensmorris.games." + idx + ".name"] = gameName;
-		localStorage["ninemensmorris.games." + idx + ".rows"] = JSON.stringify(this.game.rows);
-		localStorage["ninemensmorris.games." + idx + ".cols"] = JSON.stringify(this.game.cols);
+		localStorage["ninemensmorris.games." + idx + ".rows"] = JSON.stringify(this.game.ROWS);
+		localStorage["ninemensmorris.games." + idx + ".cols"] = JSON.stringify(this.game.COLS);
 		localStorage["ninemensmorris.games." + idx + ".started"] = JSON.stringify(this.game.started);
 		localStorage["ninemensmorris.games." + idx + ".board"] = JSON.stringify(this.game.board);
         localStorage["ninemensmorris.games." + idx + ".turn"] = JSON.stringify(this.game.turn);
@@ -166,9 +166,8 @@ Storage.prototype.loadSingleGameHandler = function(idx) {
 	var gameName = localStorage["ninemensmorris.games." + idx + ".name"];
 	// this.game.rows = JSON.parse(localStorage["ninemensmorris.games." + idx + ".rows"]);
 	// this.game.cols = JSON.parse(localStorage["ninemensmorris.games." + idx + ".cols"]);
-	document.getElementById("rows").value = JSON.parse(localStorage["ninemensmorris.games." + idx + ".rows"]);
-	document.getElementById("cols").value = JSON.parse(localStorage["ninemensmorris.games." + idx + ".cols"]);
-	changeDims();
+	// document.getElementById("rows").value = JSON.parse(localStorage["ninemensmorris.games." + idx + ".rows"]);
+	// document.getElementById("cols").value = JSON.parse(localStorage["ninemensmorris.games." + idx + ".cols"]);
 
 	this.game.started = JSON.parse(localStorage["ninemensmorris.games." + idx + ".started"]);
 	this.game.board = JSON.parse(localStorage["ninemensmorris.games." + idx + ".board"]);

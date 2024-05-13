@@ -1,23 +1,3 @@
-function changeDims() {
-    window.cols = document.getElementById("cols").value;
-    if (cols == 6) {
-        var rows = document.getElementById("rows").value;
-        if(rows > 6){
-            document.getElementById("rows").value = 6;
-        }
-        $(".highRows").hide();
-    } else if(cols < 6){
-        $(".highRows").show();
-    }
-    window.rows = document.getElementById("rows").value;
-    if(!window.game.started){
-        window.game.rows = window.rows;
-        window.game.cols = window.cols;
-        window.game.init();
-        resizeBoard();
-    }
-};
-
 var hideAllActions = function(resetAI) {
 	$('#cleargameList').hide();
 	$('#cleargameList').html("");
@@ -52,9 +32,7 @@ $(document).ready(function() {
 	window.canvas = document.getElementById("myCanvas");
     window.context = canvas.getContext("2d");
     canvas.onmousemove = mouseMove;
-    canvas.onclick = mouseClick;
-    window.rows = 4;
-    window.cols = 4;
+    canvas.onclick = mouseClick;;
     $(".about").hide();
     initPieces();
 	window.game = new Game();
@@ -141,12 +119,7 @@ $(document).ready(function() {
 		window.game.aiBlevel = $(this).find("option:selected").val();
 		window.game.nextPlayer(false);
 	});
-	$('#rows').change(function() {
-		changeDims();
-	});
-	$('#cols').change(function() {
-		changeDims();
-	});
+	
 	$('#aboutlink').click(function() {
 		$('.about').toggle();
 		return false;

@@ -3,6 +3,16 @@
  */
 const PIECE_SIZE = 90
 
+const SPARE_BLACKS_X = PIECE_SIZE / 4;
+const SPARE_BLACKS_Y = PIECE_SIZE / 4;
+
+const SPARE_WHITES_X = PIECE_SIZE * 5.75;
+const SPARE_WHITES_Y = PIECE_SIZE / 4;
+
+const BOARD_X = PIECE_SIZE * 1.5;
+const BOARD_Y = PIECE_SIZE / 4;
+
+
 /**
  * Reset and resize board, if sizes changed
  */
@@ -35,6 +45,8 @@ function initPieces(){
 
     window.piece_images = {};
 
+    window.piece_images[PieceType.EMPTY] = new Image();
+
     window.piece_images[PieceType.WHITE_SQUARE] = new Image();
     window.piece_images[PieceType.WHITE_SQUARE].src = "images/white_square.png";
 
@@ -61,14 +73,20 @@ function initPieces(){
 }
 
 /**
- * Draw one pawn at position with backgroundcolor
+ * Draw one piece at position with backgroundcolor
  */
-var drawPawn = function(image, x, y, color) {
-    if(color !== "null"){
+var drawSquare = function(image, x, y, color, radii = 0) {
+    if(color !== BackgroundColor.INACTIVE){
         window.context.fillStyle = color;
-        window.context.fillRect(x, y, PIECE_SIZE, PIECE_SIZE);
+        window.context.strokeStyle = "#827162";
+        window.context.roundRect(x, y, PIECE_SIZE, PIECE_SIZE, radii);
+        window.context.stroke();
+        // window.context.fill(); TODO!!!!!
     }
-    window.context.drawImage(image, x, y);
+    if (image != null)
+    {
+        window.context.drawImage(image, x, y);
+    }
 };
 
 /**
@@ -118,29 +136,53 @@ var drawEval = function(position, eval) {
  */
 var drawBoard = function() {
     var activePlayer = window.game.turn;
-    window.context.clearRect(0, 0, window.canvas.width, window.canvas.height);
-    // if (window.game.activeMove.target_row !== -1)
-    // {
+    
+    window.context.clearRect(0, 0, window.canvas.width, window.canvas.height); // TODO: needed?
 
+    // Background
+    window.context.fillStyle = "#bbada0";
+    window.context.strokeStyle = "#827162";
+
+    window.context.beginPath();
+    window.context.roundRect(SPARE_BLACKS_X, SPARE_BLACKS_Y, PIECE_SIZE, PIECE_SIZE * 4, 10);
+    window.context.fill();
+    window.context.stroke();
+
+    window.context.beginPath();
+    window.context.roundRect(SPARE_WHITES_X, SPARE_WHITES_Y, PIECE_SIZE, PIECE_SIZE * 4, 10);
+    window.context.fill();
+    window.context.stroke();
+
+    window.context.beginPath();
+    window.context.roundRect(BOARD_X, BOARD_Y, PIECE_SIZE * 4, PIECE_SIZE * 4, 10);
+    window.context.fill();
+    window.context.stroke();
+
+    // Spare Pieces
     for (let [_, val] of Object.entries(PieceType))
     {
         if (val == PieceType.EMPTY) continue;
         let pos = getSpareSquarePosition(val);
         let image = window.piece_images[val];
-        drawPawn(image, pos.x, pos.y, BackgroundColor.INACTIVE);
+        drawSquare(image, pos.x, pos.y, BackgroundColor.INACTIVE);
         drawEval(pos, "x2");
     }
 
-    for (var i = 0; i < window.game.cols; i++) {
-        for(var j = 0; j < window.game.rows; j++){
-            if (window.game.board[i][j] !== PieceType.EMPTY)
-            {
-                var position = getSquarePosition(j, i);
-                var image = window.piece_images[window.game.board[i][j]];
-                drawPawn(image, position.x, position.y, BackgroundColor.INACTIVE);
-            }
+    // Board
+    for (let i = 0; i < window.game.COLS; i++) {
+        for(let j = 0; j < window.game.ROWS; j++){
+            let position = getSquarePosition(j, i);
+            let image = window.piece_images[window.game.board[i][j]];
+            let radii = [
+                (i == 0 && j == 0) ? 10 : 0,
+                (i == window.game.COLS - 1 && j == 0) ? 10 : 0,
+                (i == window.game.COLS - 1 && j == window.game.ROWS - 1) ? 10 : 0,
+                (i == 0 && j == window.game.ROWS - 1) ? 10 : 0,
+            ]
+            drawSquare(image, position.x, position.y, BackgroundColor.ACTIVE, radii);
         }
     }
+
     // var position = getNodePosition(window.game.activeMove.target_row, window.game.activeMove.target_col);
     // var image = window.piece_images[window.game.board[window.game.activeMove.target_row][window.game.activeMove.target_col]];
     // drawPawn(image, position.x, position.y, BackgroundColor.INACTIVE);
@@ -203,9 +245,9 @@ var drawEvals = function() {
         (window.game.activeMove.target_row !== -1)) return;
 
     var bestEval = [];
-    for(var i = 0; i < window.game.cols; i++){
+    for(var i = 0; i < window.game.COLS; i++){
         var col = []
-        for(var j = 0; j < window.game.rows; j++){
+        for(var j = 0; j < window.game.ROWS; j++){
             col.push(-2);
         }
         bestEval.push(col);
@@ -220,9 +262,9 @@ var drawEvals = function() {
                 bestEval[move.target_col][move.target_row] = move.eval;
             }
         }
-        for (var i = 0; i < window.game.cols; i++)
+        for (var i = 0; i < window.game.COLS; i++)
         {
-            for(var j = 0; j < window.game.rows; j++){
+            for(var j = 0; j < window.game.ROWS; j++){
                 if (bestEval[i][j] !== -2)
                 {
                     if ((window.game.recommendedMoveIndex == -1) ||
@@ -245,9 +287,9 @@ var drawEvals = function() {
                 bestEval[move.source_col][move.source_row] = move.eval;
             }
         }
-        for (var i = 0; i < window.game.cols; i++)
+        for (var i = 0; i < window.game.COLS; i++)
         {
-            for(var j = 0; j < window.game.rows; j++){
+            for(var j = 0; j < window.game.ROWS; j++){
                 if (bestEval[i][j] !== -2)
                 {
                     if ((window.game.recommendedMoveIndex == -1) ||
@@ -305,8 +347,8 @@ var mouseClick = function(e) {
  * returns the index of the node at the coordinates
  */
 function getNode(x_pos, y_pos) {
-    for (var i = 0; i < window.game.cols; i++) {
-        for(var j = 0; j < window.game.rows; j++){
+    for (var i = 0; i < window.game.COLS; i++) {
+        for(var j = 0; j < window.game.ROWS; j++){
             var position = getSquarePosition(j, i);
             var top = position.y;
             var bottom = position.y + PIECE_SIZE;
@@ -337,8 +379,8 @@ function getSpareSquarePosition(type) {
     let posIndex = Math.ceil(type - (type / 2)) - 1;
 
     return {
-        x: isBlack ? PIECE_SIZE / 4 : PIECE_SIZE * window.game.cols + PIECE_SIZE * 1.75,
-        y: posIndex * PIECE_SIZE + PIECE_SIZE / 4
+        x: isBlack ? SPARE_BLACKS_X : SPARE_WHITES_X,
+        y: posIndex * PIECE_SIZE + SPARE_BLACKS_Y
     }
 }
 
@@ -347,7 +389,7 @@ function getSpareSquarePosition(type) {
  */
 function getSquarePosition(row, col) {
     return {
-        x: (PIECE_SIZE + PIECE_SIZE / 2) + col * PIECE_SIZE,
-        y: (PIECE_SIZE / 4) + row * PIECE_SIZE,
+        x: BOARD_X + col * PIECE_SIZE,
+        y: BOARD_Y + row * PIECE_SIZE,
     };
 }
