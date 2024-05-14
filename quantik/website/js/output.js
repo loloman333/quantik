@@ -50,13 +50,12 @@ Output.prototype.showTurn = function () {
 			String.format("Player {0} waiting for AI move!", this.game.turn));
 	}
 	else {
-		if (this.game.activeMove.source_row == -1) {
+		if (this.game.activeMove.piece_type == PieceType.EMPTY) {
 			$('#gameinfo').html(
-				String.format("Player {0} please select a piece to move!", this.game.turn));
+				String.format("Player {0} please select a piece to place!", this.game.turn));
 		} else {
 			$('#gameinfo').html(
-				String.format("Player {0} please select a field to move to!",
-					this.game.turn));
+				String.format("Player {0} please select a square to move to!", this.game.turn));
 		}
 	}
 };

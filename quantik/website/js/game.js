@@ -8,6 +8,20 @@ function Move(target_row, target_col, piece_type, eval = -1) {
     this.eval = eval;
 };
 
+Move.prototype.compute_all_moves = function () {
+    let moves = [];
+    for (let row = 0; row < 4; row++) {
+        for (let col = 0; col < 4; col++) {
+            for (let type = 1; type < Object.keys(PieceType).length; type++) {
+                let move = new Move(row, col, type, -1);
+                moves.push(move);
+            }
+        }
+    }
+
+    return moves;
+};
+
 /** TODO
  * Shows information about the move (player, col, row, value of move) in a list element for history
  */
@@ -47,7 +61,6 @@ function Game() {
      * Number of cols on board
      */
     this.COLS = 4;
-
     /**
      * Indicated if a move has already been done
      */
@@ -57,13 +70,21 @@ function Game() {
      */
     this.board = [];
     /**
-     * Row of the field the mouse is pointing to
+     * List of the Pieces of all squares
+     */
+    this.pieceCounter = [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,] // TODO: fine ?
+    /**
+     * Row of the square the mouse is pointing to
      */
     this.mouseOverRow = -1;
     /**
-     * Col of the field the mouse is pointing to
+     * Col of the square the mouse is pointing to
      */
     this.mouseOverCol = -1;
+    /**
+     * Type of the piece the mouse is pointing to
+     */
+    this.mouseOverType = PieceType.EMPTY;
     /**
      * Index of the recommended move
      */
@@ -71,7 +92,11 @@ function Game() {
     /**
      * The active move
      */
-    this.activeMove = new Move(-1, -1, -1, -1);
+    this.activeMove = new Move(-1, -1, PieceType.EMPTY, -1);
+    /**
+     * All moves
+     */
+    this.allMoves = Move.prototype.compute_all_moves();
     /**
      * Array for all possible moves
      */
@@ -127,7 +152,7 @@ Game.prototype.init = function () {
     this.turn = PieceColor.WHITE;
     this.history = [];
     this.historyForward = [];
-    this.activeMove = new Move(-1, -1, -1, -1);
+    this.activeMove = new Move(-1, -1, PieceType.EMPTY, -1);
     this.mouseOverRow = -1;
     this.mouseOverCol = -1;
 
@@ -147,13 +172,83 @@ Game.prototype.init = function () {
  */
 Game.prototype.initBoard = function () {
     this.board = [];
-    for (var i = 0; i < this.COLS; i++) {
-        var col = [PieceType.EMPTY];
-        for (var j = 0; j < this.ROWS - 1; j++) {
-            col.push(PieceType.EMPTY);
+    for (var i = 0; i < this.ROWS; i++) {
+        var row = [];
+        for (var j = 0; j < this.COLS; j++) {
+            row.push(PieceType.EMPTY);
         }
-        this.board.push(col);
+        this.board.push(row);
     }
+    this.board = [
+        [PieceType.WHITE_SQUARE, PieceType.EMPTY, PieceType.BLACK_SQUARE, PieceType.EMPTY],
+        [PieceType.EMPTY, PieceType.EMPTY, PieceType.EMPTY, PieceType.EMPTY],
+        [PieceType.WHITE_TRIANGLE, PieceType.EMPTY, PieceType.BLACK_TRIANGLE, PieceType.EMPTY],
+        [PieceType.EMPTY, PieceType.EMPTY, PieceType.EMPTY, PieceType.EMPTY],
+    ]
+}
+
+/**
+ * Returns if the move is a legal move
+ */
+Game.prototype.getBoardSector = function (rowIndex, colIndex) {
+    let startRow = Math.floor(rowIndex / 2) * 2;
+    let startCol = Math.floor(colIndex / 2) * 2;
+
+    return [
+        this.board[startRow][startCol],
+        this.board[startRow + 1][startCol],
+        this.board[startRow][startCol + 1],
+        this.board[startRow + 1][startCol + 1]
+    ];
+}
+
+/**
+ * Returns if the move is a legal move
+ */
+Game.prototype.isLegalMove = function (move) {
+    // Try to place empty Piece
+    if (move.piece_type == PieceType.EMPTY) return false;
+
+    // Try to place outside of board
+    if (move.target_col >= 4 || move.target_row >= 4) return false;
+    if (move.target_col <= -1 || move.target_row <= -1) return false;
+
+    // Try to place piece of wrong color
+    let piece_color = getPieceColor(move.piece_type);
+    if (this.turn != piece_color) return false;
+
+    // Try to place on top of another piece
+    if (this.board[move.target_row][move.target_col] != PieceType.EMPTY) return false;
+
+    // Try to place a third of a shape
+    if (this.pieceCounter[move.piece_type] >= 2) return false;
+
+    // Try to place in row, col or sector where opponent has one of same shape
+    let counterpart = (piece_color == PieceColor.BLACK ? move.piece_type - 1 : move.piece_type + 1);
+
+    for (var row = 0; row < this.ROWS; row++) {
+        for (var col = 0; col < this.COLS - 1; col++) {
+
+            if (this.board[row][col] != counterpart) continue;
+
+            // Row
+            if (row == move.target_row) return false;
+
+            // Col
+            if (col == move.target_col) return false;        
+        }
+    }
+
+    // Sector
+    for (let square of this.getBoardSector(move.target_row, move.target_col))
+    {
+        if (square == counterpart) return false;
+    }
+
+    // Try to play on a final board
+    // if (is_winning_state()) return false; // TODO
+
+    return true;
 }
 
 /**
@@ -165,6 +260,7 @@ Game.prototype.calcMoves = function () {
 
     var moves = [];
 
+    // TODO: Win Cond
     // for(var col = 0; col < this.cols; col++){
     //   if(this.board[col][0] == NodeColor.WHITE || this.board[col][this.rows - 1] == NodeColor.BLACK){
     //     this.possibleMoves = moves;
@@ -172,49 +268,9 @@ Game.prototype.calcMoves = function () {
     //   }
     // }
 
-    // TODO
-
-    // for(var col = 0; col < this.cols; col++){
-    //   for(var row = 0; row < this.rows; row++){
-    //     if(this.board[col][row] == activePlayer){
-    //       if(activePlayer == NodeColor.WHITE){
-    //         if(col > 0 && this.board[col - 1][row - 1] == passivePlayer)
-    //         {
-    //           var move = new Move(row, col, row - 1, col - 1);
-    //           moves.push(move);
-    //         }
-    //         if(this.board[col][row - 1] == 0)
-    //         {
-    //           var move = new Move(row, col, row - 1, col);
-    //           moves.push(move);
-    //         }
-    //         if(col < this.cols - 1 && this.board[col + 1][row - 1] == passivePlayer)
-    //         {
-    //           var move = new Move(row, col, row - 1, col + 1);
-    //           moves.push(move);
-    //         }
-    //       }
-    //       else
-    //       {
-    //         if(col > 0 && this.board[col - 1][row + 1] == passivePlayer)
-    //         {
-    //           var move = new Move(row, col, row + 1, col - 1);
-    //           moves.push(move);
-    //         }
-    //         if(this.board[col][row + 1] == 0)
-    //         {
-    //           var move = new Move(row, col, row + 1, col);
-    //           moves.push(move);
-    //         }
-    //         if(col < this.cols - 1 && this.board[col + 1][row + 1] == passivePlayer)
-    //         {
-    //           var move = new Move(row, col, row + 1, col + 1);
-    //           moves.push(move);
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
+    for (let move of this.allMoves) {
+        if (this.isLegalMove(move)) moves.push(move);
+    }
 
     this.possibleMoves = moves;
 }
@@ -223,6 +279,9 @@ Game.prototype.calcMoves = function () {
  * Takes the move in this.activeMove
  */
 Game.prototype.takeMove = function (isNotRedoMove = true) {
+
+    console.log(this.activeMove)
+
     this.started = true;
     var move = null;
     if (!isNotRedoMove) {
@@ -270,30 +329,24 @@ Game.prototype.revertMove = function () {
 }
 
 /**
- * Reacts to a node being clicked. Expands this.activeMove, takes the move if it is a full possible move
+ * Reacts to a square being clicked. Expands this.activeMove, takes the move if it is a full possible move
  */
-Game.prototype.fieldClicked = function (row, col) {
-    var newMove = new Move(this.activeMove.source_row, this.activeMove.source_col, this.activeMove.target_row, this.activeMove.target_col)
-    if (newMove.source_row == -1) {
-        newMove.source_row = row;
-        newMove.source_col = col;
+Game.prototype.fieldClicked = function (row, col, type) {
+    if (row == -1){
+        this.activeMove.piece_type = type;
+    } else {
+        if (this.activeMove.piece_type != PieceType.EMPTY){
+            this.activeMove.target_row = this.mouseOverRow;
+            this.activeMove.target_col = this.mouseOverCol;
+        } 
     }
-    else if (newMove.source_row == row && newMove.source_col == col) {
-        this.activeMove = new Move(-1, -1, -1, -1);
-        this.mouseOverIndex = -1;
-        window.output.showInfo("");
-        return;
-    }
-    else {
-        newMove.target_row = row;
-        newMove.target_col = col;
-    }
-    if (this.isLegalMove(newMove)) {
-        this.activeMove = newMove;
+
+    if (this.isLegalMove(this.activeMove)) {
         this.recommendedMoveIndex = -1;
         window.game.takeMove();
         window.output.showInfo("");
     }
+    window.output.showTurn();
 }
 /**
  * Returns if the move is a legal move
@@ -309,18 +362,6 @@ Game.prototype.isMouseOverLegalMove = function (row, col) {
         newMove.target_col = col;
     }
     return (this.isLegalMove(newMove))
-}
-
-/**
- * Returns if the move is a legal move
- */
-Game.prototype.isLegalMove = function (move) {
-    for (const possMove of this.possibleMoves) {
-        if ((possMove.source_row == move.source_row) && (possMove.source_col == move.source_col) && (move.target_row == -1)) return true;
-        if ((possMove.source_row == move.source_row) && (possMove.source_col == move.source_col) &&
-            (possMove.target_row == move.target_row) && (possMove.target_col == move.target_col)) return true;
-    }
-    return false
 }
 
 /**
@@ -375,8 +416,7 @@ Game.prototype.nextPlayer = function (advance = true) {
     }
 
     this.recommendedMoveIndex = -1;
-    this.activeMove = new Move(-1, -1, -1, -1);
-    this.mouseOverIndex = -1
+    this.activeMove = new Move(-1, -1, PieceType.EMPTY, -1);
     drawBoard();
     this.network.requestMoveInfo();
     window.output.showHistoryList();

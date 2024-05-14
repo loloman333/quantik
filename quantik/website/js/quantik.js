@@ -31,8 +31,19 @@ var hideAllActions = function (resetAI) {
 $(document).ready(function () {
 	window.canvas = document.getElementById("myCanvas");
 	window.context = canvas.getContext("2d");
-	canvas.onmousemove = mouseMove;
-	canvas.onclick = mouseClick;;
+	// canvas.onmousemove = mouseMove;
+	canvas.onclick = mouseClick;
+
+	$("#myCanvas").mousemove(function (e) {
+        if (enableHandler) {
+            mouseMove(e);
+            enableHandler = false;
+        }
+	});	
+	timer = window.setInterval(function(){
+		enableHandler = true;
+	}, 40);
+
 	$(".about").hide();
 	initPieces();
 	window.game = new Game();

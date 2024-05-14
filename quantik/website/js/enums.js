@@ -55,12 +55,18 @@ var PieceColor = {
 	BLACK: 2
 };
 
+function getPieceColor(piece_type){
+	if (piece_type == PieceType.EMPTY) return PieceColor.NONE;
+	return piece_type % 2 == 1 ? 1 : 2;
+}
+
 /**
  * Enum for the color of the boarders of the pieces
  */
 var BackgroundColor = {
-	INACTIVE: "null",
+	INACTIVE: "transparent",
 	ACTIVE: "grey",
+	// HOVER: "gainsboro",
 	POSSIBLE: "yellow"
 };
 
