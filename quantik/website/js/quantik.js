@@ -1,4 +1,4 @@
-var hideAllActions = function(resetAI) {
+var hideAllActions = function (resetAI) {
 	$('#cleargameList').hide();
 	$('#cleargameList').html("");
 	$('#cleargameList').parent().removeClass("highlight");
@@ -28,21 +28,21 @@ var hideAllActions = function(resetAI) {
 /**
  * Initializes the client (game object) and sets click functions for all actions on the GUI
  */
-$(document).ready(function() {
+$(document).ready(function () {
 	window.canvas = document.getElementById("myCanvas");
-    window.context = canvas.getContext("2d");
-    canvas.onmousemove = mouseMove;
-    canvas.onclick = mouseClick;;
-    $(".about").hide();
-    initPieces();
+	window.context = canvas.getContext("2d");
+	canvas.onmousemove = mouseMove;
+	canvas.onclick = mouseClick;;
+	$(".about").hide();
+	initPieces();
 	window.game = new Game();
 	window.game.init();
 	hideAllActions(true);
 	$('#optionsaialevel').val("perfect");
 	$('#optionsaiblevel').val("perfect");
 
-    $('#restart').click(function() {
-	    var showInfo = window.game.showMoveInfos;
+	$('#restart').click(function () {
+		var showInfo = window.game.showMoveInfos;
 		window.game = new Game();
 		window.game.init();
 		window.game.showMoveInfos = showInfo;
@@ -55,7 +55,7 @@ $(document).ready(function() {
 		resizeBoard();
 		return false;
 	});
-    $('#togglemoveinfos').click(function() {
+	$('#togglemoveinfos').click(function () {
 		hideAllActions(true);
 		window.game.showMoveInfos = !window.game.showMoveInfos;
 		if (window.game.showMoveInfos) {
@@ -67,60 +67,60 @@ $(document).ready(function() {
 		window.game.network.requestMoveInfo();
 		return false;
 	});
-    $('#moverecommender').click(function() {
+	$('#moverecommender').click(function () {
 		window.game.moveRecommender();
 		return false;
 	});
-    $('#historyrevert').click(function() {
+	$('#historyrevert').click(function () {
 		hideAllActions(true);
 		window.game.historyRevert();
 		return false;
 	});
-	$('#historyredo').click(function() {
+	$('#historyredo').click(function () {
 		hideAllActions(true);
 		window.game.historyRedo();
 		return false;
 	});
-	$('#savegameStart').click(function() {
+	$('#savegameStart').click(function () {
 		hideAllActions(true);
 		window.game.storage.saveGame("start");
 		return false;
 	});
-	$('#savegameConfirm').click(function() {
+	$('#savegameConfirm').click(function () {
 		window.game.storage.saveGame("confirm");
 		return false;
 	});
-	$('#savegameCancel').click(function() {
+	$('#savegameCancel').click(function () {
 		window.game.storage.saveGame("cancel");
 		return false;
 	});
-	$('#loadgame').click(function() {
+	$('#loadgame').click(function () {
 		hideAllActions(true);
 		window.game.storage.loadGame();
 		return false;
 	});
-	$('#cleargame').click(function() {
+	$('#cleargame').click(function () {
 		window.game.storage.clearGame();
 		return false;
 	});
-	$('#optionsaia').change(function() {
+	$('#optionsaia').change(function () {
 		window.game.aiA = this.checked;
 		window.game.nextPlayer(false);
 	});
-	$('#optionsaialevel').change(function() {
+	$('#optionsaialevel').change(function () {
 		window.game.aiAlevel = $(this).find("option:selected").val();
 		window.game.nextPlayer(false);
 	});
-	$('#optionsaib').change(function() {
+	$('#optionsaib').change(function () {
 		window.game.aiB = this.checked;
 		window.game.nextPlayer(false);
 	});
-	$('#optionsaiblevel').change(function() {
+	$('#optionsaiblevel').change(function () {
 		window.game.aiBlevel = $(this).find("option:selected").val();
 		window.game.nextPlayer(false);
 	});
-	
-	$('#aboutlink').click(function() {
+
+	$('#aboutlink').click(function () {
 		$('.about').toggle();
 		return false;
 	});

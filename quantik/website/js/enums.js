@@ -3,9 +3,9 @@
  * based on http://stackoverflow.com/a/4673436
  */
 if (!String.format) {
-	String.format = function(format) {
+	String.format = function (format) {
 		var args = Array.prototype.slice.call(arguments, 1);
-		return format.replace(/{(\d+)(?:\.(\d+))?}/g, function(match, number, intFormat) {
+		return format.replace(/{(\d+)(?:\.(\d+))?}/g, function (match, number, intFormat) {
 			if (args[number] != 'undefined') {
 				if (intFormat != undefined && intFormat.length > 0) {
 					return ('0' + args[number].toString(10)).substr(-intFormat);
@@ -20,7 +20,7 @@ if (!String.format) {
 /**
  * New unique ID for this client, to detect old requests from the same client on the server
  */
-var uuid = (function() {
+var uuid = (function () {
 	/**
 	 * Generates a string to look like a globally unique identifier,
 	 * based on http://stackoverflow.com/a/105074
@@ -35,33 +35,33 @@ var uuid = (function() {
  * Enum for the type of all pieces
  */
 var PieceType = {
-    EMPTY: 0, 
-    WHITE_SQUARE: 1, 
-    BLACK_SQUARE: 2, 
-    WHITE_TRIANGLE: 3, 
-    BLACK_TRIANGLE: 4, 
-    WHITE_CIRCLE: 5, 
-    BLACK_CIRCLE: 6, 
-    WHITE_DIAMOND: 7, 
-    BLACK_DIAMOND: 8
+	EMPTY: 0,
+	WHITE_SQUARE: 1,
+	BLACK_SQUARE: 2,
+	WHITE_TRIANGLE: 3,
+	BLACK_TRIANGLE: 4,
+	WHITE_CIRCLE: 5,
+	BLACK_CIRCLE: 6,
+	WHITE_DIAMOND: 7,
+	BLACK_DIAMOND: 8
 };
 
 /**
  * Enum for the color of a piece
  */
-var PieceColor= {
-    NONE: 0, 
-    WHITE: 1,
-	BLACK: 2 
+var PieceColor = {
+	NONE: 0,
+	WHITE: 1,
+	BLACK: 2
 };
 
 /**
  * Enum for the color of the boarders of the pieces
  */
 var BackgroundColor = {
-    INACTIVE : "null",
-    ACTIVE : "grey",
-    POSSIBLE : "yellow"
+	INACTIVE: "null",
+	ACTIVE: "grey",
+	POSSIBLE: "yellow"
 };
 
 /**
@@ -71,7 +71,7 @@ var BackgroundColor = {
  * Random:  Don't look at the values, just choose a non-empty column (does not ask the server)
  */
 var LevelEnum = {
-	Perfect : "perfect",
-	JustWin : "justwin",
-	Random : "random"
+	Perfect: "perfect",
+	JustWin: "justwin",
+	Random: "random"
 };

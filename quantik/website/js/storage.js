@@ -8,7 +8,7 @@ function Storage(game) {
 /**
  * Returns whether local storage (HTML5) is supported by the browser
  */
-Storage.prototype.isStorageSupported = function() {
+Storage.prototype.isStorageSupported = function () {
 	try {
 		return ('localStorage' in window) && (window['localStorage'] !== null);
 	} catch (e) {
@@ -19,7 +19,7 @@ Storage.prototype.isStorageSupported = function() {
 /**
  * Saves the current game in HTML5 local storage
  */
-Storage.prototype.saveGame = function(action) {
+Storage.prototype.saveGame = function (action) {
 	if (!this.isStorageSupported()) {
 		window.output.showError("Local storage is not supported by your browser");
 		hideAllActions();
@@ -36,8 +36,8 @@ Storage.prototype.saveGame = function(action) {
 
 		var d = new Date();
 		$('#savegameName').val(
-				String.format("{0.4}-{1.2}-{2.2} {3.2}:{4.2}", d.getFullYear(), d.getMonth(), d.getDate(),
-						d.getHours(), d.getMinutes()));
+			String.format("{0.4}-{1.2}-{2.2} {3.2}:{4.2}", d.getFullYear(), d.getMonth(), d.getDate(),
+				d.getHours(), d.getMinutes()));
 		return;
 	} else if (action == "cancel") {
 		// User has canceled the save action
@@ -62,7 +62,7 @@ Storage.prototype.saveGame = function(action) {
 		localStorage["ninemensmorris.games." + idx + ".cols"] = JSON.stringify(this.game.COLS);
 		localStorage["ninemensmorris.games." + idx + ".started"] = JSON.stringify(this.game.started);
 		localStorage["ninemensmorris.games." + idx + ".board"] = JSON.stringify(this.game.board);
-        localStorage["ninemensmorris.games." + idx + ".turn"] = JSON.stringify(this.game.turn);
+		localStorage["ninemensmorris.games." + idx + ".turn"] = JSON.stringify(this.game.turn);
 		localStorage["ninemensmorris.games." + idx + ".showMoveInfos"] = JSON.stringify(this.game.showMoveInfos);
 		localStorage["ninemensmorris.games." + idx + ".history"] = JSON.stringify(this.game.history);
 		localStorage["ninemensmorris.games." + idx + ".historyForward"] = JSON.stringify(this.game.historyForward);
@@ -76,10 +76,10 @@ Storage.prototype.saveGame = function(action) {
 /**
  * Returns the next free idx in the local storage
  */
-Storage.prototype.getFreeIdx = function() {
+Storage.prototype.getFreeIdx = function () {
 	var maxIdx = this.getNumberSavedGames(1);
 
-	for ( var idx = 1; idx <= maxIdx; idx++) {
+	for (var idx = 1; idx <= maxIdx; idx++) {
 		var gameName = localStorage["ninemensmorris.games." + idx + ".name"];
 		if (gameName == undefined || gameName.length == 0) {
 			return idx;
@@ -91,7 +91,7 @@ Storage.prototype.getFreeIdx = function() {
 /**
  * Reads number of saved games in local storage
  */
-Storage.prototype.getNumberSavedGames = function(defaultVal) {
+Storage.prototype.getNumberSavedGames = function (defaultVal) {
 	var savedGamesStr = localStorage["ninemensmorris.nSavedGames"];
 	return savedGamesStr == undefined ? defaultVal : parseInt(savedGamesStr, 10);
 };
@@ -99,7 +99,7 @@ Storage.prototype.getNumberSavedGames = function(defaultVal) {
 /**
  * Really deletes a single game with given index from the local storage
  */
-Storage.prototype.clearSingleGameHandler = function(idx) {
+Storage.prototype.clearSingleGameHandler = function (idx) {
 	var gameName = localStorage["ninemensmorris.games." + idx + ".name"];
 	localStorage["ninemensmorris.games." + idx + ".name"] = "";
 	localStorage["ninemensmorris.games." + idx + ".rows"] = "";
@@ -118,7 +118,7 @@ Storage.prototype.clearSingleGameHandler = function(idx) {
 /**
  * Lists stored games in HTML5 local storage, with onclick function to delete that game
  */
-Storage.prototype.clearGame = function() {
+Storage.prototype.clearGame = function () {
 	if (!this.isStorageSupported()) {
 		window.output.showError("Local storage is not supported by your browser");
 		hideAllActions();
@@ -135,7 +135,7 @@ Storage.prototype.clearGame = function() {
 	var maxIdx = this.getNumberSavedGames(0);
 	var nGames = 0;
 
-	for ( var idx = 1; idx <= maxIdx; idx++) {
+	for (var idx = 1; idx <= maxIdx; idx++) {
 		var gameName = localStorage["ninemensmorris.games." + idx + ".name"];
 		if (gameName == undefined || gameName.length == 0) {
 			continue;
@@ -149,7 +149,7 @@ Storage.prototype.clearGame = function() {
 		window.output.showError("No game saved yet");
 	} else {
 		// Sort list of shown games on GUI
-		$('#cleargameList').children("li").sort(function(a, b) {
+		$('#cleargameList').children("li").sort(function (a, b) {
 			var upA = $(a).text().toUpperCase();
 			var upB = $(b).text().toUpperCase();
 			return (upA < upB) ? -1 : (upA > upB) ? 1 : 0;
@@ -162,7 +162,7 @@ Storage.prototype.clearGame = function() {
 /**
  * Really loads a single game with specified index from the local storage
  */
-Storage.prototype.loadSingleGameHandler = function(idx) {
+Storage.prototype.loadSingleGameHandler = function (idx) {
 	var gameName = localStorage["ninemensmorris.games." + idx + ".name"];
 	// this.game.rows = JSON.parse(localStorage["ninemensmorris.games." + idx + ".rows"]);
 	// this.game.cols = JSON.parse(localStorage["ninemensmorris.games." + idx + ".cols"]);
@@ -181,12 +181,12 @@ Storage.prototype.loadSingleGameHandler = function(idx) {
 	var hist = JSON.parse(localStorage["ninemensmorris.games." + idx + ".history"]);
 	var histRedo = JSON.parse(localStorage["ninemensmorris.games." + idx + ".historyForward"]);
 	this.game.history = [];
-	for ( var i = 0; i < hist.length; ++i) {
+	for (var i = 0; i < hist.length; ++i) {
 		this.game.history.push(new Move(hist[i].source_row, hist[i].source_col, hist[i].target_row, hist[i].target_col, hist[i].eval));
 	}
 	window.output.showHistoryList();
 	this.game.historyForward = [];
-	for ( var i = 0; i < histRedo.length; ++i) {
+	for (var i = 0; i < histRedo.length; ++i) {
 		this.game.historyForward.push(new Move(histRedo[i].source_row, histRedo[i].source_col, histRedo[i].target_row, histRedo[i].target_col, histRedo[i].eval));
 	}
 	window.output.showHistoryRedoList();
@@ -208,7 +208,7 @@ Storage.prototype.loadSingleGameHandler = function(idx) {
 /**
  * Lists stored games in HTML5 local storage, with onclick function to load that game
  */
-Storage.prototype.loadGame = function() {
+Storage.prototype.loadGame = function () {
 	if (!this.isStorageSupported()) {
 		window.output.showError("Local storage is not supported by your browser");
 		hideAllActions();
@@ -224,7 +224,7 @@ Storage.prototype.loadGame = function() {
 	var maxIdx = this.getNumberSavedGames(0);
 	var nGames = 0;
 
-	for ( var idx = 1; idx <= maxIdx; idx++) {
+	for (var idx = 1; idx <= maxIdx; idx++) {
 		var gameName = localStorage["ninemensmorris.games." + idx + ".name"];
 		if (gameName == undefined || gameName.length == 0) {
 			continue;
@@ -237,7 +237,7 @@ Storage.prototype.loadGame = function() {
 	if (maxIdx == 0 || nGames == 0) {
 		window.output.showError("No game saved yet");
 	} else {
-		$('#loadgameList').children("li").sort(function(a, b) {
+		$('#loadgameList').children("li").sort(function (a, b) {
 			var upA = $(a).text().toUpperCase();
 			var upB = $(b).text().toUpperCase();
 			return (upA < upB) ? -1 : (upA > upB) ? 1 : 0;

@@ -327,9 +327,10 @@ var isBetterEval = function(new_eval, eval) {
  */
 var mouseMove = function(e) {
     if (window.game.waitingForMove) return;
-    var node = getNode(e.offsetX, e.offsetY);
+    var node = getSquareInfo(e.offsetX, e.offsetY);
     window.game.mouseOverRow = node.row;
     window.game.mouseOverCol = node.col;
+    window.game.mouseOverType = node.type;
     drawBoard();
 };
 
@@ -338,34 +339,66 @@ var mouseMove = function(e) {
  */
 var mouseClick = function(e) {
     if (window.game.waitingForMove) return;
-    var node = getNode(e.offsetX, e.offsetY);
-    window.game.fieldClicked(node.row, node.col);
+    // var node = getSquareIndex(e.offsetX, e.offsetY);
+    console.log("Clicked x: " + window.game.mouseOverCol + " y: " + window.game.mouseOverRow + " type: " + window.game.mouseOverType);
+    window.game.fieldClicked(window.game.mouseOverRow, window.game.mouseOverCol);
     drawBoard();
 };
 
 /**
+ * checks if a positon in in the bounds of a square
+ */
+function isPositionOverSquare(mouse_x, mouse_y, square_x, square_y)
+{
+    let top = square_y;
+    let bottom = square_y + PIECE_SIZE;
+    let left = square_x;
+    let right = square_x + PIECE_SIZE;
+    return (mouse_x >= left) && (mouse_x <= right) && (mouse_y >= top) && (mouse_y <= bottom)
+}
+
+/**
  * returns the index of the node at the coordinates
  */
-function getNode(x_pos, y_pos) {
-    for (var i = 0; i < window.game.COLS; i++) {
-        for(var j = 0; j < window.game.ROWS; j++){
-            var position = getSquarePosition(j, i);
-            var top = position.y;
-            var bottom = position.y + PIECE_SIZE;
-            var left = position.x;
-            var right = position.x + PIECE_SIZE;
-            if ((x_pos >= left) && (x_pos <= right) && (y_pos >= top) && (y_pos <= bottom))
+function getSquareInfo(x_pos, y_pos) {
+    for (let i = 0; i < window.game.COLS; i++) {
+        for(let j = 0; j < window.game.ROWS; j++){
+
+            let square_position = getSquarePosition(j, i);
+            if (isPositionOverSquare(x_pos, y_pos, square_position.x, square_position.y))
             {
                 return {
                     row: j,
                     col: i,
+                    type: PieceType.EMPTY // not used so far
                 };
             }
         }
     }
+
+    for (let i = 0; i < window.game.ROWS; i++)
+    {
+        if (isPositionOverSquare(x_pos, y_pos, SPARE_BLACKS_X, SPARE_BLACKS_Y + i * PIECE_SIZE)){
+            return {
+                row: -1,
+                col: -1,
+                type: (i + 1) * 2
+            }
+        }
+
+        if (isPositionOverSquare(x_pos, y_pos, SPARE_WHITES_X, SPARE_WHITES_Y + i * PIECE_SIZE)){
+            return {
+                row: -1,
+                col: -1,
+                type: (i + 1) * 2 - 1
+            }
+        }
+    }
+
     return {
         row: -1,
         col: -1,
+        type: PieceType.EMPTY
     };
 }
 
