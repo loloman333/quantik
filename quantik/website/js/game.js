@@ -179,12 +179,12 @@ Game.prototype.initBoard = function () {
         }
         this.board.push(row);
     }
-    this.board = [
-        [PieceType.WHITE_SQUARE, PieceType.EMPTY, PieceType.BLACK_SQUARE, PieceType.EMPTY],
-        [PieceType.EMPTY, PieceType.EMPTY, PieceType.EMPTY, PieceType.EMPTY],
-        [PieceType.WHITE_TRIANGLE, PieceType.EMPTY, PieceType.BLACK_TRIANGLE, PieceType.EMPTY],
-        [PieceType.EMPTY, PieceType.EMPTY, PieceType.EMPTY, PieceType.EMPTY],
-    ]
+    // this.board = [
+    //     [PieceType.WHITE_SQUARE, PieceType.EMPTY, PieceType.BLACK_SQUARE, PieceType.EMPTY],
+    //     [PieceType.EMPTY, PieceType.EMPTY, PieceType.EMPTY, PieceType.EMPTY],
+    //     [PieceType.WHITE_TRIANGLE, PieceType.EMPTY, PieceType.BLACK_TRIANGLE, PieceType.EMPTY],
+    //     [PieceType.EMPTY, PieceType.EMPTY, PieceType.EMPTY, PieceType.EMPTY],
+    // ]
 }
 
 /**
@@ -227,7 +227,7 @@ Game.prototype.isLegalMove = function (move) {
     let counterpart = (piece_color == PieceColor.BLACK ? move.piece_type - 1 : move.piece_type + 1);
 
     for (var row = 0; row < this.ROWS; row++) {
-        for (var col = 0; col < this.COLS - 1; col++) {
+        for (var col = 0; col < this.COLS; col++) {
 
             if (this.board[row][col] != counterpart) continue;
 
@@ -259,6 +259,7 @@ Game.prototype.calcMoves = function () {
     var passivePlayer = activePlayer == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
 
     var moves = [];
+    for (let _ = 0; _ < Object.keys(PieceType).length; _++) moves.push([]);
 
     // TODO: Win Cond
     // for(var col = 0; col < this.cols; col++){
@@ -269,7 +270,7 @@ Game.prototype.calcMoves = function () {
     // }
 
     for (let move of this.allMoves) {
-        if (this.isLegalMove(move)) moves.push(move);
+        if (this.isLegalMove(move)) moves[move.piece_type].push(move);
     }
 
     this.possibleMoves = moves;
@@ -278,16 +279,14 @@ Game.prototype.calcMoves = function () {
 /**
  * Takes the move in this.activeMove
  */
-Game.prototype.takeMove = function (isNotRedoMove = true) {
-
-    console.log(this.activeMove)
-
+Game.prototype.takeMove = function (isRedoMove = false) {
     this.started = true;
-    var move = null;
-    if (!isNotRedoMove) {
+    let move = null;
+    if (! isRedoMove) {
         move = this.activeMove;
     }
     else {
+        // TODO: redomove
         for (const possibleMove of this.possibleMoves) {
             if ((this.activeMove.source_row == possibleMove.source_row) && (this.activeMove.source_col == possibleMove.source_col) &&
                 (this.activeMove.target_row == possibleMove.target_row) && (this.activeMove.target_col == possibleMove.target_col)) {
@@ -299,11 +298,12 @@ Game.prototype.takeMove = function (isNotRedoMove = true) {
         }
     }
 
-    this.board[move.target_col][move.target_row] = this.turn;
-    this.board[move.source_col][move.source_row] = PieceColor.NONE;
+    this.board[move.target_row][move.target_col] = move.piece_type;
+    this.pieceCounter[PieceType.EMPTY]--;
+    this.pieceCounter[move.piece_type]++;
 
     this.history.push(move);
-    if (isNotRedoMove) this.historyForward = [];
+    if (isRedoMove) this.historyForward = [];
 
     this.nextPlayer();
 }
@@ -333,7 +333,8 @@ Game.prototype.revertMove = function () {
  */
 Game.prototype.fieldClicked = function (row, col, type) {
     if (row == -1){
-        this.activeMove.piece_type = type;
+        if (this.activeMove.piece_type == type) this.activeMove.piece_type = PieceType.EMPTY;
+        else if (this.turn == getPieceColor(type) && this.pieceCounter[type] < 2) this.activeMove.piece_type = type;
     } else {
         if (this.activeMove.piece_type != PieceType.EMPTY){
             this.activeMove.target_row = this.mouseOverRow;
@@ -400,20 +401,12 @@ Game.prototype.moveRecommender = function () {
  */
 Game.prototype.nextPlayer = function (advance = true) {
     if (advance) {
-        if (this.turn == NodeColor.WHITE) {
-            this.turn = NodeColor.BLACK;
-        } else {
-            this.turn = NodeColor.WHITE;
-        }
+        this.turn = this.turn == PieceColor.BLACK ? PieceColor.WHITE : PieceColor.BLACK
         this.calcMoves();
     }
-    if ((this.aiA && this.turn == NodeColor.WHITE) || (this.aiB && this.turn == NodeColor.BLACK)) {
-        // AI on the move
-        this.waitingForMove = true;
-    }
-    else {
-        this.waitingForMove = false;
-    }
+
+    // AI to move ?
+    this.waitingForMove = (this.aiA && this.turn == PieceColor.WHITE) || (this.aiB && this.turn == PieceColor.BLACK);
 
     this.recommendedMoveIndex = -1;
     this.activeMove = new Move(-1, -1, PieceType.EMPTY, -1);

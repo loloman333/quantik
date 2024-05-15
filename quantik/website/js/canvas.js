@@ -127,15 +127,37 @@ var drawEval = function(position, eval) {
     window.context.fillText(eval, x, y);
 };
 
+function getCornerRadii(first_index, second_index = false){
+    if (second_index === false){
+        return [
+            (first_index == 0) ? 10 : 0,
+            (first_index == 0) ? 10 : 0,
+            (first_index == 3) ? 10 : 0,
+            (first_index == 3) ? 10 : 0,
+        ]
+    }
+
+    return [
+        (first_index == 0 && second_index == 0) ? 10 : 0,
+        (first_index == 0 && second_index == window.game.COLS - 1) ? 10 : 0,
+        (first_index == window.game.ROWS - 1 && second_index == window.game.COLS - 1) ? 10 : 0,
+        (first_index == window.game.ROWS - 1 && second_index == 0) ? 10 : 0,
+    ]
+}
+
 /**
  * Draw  the board on the canvas
  */
 var drawBoard = function() {
-    var activePlayer = window.game.turn;
 
-    console.log("drew")
-    
-    window.context.clearRect(0, 0, window.canvas.width, window.canvas.height); // TODO: needed?
+    // Clear old
+    // window.context.clearRect(0, 0, window.canvas.width, window.canvas.height); // TODO: needed?
+
+    let activeMove = window.game.activeMove;
+
+    let mouseOverType = window.game.mouseOverType;
+    let mouseOverRow= window.game.mouseOverRow;
+    let mouseOverCol = window.game.mouseOverCol;
 
     // Background
     window.context.fillStyle = "#bbada0";
@@ -163,23 +185,18 @@ var drawBoard = function() {
         
         let pos = getSpareSquarePosition(val);
         let image = window.piece_images[val];
-        let _index = Math.ceil(val - (val / 2)) - 1;
-        let radii = [
-            (_index == 0) ? 10 : 0,
-            (_index == 0) ? 10 : 0,
-            (_index == 3) ? 10 : 0,
-            (_index == 3) ? 10 : 0,
-        ]
+        let radii = getCornerRadii(Math.ceil(val - (val / 2)) - 1);
+        
         let color = BackgroundColor.INACTIVE;
-        if (window.game.activeMove.piece_type == val){
+        if (activeMove.piece_type == val){
             color = BackgroundColor.ACTIVE;
-        } else if (window.game.activeMove.piece_type == PieceType.EMPTY && window.game.turn == getPieceColor(val)){
-            if (window.game.mouseOverType == val) color = BackgroundColor.ACTIVE;
+        } else if (activeMove.piece_type == PieceType.EMPTY && window.game.turn == getPieceColor(val) && window.game.pieceCounter[val] < 2){
+            if (mouseOverType == val) color = BackgroundColor.ACTIVE;
             else color = BackgroundColor.POSSIBLE;
         }
 
         drawSquare(image, pos.x, pos.y, color, radii);
-        drawEval(pos, "x2");
+        drawEval(pos, "x" + (2 - window.game.pieceCounter[val]));
     }
 
     // Board
@@ -187,16 +204,23 @@ var drawBoard = function() {
         for(let j = 0; j < window.game.COLS; j++){
             let position = getSquarePosition(i, j);
             let image = window.piece_images[window.game.board[i][j]];
-            let radii = [
-                (i == 0 && j == 0) ? 10 : 0,
-                (i == 0 && j == window.game.COLS - 1) ? 10 : 0,
-                (i == window.game.ROWS - 1 && j == window.game.COLS - 1) ? 10 : 0,
-                (i == window.game.ROWS - 1 && j == 0) ? 10 : 0,
-            ]
+            let radii = getCornerRadii(i, j);
             drawSquare(image, position.x, position.y, BackgroundColor.INACTIVE, radii);
         }
     }
 
+    // Possible Moves
+    for (let move of window.game.possibleMoves[activeMove.piece_type])
+    {   
+        let isMouseOver = (mouseOverRow == move.target_row) && (mouseOverCol == move.target_col);
+
+        let position = getSquarePosition(move.target_row, move.target_col);
+        let image = isMouseOver ? window.piece_images[activeMove.piece_type] : window.piece_images[PieceType.EMPTY];
+        let color = isMouseOver ?  BackgroundColor.ACTIVE : BackgroundColor.POSSIBLE;
+        let radii = getCornerRadii(move.target_row, move.target_col);
+
+        drawSquare(image, position.x, position.y, color, radii);
+    }
 };
 
 /**
