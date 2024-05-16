@@ -55,6 +55,17 @@ var PieceColor = {
 	BLACK: 2
 };
 
+/**
+ * Enum for the color of a piece
+ */
+var PieceShape = {
+	NONE: 0,
+	SQUARE: 1,
+	TRIANGLE: 2,
+	CIRCLE: 3,
+	DIAMOND: 4
+};
+
 function getPieceColor(piece_type){
 	if (piece_type == PieceType.EMPTY) return PieceColor.NONE;
 	return piece_type % 2 == 1 ? 1 : 2;

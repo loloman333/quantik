@@ -395,15 +395,16 @@ bool State::is_winning_state()
         std::set<PieceShape> shapes_in_col;
         for (char j = 0; j < 4; j++)
         {
-            PieceShape shape = PieceManager::get_piece_shape(this->board[i][j]);
-            if (shape != PieceShape::NONE)
-            {
-                shapes_in_row.insert(shape);
-                shapes_in_col.insert(shape);
-            }
+            PieceShape shape_1 = PieceManager::get_piece_shape(this->board[i][j]);
+            PieceShape shape_2 = PieceManager::get_piece_shape(this->board[j][i]);
+
+            if (shape_1 != PieceShape::NONE) shapes_in_row.insert(shape_1);
+            if (shape_2 != PieceShape::NONE) shapes_in_row.insert(shape_2);
         }
+
         if (shapes_in_row.size() == 4)
             return true;
+            
         if (shapes_in_col.size() == 4)
             return true;
     }

@@ -235,13 +235,12 @@ Game.prototype.isLegalMove = function (move) {
             if (row == move.target_row) return false;
 
             // Col
-            if (col == move.target_col) return false;        
+            if (col == move.target_col) return false;
         }
     }
 
     // Sector
-    for (let square of this.getBoardSector(move.target_row, move.target_col))
-    {
+    for (let square of this.getBoardSector(move.target_row, move.target_col)) {
         if (square == counterpart) return false;
     }
 
@@ -249,6 +248,51 @@ Game.prototype.isLegalMove = function (move) {
     // if (is_winning_state()) return false; // TODO
 
     return true;
+}
+
+/**
+ * Takes a piece and returns its shape
+ */
+Game.prototype.getPieceShape = function (piece) {
+    return Math.ceil(piece / 2);
+}
+
+/**
+ * Checks if one player has already won
+ */
+Game.prototype.isFinished = function () {
+    for (let row = 0; row < this.ROWS; row++) {
+        let shapes_in_row = new Set();
+        let shapes_in_col = new Set();
+        
+        for (let col = 0; col < this.COLS; col++) {
+
+            let shape_1 = this.getPieceShape(this.board[row][col]);
+            let shape_2 = this.getPieceShape(this.board[col][row]);
+
+            if (shape_1 != PieceShape.NONE) shapes_in_row.add(shape_1);
+            if (shape_2 != PieceShape.NONE) shapes_in_col.add(shape_2);
+        }
+        
+        if (shapes_in_col.size == 4) return true;
+        if (shapes_in_row.size == 4) return true;
+    }
+
+    let sectors = [this.getBoardSector(0, 0), this.getBoardSector(3, 0), this.getBoardSector(0, 3), this.getBoardSector(3, 3)]
+    for (let sector of sectors) {
+        let shapes_in_sector = new Set();
+
+        for (let piece of sector) {
+
+            let shape = this.getPieceShape(piece);
+            if (shape != PieceShape.NONE) shapes_in_sector.add(shape);
+        }
+
+        if (shapes_in_sector.size == 4)
+            return true;
+    }
+
+    return false;
 }
 
 /**
@@ -261,13 +305,11 @@ Game.prototype.calcMoves = function () {
     var moves = [];
     for (let _ = 0; _ < Object.keys(PieceType).length; _++) moves.push([]);
 
-    // TODO: Win Cond
-    // for(var col = 0; col < this.cols; col++){
-    //   if(this.board[col][0] == NodeColor.WHITE || this.board[col][this.rows - 1] == NodeColor.BLACK){
-    //     this.possibleMoves = moves;
-    //     return;
-    //   }
-    // }
+    // Win Cond
+    if (this.isFinished()) {
+        this.possibleMoves = moves;
+        return;
+    }
 
     for (let move of this.allMoves) {
         if (this.isLegalMove(move)) moves[move.piece_type].push(move);
@@ -282,7 +324,7 @@ Game.prototype.calcMoves = function () {
 Game.prototype.takeMove = function (isRedoMove = false) {
     this.started = true;
     let move = null;
-    if (! isRedoMove) {
+    if (!isRedoMove) {
         move = this.activeMove;
     }
     else {
@@ -332,14 +374,14 @@ Game.prototype.revertMove = function () {
  * Reacts to a square being clicked. Expands this.activeMove, takes the move if it is a full possible move
  */
 Game.prototype.fieldClicked = function (row, col, type) {
-    if (row == -1){
+    if (row == -1) {
         if (this.activeMove.piece_type == type) this.activeMove.piece_type = PieceType.EMPTY;
         else if (this.turn == getPieceColor(type) && this.pieceCounter[type] < 2) this.activeMove.piece_type = type;
     } else {
-        if (this.activeMove.piece_type != PieceType.EMPTY){
+        if (this.activeMove.piece_type != PieceType.EMPTY) {
             this.activeMove.target_row = this.mouseOverRow;
             this.activeMove.target_col = this.mouseOverCol;
-        } 
+        }
     }
 
     if (this.isLegalMove(this.activeMove)) {
