@@ -55,7 +55,7 @@ Output.prototype.showTurn = function () {
 				String.format("Player {0} please select a piece to place!", this.game.turn));
 		} else {
 			$('#gameinfo').html(
-				String.format("Player {0} please select a square to move to!", this.game.turn));
+				String.format("Player {0} please select a square!", this.game.turn));
 		}
 	}
 };

@@ -245,7 +245,7 @@ Game.prototype.isLegalMove = function (move) {
     }
 
     // Try to play on a final board
-    // if (is_winning_state()) return false; // TODO
+    if (this.isFinished()) return false;
 
     return true;
 }
@@ -264,7 +264,7 @@ Game.prototype.isFinished = function () {
     for (let row = 0; row < this.ROWS; row++) {
         let shapes_in_row = new Set();
         let shapes_in_col = new Set();
-        
+
         for (let col = 0; col < this.COLS; col++) {
 
             let shape_1 = this.getPieceShape(this.board[row][col]);
@@ -273,7 +273,7 @@ Game.prototype.isFinished = function () {
             if (shape_1 != PieceShape.NONE) shapes_in_row.add(shape_1);
             if (shape_2 != PieceShape.NONE) shapes_in_col.add(shape_2);
         }
-        
+
         if (shapes_in_col.size == 4) return true;
         if (shapes_in_row.size == 4) return true;
     }
@@ -373,14 +373,14 @@ Game.prototype.revertMove = function () {
 /**
  * Reacts to a square being clicked. Expands this.activeMove, takes the move if it is a full possible move
  */
-Game.prototype.fieldClicked = function (row, col, type) {
+Game.prototype.squareClicked = function (row, col, type) {
     if (row == -1) {
         if (this.activeMove.piece_type == type) this.activeMove.piece_type = PieceType.EMPTY;
         else if (this.turn == getPieceColor(type) && this.pieceCounter[type] < 2) this.activeMove.piece_type = type;
     } else {
         if (this.activeMove.piece_type != PieceType.EMPTY) {
-            this.activeMove.target_row = this.mouseOverRow;
-            this.activeMove.target_col = this.mouseOverCol;
+            this.activeMove.target_row = row;
+            this.activeMove.target_col = col;
         }
     }
 
@@ -390,21 +390,6 @@ Game.prototype.fieldClicked = function (row, col, type) {
         window.output.showInfo("");
     }
     window.output.showTurn();
-}
-/**
- * Returns if the move is a legal move
- */
-Game.prototype.isMouseOverLegalMove = function (row, col) {
-    var newMove = new Move(this.activeMove.source_row, this.activeMove.source_col, this.activeMove.target_row, this.activeMove.target_col)
-    if (newMove.source_row == -1) {
-        newMove.source_row = row;
-        newMove.source_col = col;
-    }
-    else {
-        newMove.target_row = row;
-        newMove.target_col = col;
-    }
-    return (this.isLegalMove(newMove))
 }
 
 /**
@@ -463,7 +448,7 @@ Game.prototype.nextPlayer = function (advance = true) {
  * lets the AI take a move
  */
 Game.prototype.takeAiMove = function () {
-    var aiLevel = this.turn == NodeColor.WHITE ? this.aiAlevel : this.aiBlevel;
+    var aiLevel = this.turn == PieceColor.WHITE ? this.aiAlevel : this.aiBlevel;
     if (aiLevel == LevelEnum.Random) {
         var move = this.possibleMoves[Math.floor(Math.random() * this.possibleMoves.length)]
     }
@@ -480,44 +465,54 @@ Game.prototype.takeAiMove = function () {
 /**
  * returns the best move (or a random winning move is just_win = true)
  */
-Game.prototype.getBestMove = function (just_win) {
-    var winMoves = [];
-    var loseMoves = [];
-    var noEval = [];
-    var best_winning_eval = 255
-    var best_loosing_eval = 0
-    for (move of this.possibleMoves) {
-        if (move.eval == -1) {
-            noEval.push(move);
-        }
-        if (move.eval % 2 == 1) {
-            if (move.eval <= best_winning_eval) {
-                best_winning_eval = move.eval;
+Game.prototype.getBestMove = function (piece_type = false, just_win = false) {
+    let winMoves = [];
+    let loseMoves = [];
+    let noEval = [];
+
+    let best_winning_eval = 17
+    let best_loosing_eval = 0
+
+    for (let moves of this.possibleMoves) {
+        for (let move of moves) {
+
+            if (piece_type !== false && move.piece_type != piece_type) continue;
+
+            if (move.eval == -1) {
+                noEval.push(move);
             }
-            winMoves.push(move);
-        }
-        else {
-            if (move.eval >= best_loosing_eval) {
-                best_loosing_eval = move.eval;
+
+            if (move.eval % 2 == 1) {
+                if (move.eval <= best_winning_eval) {
+                    best_winning_eval = move.eval;
+                }
+                winMoves.push(move);
             }
-            loseMoves.push(move);
+            else {
+                if (move.eval >= best_loosing_eval) {
+                    best_loosing_eval = move.eval;
+                }
+                loseMoves.push(move);
+            }
         }
     }
+
     if (winMoves.length > 0) {
         if (just_win) {
             return winMoves[Math.floor(Math.random() * winMoves.length)];
         }
-        for (move of winMoves) {
+        for (let move of winMoves) {
             if (move.eval == best_winning_eval) {
                 return move
             }
         }
     }
-    for (move of loseMoves) {
+    for (let move of loseMoves) {
         if (move.eval == best_loosing_eval) {
             return move;
         }
     }
+    
     return noEval[0];
 };
 

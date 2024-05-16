@@ -14,35 +14,9 @@ const BOARD_Y = PIECE_SIZE / 4;
 
 
 /**
- * Reset and resize board, if sizes changed
- */
-function resizeBoard(){
-    // window.canvas.height = PIECE_SIZE * rows;
-    // window.canvas.width = PIECE_SIZE * cols;
-    drawBoard();
-}
-
-/**
- * Draws all pawns
- */
-// function drawPawns(){
-//     var cols = document.getElementById("cols").value;
-//     var rows = document.getElementById("rows").value;
-//     for(var i = 0; i < cols; i++){
-//         drawPawn(white_pawn, PIECE_SIZE * i, (rows - 1) * PIECE_SIZE, "null");
-//     }
-//     for(var i = 0; i < cols; i++){
-//         drawPawn(black_pawn, PIECE_SIZE * i, 0, "null");
-//     }
-// }
-
-/**
- * Initializes all pawns (should only be called once)
+ * Initializes all pieces (should only be called once)
  */
 function initPieces(){
-    // var cols = document.getElementById("cols").value;
-    // var rows = document.getElementById("rows").value;
-
     window.piece_images = {};
 
     window.piece_images[PieceType.EMPTY] = new Image();
@@ -89,14 +63,11 @@ var drawSquare = function(image, x, y, color, radii = 0, borders = true) {
  * Draw one classification at position
  */
 var drawEval = function(position, eval) {
-    let x = position.x + PIECE_SIZE * 0.5;
-    let y = position.y + PIECE_SIZE * 0.55;
 
-    if (eval.includes("x"))
-    {
-        window.context.fillStyle = "grey";
-    }   
-    else if (window.game.recommendedMoveIndex !== -1)
+    let x = position.x + PIECE_SIZE * 0.15;
+    let y = position.y + PIECE_SIZE * 0.25;
+
+    if (window.game.recommendedMoveIndex !== -1)
     {
         eval = "!";
         window.context.fillStyle = "red";
@@ -196,7 +167,18 @@ var drawBoard = function() {
         }
 
         drawSquare(image, pos.x, pos.y, color, radii);
-        drawEval(pos, "x" + (2 - window.game.pieceCounter[val]));
+
+        window.context.fillStyle = "grey";
+        window.context.textAlign = "center";
+        window.context.font = "bold 16px Arial";
+        window.context.fillText(
+            "x" + (2 - window.game.pieceCounter[val]), 
+            pos.x + PIECE_SIZE * 0.5, 
+            pos.y + PIECE_SIZE * 0.55
+        );
+
+        let best_move_with_piece = window.game.getBestMove(val);
+        if (best_move_with_piece !== undefined) drawEval(pos, best_move_with_piece.eval)
     }
 
     // Board
@@ -220,6 +202,7 @@ var drawBoard = function() {
         let radii = getCornerRadii(move.target_row, move.target_col);
 
         drawSquare(image, position.x, position.y, color, radii);
+        drawEval(position, move.eval)
     }
 };
 
@@ -324,7 +307,7 @@ var mouseMove = function(e) {
  */
 var mouseClick = function(e) {
     if (window.game.waitingForMove) return;
-    window.game.fieldClicked(window.game.mouseOverRow, window.game.mouseOverCol, window.game.mouseOverType);
+    window.game.squareClicked(window.game.mouseOverRow, window.game.mouseOverCol, window.game.mouseOverType);
     drawBoard();
 };
 

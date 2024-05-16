@@ -63,7 +63,6 @@ $(document).ready(function () {
 		window.game.aiAlevel = $('#optionsaialevel').find("option:selected").val();
 		window.game.aiBlevel = $('#optionsaiblevel').find("option:selected").val();
 		window.game.nextPlayer(false);
-		resizeBoard();
 		return false;
 	});
 	$('#togglemoveinfos').click(function () {
