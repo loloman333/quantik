@@ -22,28 +22,28 @@ function initPieces(){
     window.piece_images[PieceType.EMPTY] = new Image();
 
     window.piece_images[PieceType.WHITE_SQUARE] = new Image();
-    window.piece_images[PieceType.WHITE_SQUARE].src = "images/white_square.png";
+    window.piece_images[PieceType.WHITE_SQUARE].src = "/static/images/white_square.png";
 
     window.piece_images[PieceType.WHITE_CIRCLE] = new Image();
-    window.piece_images[PieceType.WHITE_CIRCLE].src = "images/white_circle.png";
+    window.piece_images[PieceType.WHITE_CIRCLE].src = "/static/images/white_circle.png";
 
     window.piece_images[PieceType.WHITE_TRIANGLE] = new Image();
-    window.piece_images[PieceType.WHITE_TRIANGLE].src = "images/white_triangle.png";
+    window.piece_images[PieceType.WHITE_TRIANGLE].src = "/static/images/white_triangle.png";
 
     window.piece_images[PieceType.WHITE_DIAMOND] = new Image();
-    window.piece_images[PieceType.WHITE_DIAMOND].src = "images/white_diamond.png";
+    window.piece_images[PieceType.WHITE_DIAMOND].src = "/static/images/white_diamond.png";
 
     window.piece_images[PieceType.BLACK_SQUARE] = new Image();
-    window.piece_images[PieceType.BLACK_SQUARE].src = "images/black_square.png";
+    window.piece_images[PieceType.BLACK_SQUARE].src = "/static/images/black_square.png";
 
     window.piece_images[PieceType.BLACK_CIRCLE] = new Image();
-    window.piece_images[PieceType.BLACK_CIRCLE].src = "images/black_circle.png";
+    window.piece_images[PieceType.BLACK_CIRCLE].src = "/static/images/black_circle.png";
 
     window.piece_images[PieceType.BLACK_TRIANGLE] = new Image();
-    window.piece_images[PieceType.BLACK_TRIANGLE].src = "images/black_triangle.png";
+    window.piece_images[PieceType.BLACK_TRIANGLE].src = "/static/images/black_triangle.png";
 
     window.piece_images[PieceType.BLACK_DIAMOND] = new Image();
-    window.piece_images[PieceType.BLACK_DIAMOND].src = "images/black_diamond.png";
+    window.piece_images[PieceType.BLACK_DIAMOND].src = "/static/images/black_diamond.png";
 }
 
 /**

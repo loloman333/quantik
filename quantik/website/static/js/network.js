@@ -3,7 +3,7 @@
  */
 Network = function (game, context) {
 	this.game = game;
-	// const data = { username: "example" };
+	const data = { username: "example" };
 	// fetch('http://localhost:5000', {
 	// 	method: 'POST', 
 	// 	headers: {
@@ -21,7 +21,7 @@ Network = function (game, context) {
  */
 Network.prototype.requestMoveInfo = function () {
 	window.lastRequest = new Date().getTime();
-	$.post('/moveinfo', {
+	$.post('http://127.0.0.1:5000/moveinfo', {
 		board: this.game.encode(this.game.board),
 		// rows: this.game.rows,
 		// cols: this.game.cols,
@@ -55,5 +55,7 @@ Network.prototype.requestMoveInfo = function () {
 			}
 		}, this)).fail($.proxy(function (jqXHR, textStatus, errorThrown) {
 			window.output.showError(String.format("Request failed, no network?"));
+			// console.error(errorThrown)
+			// console.error(textStatus)
 		}, this));
 };
