@@ -546,12 +546,12 @@ Game.prototype.historyRedo = function () {
 /** TODO: check if correct order traversing
  * Encodes the board into an integer representing the state
  */
-Game.prototype.encode = function (state) {
+Game.prototype.encode = function (board = this.board) {
     let enc = 0;
     let mult = 1;
-    for (let i = this.ROWS - 1; i <= 0; i--) {
-        for (let j = this.COLS - 1; j <= 0; j--) {
-            enc += this.board[i][j] * mult;
+    for (let i = this.ROWS - 1; i >= 0; i--) {
+        for (let j = this.COLS - 1; j >= 0; j--) {
+            enc += board[i][j] * mult;
             mult *= 9;
         }
     }

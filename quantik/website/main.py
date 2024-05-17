@@ -6,7 +6,8 @@ import mmap
 import os
 
 app = Flask(__name__)
-CORS(app)
+# CORS(app, resources={r"/moveinfo": {"origins": "http://localhost:5000"}})
+# CORS(app)
 
 @app.route("/")
 def index():
@@ -15,20 +16,13 @@ def index():
 @app.route("/moveinfo", methods=['GET', 'POST'])
 def hello_world():
     if request.method == 'POST':
-        data = json.loads(request.data)
-        states = data['states']
-        timestamp = data['timestamp']
 
-        moveInfos = []
-        
         response = {}
+                
+        response['timestamp'] = request.form.get('timestamp')
+        response['code'] = getCodeForState(int(request.form.get('encoding')))
         response['error'] = ''
-        response['timestamp'] = timestamp
         
-        for state in states:
-            moveInfos.append(getCodeForState(state))
-        
-        response['moveInfos'] = moveInfos
         return jsonify(response)
     else:
         return False
@@ -36,7 +30,7 @@ def hello_world():
 def getCodeForState(encoding):
     state = decode(encoding)
     level = 16 - sum(_.count(0) for _ in state)
-    filename = f'level{level}.qtk'
+    filename = f'../../data/level{level}.qtk'
     
     with open(filename, 'rb') as file:
         # file = mmap.mmap()

@@ -21,14 +21,14 @@ Network = function (game, context) {
  */
 Network.prototype.requestMoveInfo = function () {
 	window.lastRequest = new Date().getTime();
-	$.post('http://127.0.0.1:5000/moveinfo', {
-		board: this.game.encode(this.game.board),
-		// rows: this.game.rows,
-		// cols: this.game.cols,
+	console.log("ahaj")
+	$.post('/moveinfo', {
+		encoding: this.game.encode(),
 		timestamp: window.lastRequest,
-		//uuid: window.uuid
 	}).done(
 		$.proxy(function (data, textStatus, jqXHR) {
+			console.log("return")
+			
 			// Check if response belongs to last request, otherwise don't show it
 			if (data.timestamp == window.lastRequest) {
 				if (data.error) {
@@ -41,21 +41,22 @@ Network.prototype.requestMoveInfo = function () {
 							this.requestMoveInfo();
 						}, this)));
 				} else {
-					var i = 0;
-					$.each(data.moveInfos, $.proxy(function (index, value) {
-						this.game.possibleMoves[index].eval = value;
-					}, this));
 
-					if (window.game.waitingForMove) {
-						window.game.takeAiMove();
-					} else {
-						drawBoard();
-					}
+					console.log("moveinfo", window.lastRequest, data.code)
+
+					// var i = 0;
+					// $.each(data.moveInfos, $.proxy(function (index, value) {
+					// 	this.game.possibleMoves[index].eval = value;
+					// }, this));
+
+					// if (window.game.waitingForMove) {
+					// 	window.game.takeAiMove();
+					// } else {
+					// 	drawBoard();
+					// }
 				}
 			}
 		}, this)).fail($.proxy(function (jqXHR, textStatus, errorThrown) {
 			window.output.showError(String.format("Request failed, no network?"));
-			// console.error(errorThrown)
-			// console.error(textStatus)
 		}, this));
 };
