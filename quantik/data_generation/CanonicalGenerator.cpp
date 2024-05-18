@@ -12,55 +12,6 @@ string get_state_map_str(state_map& map)
     return ss.str();
 }
 
-void CanonicalGenerator::add_mirror_states(state_map& states)
-{
-    state_map newStates;
-
-    for (auto& pair : states)
-    {
-        State newState = pair.second.mirror();
-        newStates.emplace(newState.encode(), newState);
-    }
-
-    states.insert(newStates.begin(), newStates.end());
-}
-
-void CanonicalGenerator::add_rotate_states(state_map& states)
-{
-    state_map newStates;
-
-    for (auto& pair : states)
-    {
-        State newState90 = pair.second.rotate_90();
-        State newState180 = pair.second.rotate_180();
-        State newState270 = pair.second.rotate_270();
-
-        newStates.emplace(newState90.encode(), newState90);
-        newStates.emplace(newState180.encode(), newState180);
-        newStates.emplace(newState270.encode(), newState270);
-    }
-
-    states.insert(newStates.begin(), newStates.end());
-}
-
-void CanonicalGenerator::add_swap_cols_states(state_map& states)
-{
-    state_map newStates;
-
-    for (auto& pair : states)
-    {
-        State newStateFirst = pair.second.swap_cols_0_1();
-        State newStateSecond = pair.second.swap_cols_2_3();
-        State newStateBoth = pair.second.swap_cols_both();
-
-        newStates.emplace(newStateFirst.encode(), newStateFirst);
-        newStates.emplace(newStateSecond.encode(), newStateSecond);
-        newStates.emplace(newStateBoth.encode(), newStateBoth);
-    }
-
-    states.insert(newStates.begin(), newStates.end());
-}
-
 void CanonicalGenerator::add_transformation_states(state_map& states, State (State::*transformation)())
 {
     state_map newStates;
@@ -72,23 +23,6 @@ void CanonicalGenerator::add_transformation_states(state_map& states, State (Sta
     states.insert(newStates.begin(), newStates.end());
 }
 
-void CanonicalGenerator::add_swap_rows_states(state_map& states)
-{
-    state_map newStates;
-
-    for (auto& pair : states)
-    {
-        State newStateFirst = pair.second.swap_rows_0_1();
-        State newStateSecond = pair.second.swap_rows_2_3();
-        State newStateBoth = pair.second.swap_rows_both();
-
-        newStates.emplace(newStateFirst.encode(), newStateFirst);
-        newStates.emplace(newStateSecond.encode(), newStateSecond);
-        newStates.emplace(newStateBoth.encode(), newStateBoth);
-    }
-
-    states.insert(newStates.begin(), newStates.end());
-}
 
 State CanonicalGenerator::compute_canonical(State& state)
 {

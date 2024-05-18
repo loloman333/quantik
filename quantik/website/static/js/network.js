@@ -23,7 +23,7 @@ Network.prototype.requestMoveInfo = function () {
 	window.lastRequest = new Date().getTime();
 	console.log("ahaj")
 	$.post('/moveinfo', {
-		encoding: this.game.encode(),
+		encoding: window.game.encode(compute_canonical(window.game.board)),
 		timestamp: window.lastRequest,
 	}).done(
 		$.proxy(function (data, textStatus, jqXHR) {
