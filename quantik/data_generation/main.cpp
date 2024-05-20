@@ -93,6 +93,41 @@ win_code compute_code(map<encoding, win_code>& children)
     return (best_child_code == DRAW_CODE) ? DRAW_CODE : best_child_code + 1;
 }
 
+// win_code compute_code(map<encoding, win_code>& children)
+// {
+//     win_code best_child_code = UNDEFINED_CODE;
+//     for (auto& child : children) 
+//     {
+//         win_code child_code = child.second;
+//         assert(child_code != UNDEFINED_CODE);
+
+//         // Still undefined
+//         if (best_child_code == UNDEFINED_CODE) 
+//         {
+//             best_child_code = child_code;
+//         }
+//         // Draw code
+//         else if (child_code == DRAW_CODE)
+//         { 
+//             if (best_child_code % 2 == 0) best_child_code = DRAW_CODE;
+//         }
+//         // 
+//         else if (child_code % 2 == 0)
+//         {
+//             if (best_child_code % 2 == 1) best_child_code = child_code;
+//             else if (child_code > best_child_code) best_child_code = child_code;
+//         }
+//         // 
+//         else
+//         { 
+//             if (best_child_code % 2 == 1 && child_code < best_child_code) best_child_code = child_code;
+//         }
+//     }
+
+//     assert(best_child_code != UNDEFINED_CODE); 
+//     return (best_child_code == DRAW_CODE) ? DRAW_CODE : best_child_code + 1;
+// }
+
 bool generate_codes(char max_depth)
 {
     DBGMSG(DBG_COMPUTE_CODES, "Beginning to compute codes...\n");

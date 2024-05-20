@@ -4,13 +4,6 @@
 Network = function (game, context) {
 	this.game = game;
 	const data = { username: "example" };
-	// fetch('http://localhost:5000', {
-	// 	method: 'POST', 
-	// 	headers: {
-	// 		"Content-Type": "application/json",
-	// 	},
-	// 	body: JSON.stringify(data),
-	// }).then(response => response.json()).then(text => console.log(text))
 };
 
 /**
@@ -21,13 +14,23 @@ Network = function (game, context) {
  */
 Network.prototype.requestMoveInfo = function () {
 	window.lastRequest = new Date().getTime();
-	console.log("ahaj")
+	
+	let following_encodings = [];
+	for (let moves of window.game.possibleMoves){
+		let encodings = []
+		for (let move of moves) {
+			let new_board = window.game.board.map((arr) => arr.slice());
+			new_board[move.target_row][move.target_col] = move.piece_type;
+			encodings.push(window.game.encode(compute_canonical(new_board)));
+		}
+		following_encodings.push(encodings);
+	}
+
 	$.post('/moveinfo', {
-		encoding: window.game.encode(compute_canonical(window.game.board)),
+		'encodings[]': following_encodings,
 		timestamp: window.lastRequest,
 	}).done(
 		$.proxy(function (data, textStatus, jqXHR) {
-			console.log("return")
 			
 			// Check if response belongs to last request, otherwise don't show it
 			if (data.timestamp == window.lastRequest) {
@@ -42,18 +45,18 @@ Network.prototype.requestMoveInfo = function () {
 						}, this)));
 				} else {
 
-					console.log("moveinfo", window.lastRequest, data.code)
 
-					// var i = 0;
-					// $.each(data.moveInfos, $.proxy(function (index, value) {
-					// 	this.game.possibleMoves[index].eval = value;
-					// }, this));
+					for (let i = 0; i < window.game.possibleMoves.length; i++){
+						for (let j = 0; j < window.game.possibleMoves[i].length; j++) {
+							window.game.possibleMoves[i][j].eval = data.codes[i][j] + 1;
+						}
+					}
 
-					// if (window.game.waitingForMove) {
-					// 	window.game.takeAiMove();
-					// } else {
-					// 	drawBoard();
-					// }
+					if (window.game.waitingForMove) {
+						window.game.takeAiMove();
+					} else {
+						drawBoard();
+					}
 				}
 			}
 		}, this)).fail($.proxy(function (jqXHR, textStatus, errorThrown) {

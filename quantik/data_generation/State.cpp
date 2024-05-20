@@ -399,7 +399,7 @@ bool State::is_winning_state()
             PieceShape shape_2 = PieceManager::get_piece_shape(this->board[j][i]);
 
             if (shape_1 != PieceShape::NONE) shapes_in_row.insert(shape_1);
-            if (shape_2 != PieceShape::NONE) shapes_in_row.insert(shape_2);
+            if (shape_2 != PieceShape::NONE) shapes_in_col.insert(shape_2);
         }
 
         if (shapes_in_row.size() == 4)

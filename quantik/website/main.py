@@ -15,57 +15,56 @@ def index():
 
 @app.route("/moveinfo", methods=['GET', 'POST'])
 def moveinfo():
-    app.logger.info("yeayea")
     if request.method == 'POST':
         app.logger.info("post fia di")
 
         response = {}
                 
         response['timestamp'] = request.form.get('timestamp')
-        app.logger.info("timestämp")
-        response['code'] = getCodeForState(int(request.form.get('encoding')))
-        app.logger.info("kot")
         response['error'] = ''
         
+        encodings = request.form.getlist('encodings[]')
+        app.logger.info(f"We need to find these encodings: {encodings}")
+        codes = []
+        for enc_list in encodings:
+            code_list = []
+            for enc in enc_list.split(","):
+                if enc == '': continue
+                enc = int(enc)
+                app.logger.debug(f"Looking for code for state {enc:016X} with board {decode(enc)}")
+                code_list.append(getCodeForState(enc))
+            codes.append(code_list)
+        
+        response['codes'] = codes
+        
         app.logger.info("return")
+        app.logger.info(codes)
         return jsonify(response)
     else:
         return False
 
 def getCodeForState(encoding):
     state = toCanonicalState(decode(encoding))
-    app.logger.debug(f"stät: {state}")
     level = 16 - sum(_.count(0) for _ in state)
     filename = f'../../data/level{level}.qtk'
-    
-    # with open(filename, 'rb') as file:
-    #     # file = mmap.mmap()
-    #     pass
     
     with open(filename, 'rb') as f:
         start = 0
         end = os.path.getsize(filename) / 9
-        app.logger.debug(f"Näm: {filename}; Säz: {os.path.getsize(filename)}")
+        app.logger.debug(f"Looking in file ::: Näm: {filename}; Säz: {os.path.getsize(filename)}")
         while start <= end:
             entry = int((start + end) // 2)
             f.seek(entry * 9)
             entry_state = int.from_bytes(f.read(8), 'little')
             
-            # app.logger.debug(f"Entry: {entry:08x}; Entry State: {entry_state}; Start: {start}; End: {end};")
-            
             found = entry_state - encoding
             if found == 0:
                 return int.from_bytes(f.read(1), 'little')
             if found < 0:
-                if start == end - 1:
-                    start = end
-                else:
-                    start = entry
+                start = entry + 1
             else:
-                end = entry
-    
-    app.logger.info("fickn")
-    assert False
+                end = entry - 1
+
     return -1
 
 def decode(encoding):
@@ -81,37 +80,6 @@ def decode(encoding):
     return state
 
 def toCanonicalState(state):
-    
-    
     return state
-
-# Not Mine
-def loadClassificationOfState(state, rows, cols):
-    find_entry = 0
-    filename = 'data/' + rows + 'x' + cols
-    with open(filename, 'rb') as f:
-        file = mmap.mmap(f.fileno(), 0)
-        start = 0
-        end = os.path.getsize(filename) / 9
-        while start != end:
-            entry = floor(start + end) / 2
-            entry_state = 0
-            for byte in range(8):
-                entry_state << 8
-                entry_state |= file[entry * 9 + byte]
-            find_entry = entry_state - state
-            if find_entry == 0:
-                classification = file[entry * 9 + 8]
-                file.close()
-                return classification
-            if find_entry < 0:
-                if start == end - 1:
-                    start = end
-                else:
-                    start = entry
-            else:
-                end = entry
-    file.close()
-    return 0
 
 app.run(debug=True)

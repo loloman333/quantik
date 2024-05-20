@@ -156,7 +156,7 @@ Game.prototype.init = function () {
     this.mouseOverRow = -1;
     this.mouseOverCol = -1;
 
-    this.network.requestMoveInfo();
+    // this.network.requestMoveInfo();
     window.output.showHistoryList();
     window.output.showHistoryRedoList();
     window.output.showInfo("");
