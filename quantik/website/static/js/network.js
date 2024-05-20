@@ -15,19 +15,21 @@ Network = function (game, context) {
 Network.prototype.requestMoveInfo = function () {
 	window.lastRequest = new Date().getTime();
 	
-	let following_encodings = [];
+	// Compute canonical encodings of all possible following states
+	this.encoding_set = new Set();
 	for (let moves of window.game.possibleMoves){
-		let encodings = []
 		for (let move of moves) {
 			let new_board = window.game.board.map((arr) => arr.slice());
 			new_board[move.target_row][move.target_col] = move.piece_type;
-			encodings.push(window.game.encode(compute_canonical(new_board)));
+
+			let encoding = window.game.encode(compute_canonical(new_board));
+			move.encoding = encoding;
+			this.encoding_set.add(encoding);
 		}
-		following_encodings.push(encodings);
 	}
 
 	$.post('/moveinfo', {
-		'encodings[]': following_encodings,
+		'encodings[]': Array.from(this.encoding_set),
 		timestamp: window.lastRequest,
 	}).done(
 		$.proxy(function (data, textStatus, jqXHR) {
@@ -45,10 +47,15 @@ Network.prototype.requestMoveInfo = function () {
 						}, this)));
 				} else {
 
+					let enc_code_map = new Map();
+					let it = this.encoding_set.values();
+					for (let i = 0; i < data.codes.length; i++){
+						enc_code_map.set(it.next().value, data.codes[i] + 1);
+					}
 
 					for (let i = 0; i < window.game.possibleMoves.length; i++){
 						for (let j = 0; j < window.game.possibleMoves[i].length; j++) {
-							window.game.possibleMoves[i][j].eval = data.codes[i][j] + 1;
+							window.game.possibleMoves[i][j].eval = enc_code_map.get(window.game.possibleMoves[i][j].encoding);
 						}
 					}
 

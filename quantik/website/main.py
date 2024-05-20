@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
-import json
 from math import floor
 import mmap
 import os
@@ -16,56 +15,63 @@ def index():
 @app.route("/moveinfo", methods=['GET', 'POST'])
 def moveinfo():
     if request.method == 'POST':
-        app.logger.info("post fia di")
-
         response = {}
                 
         response['timestamp'] = request.form.get('timestamp')
         response['error'] = ''
         
         encodings = request.form.getlist('encodings[]')
-        app.logger.info(f"We need to find these encodings: {encodings}")
-        codes = []
-        for enc_list in encodings:
-            code_list = []
-            for enc in enc_list.split(","):
-                if enc == '': continue
-                enc = int(enc)
-                app.logger.debug(f"Looking for code for state {enc:016X} with board {decode(enc)}")
-                code_list.append(getCodeForState(enc))
-            codes.append(code_list)
         
+        cleaned_encodings = []
+        for encoding in encodings:
+            encoding = -1 if encoding == '' else int(encoding)
+            cleaned_encodings.append(encoding)                                        
+        
+        codes = getCodesForEncodings(cleaned_encodings)
         response['codes'] = codes
         
-        app.logger.info("return")
-        app.logger.info(codes)
         return jsonify(response)
     else:
         return False
 
-def getCodeForState(encoding):
-    state = toCanonicalState(decode(encoding))
-    level = 16 - sum(_.count(0) for _ in state)
+def getCodesForEncodings(encodings):
+    if len(encodings) == 0: return []
+    
+    level = 16 - sum(_.count(0) for _ in decode(encodings[0])) 
     filename = f'../../data/level{level}.qtk'
     
+    codes = []
     with open(filename, 'rb') as f:
-        start = 0
-        end = os.path.getsize(filename) / 9
-        app.logger.debug(f"Looking in file ::: Näm: {filename}; Säz: {os.path.getsize(filename)}")
-        while start <= end:
-            entry = int((start + end) // 2)
-            f.seek(entry * 9)
-            entry_state = int.from_bytes(f.read(8), 'little')
+        for encoding in encodings:
             
-            found = entry_state - encoding
-            if found == 0:
-                return int.from_bytes(f.read(1), 'little')
-            if found < 0:
-                start = entry + 1
-            else:
-                end = entry - 1
-
-    return -1
+            if encoding == -1: 
+                codes.append(-1)
+                continue
+            
+            start = 0
+            end = int(os.path.getsize(filename) / 9)
+            
+            found = 1
+            round = 0
+            while found != 0 and start <= end:
+                round += 1
+                entry = int((start + end) // 2)
+                f.seek(entry * 9)
+                
+                entry_state = int.from_bytes(f.read(8), 'little')
+                found = entry_state - encoding
+                
+                if found == 0:
+                    codes.append(int.from_bytes(f.read(1), 'little'))
+                elif found < 0:
+                    start = entry + 1
+                else:
+                    end = entry - 1
+                    
+            if (start > end): 
+                codes.append(-1)
+    
+    return codes
 
 def decode(encoding):
     state = [[0 for _ in range(4)] for _ in range(4)]
@@ -77,9 +83,6 @@ def decode(encoding):
         y = 3 - (i % 4)
         state[x][y] = remainder
 
-    return state
-
-def toCanonicalState(state):
     return state
 
 app.run(debug=True)

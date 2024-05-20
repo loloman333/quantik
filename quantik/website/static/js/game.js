@@ -1,11 +1,12 @@
 /**
  * Object to store a single move by a player (e.g. for history)
  */
-function Move(target_row, target_col, piece_type, eval = -1) {
+function Move(target_row, target_col, piece_type, eval = -1, encoding = -1) {
     this.piece_type = piece_type;
     this.target_row = target_row;
     this.target_col = target_col;
     this.eval = eval;
+    this.encoding = encoding;
 };
 
 Move.prototype.compute_all_moves = function () {
@@ -13,7 +14,7 @@ Move.prototype.compute_all_moves = function () {
     for (let row = 0; row < 4; row++) {
         for (let col = 0; col < 4; col++) {
             for (let type = 1; type < Object.keys(PieceType).length; type++) {
-                let move = new Move(row, col, type, -1);
+                let move = new Move(row, col, type);
                 moves.push(move);
             }
         }
