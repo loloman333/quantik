@@ -324,29 +324,14 @@ Game.prototype.calcMoves = function () {
  */
 Game.prototype.takeMove = function (isRedoMove = false) {
     this.started = true;
-    let move = null;
-    if (!isRedoMove) {
-        move = this.activeMove;
-    }
-    else {
-        // TODO: redomove
-        for (const possibleMove of this.possibleMoves) {
-            if ((this.activeMove.source_row == possibleMove.source_row) && (this.activeMove.source_col == possibleMove.source_col) &&
-                (this.activeMove.target_row == possibleMove.target_row) && (this.activeMove.target_col == possibleMove.target_col)) {
-                move = possibleMove;
-            }
-        }
-        if (move == null) {
-            return;
-        }
-    }
+    let move = this.activeMove;;
 
     this.board[move.target_row][move.target_col] = move.piece_type;
     this.pieceCounter[PieceType.EMPTY]--;
     this.pieceCounter[move.piece_type]++;
 
     this.history.push(move);
-    if (isRedoMove) this.historyForward = [];
+    if (!isRedoMove) this.historyForward = [];
 
     this.nextPlayer();
 }
@@ -357,15 +342,8 @@ Game.prototype.takeMove = function (isRedoMove = false) {
 Game.prototype.revertMove = function () {
     var move = this.history.pop();
 
-    var passivePlayer = this.turn;
-    var activePlayer = passivePlayer == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
-
-    this.board[move.source_col][move.source_row] = activePlayer;
-    if (move.target_col != move.source_col) {
-        this.board[move.target_col][move.target_row] = passivePlayer;
-    } else {
-        this.board[move.target_col][move.target_row] = PieceColor.NONE;
-    }
+    this.board[move.target_row][move.target_col] = PieceType.EMPTY;
+    this.pieceCounter[move.piece_type] -= 1;
 
     this.historyForward.push(move);
     this.nextPlayer();
@@ -540,7 +518,7 @@ Game.prototype.historyRedo = function () {
         return;
     }
     this.activeMove = this.historyForward.pop();
-    this.takeMove(false);
+    this.takeMove(true);
     window.output.showInfo("Move redone");
 };
 
