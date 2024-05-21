@@ -71,6 +71,14 @@ function getPieceColor(piece_type){
 	return piece_type % 2 == 1 ? 1 : 2;
 }
 
+function getPieceShape(piece_type){
+	if (piece_type == PieceType.EMPTY) return PieceShape.NONE;
+    if (piece_type == PieceType.WHITE_SQUARE || piece_type == PieceType.BLACK_SQUARE) return PieceShape.SQUARE;
+    if (piece_type == PieceType.WHITE_TRIANGLE || piece_type == PieceType.BLACK_TRIANGLE) return PieceShape.TRIANGLE;
+    if (piece_type == PieceType.WHITE_CIRCLE || piece_type == PieceType.BLACK_CIRCLE) return PieceShape.CIRCLE;
+    if (piece_type == PieceType.WHITE_DIAMOND || piece_type == PieceType.BLACK_DIAMOND) return PieceShape.DIAMOND;
+}
+
 /**
  * Enum for the color of the boarders of the pieces
  */

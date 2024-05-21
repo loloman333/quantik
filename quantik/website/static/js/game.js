@@ -28,14 +28,19 @@ Move.prototype.compute_all_moves = function () {
  */
 Move.prototype.toHistoryLi = function (player) {
     var str = String.format("Player {0}", player);
-    str = str + String.format(" moved from {0}{1} to {2}{3}.", String.fromCharCode(65 + this.source_col), window.game.ROWS - this.source_row,
-        String.fromCharCode(65 + this.target_col), window.game.ROWS - this.target_row);
+
+    let color_string = Object.keys(PieceColor).find(key => PieceColor[key] === getPieceColor(this.piece_type));
+    let shape_string = Object.keys(PieceShape).find(key => PieceShape[key] === getPieceShape(this.piece_type));
+
+    str = str + String.format(" placed a {0} {1} on x:{2} y:{3}.", color_string, shape_string, this.target_col, this.target_row);
+    
     if (this.eval !== -1) {
         str = str + String.format("<span class='histvalue'> ({0})</span>", this.getStringForEval(this.eval));
     }
     else {
         str = str + String.format("<span class='histvalue'> ({0})</span>", "The server didn't respond in time!");
     }
+
     return $('<li>').html(str);
 };
 
@@ -44,7 +49,6 @@ Move.prototype.toHistoryLi = function (player) {
  */
 Move.prototype.getStringForEval = function (value) {
     if (value == 21) return "Draw";
-    value--
     if (value == 0) return "Win!";
     if (value % 2 == 1) return "Lose in " + value;
     return "Win in " + value;
@@ -327,7 +331,7 @@ Game.prototype.takeMove = function (isRedoMove = false) {
     this.recommendedMove = false;
 
     this.started = true;
-    let move = this.activeMove;;
+    let move = this.activeMove;
 
     this.board[move.target_row][move.target_col] = move.piece_type;
     this.pieceCounter[PieceType.EMPTY]--;
@@ -356,6 +360,7 @@ Game.prototype.revertMove = function () {
  * Reacts to a square being clicked. Expands this.activeMove, takes the move if it is a full possible move
  */
 Game.prototype.squareClicked = function (row, col, type) {
+
     if (row == -1) {
         if (this.activeMove.piece_type == type) this.activeMove.piece_type = PieceType.EMPTY;
         else if (this.turn == getPieceColor(type) && this.pieceCounter[type] < 2) this.activeMove.piece_type = type;
@@ -372,6 +377,9 @@ Game.prototype.squareClicked = function (row, col, type) {
     }
 
     if (this.isLegalMove(this.activeMove)) {
+        let eval = this.possibleMoves[this.activeMove.piece_type].find(move => move.target_row == row && move.target_col == col).eval;
+        this.activeMove.eval = eval;
+
         window.game.takeMove();
         window.output.showInfo("");
     }
