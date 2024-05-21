@@ -45,7 +45,6 @@ $(document).ready(function () {
 	}, 40);
 
 	$(".about").hide();
-	initPieces();
 	window.game = new Game();
 	window.game.init();
 	hideAllActions(true);

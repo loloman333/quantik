@@ -46,6 +46,8 @@ function initPieces(){
     window.piece_images[PieceType.BLACK_DIAMOND].src = "/static/images/black_diamond.png";
 }
 
+initPieces();
+
 /**
  * Draw one piece at position with backgroundcolor
  */
@@ -81,8 +83,10 @@ var drawEval = function(position, eval) {
         window.context.fillStyle = "blue";
         eval = "?";
     }
-    else
-    {
+    else if (eval == 21){
+        window.context.fillStyle = "blue";
+        if (eval == 21) eval = "D";
+    } else {
         if (eval % 2 == 0)
         {
             window.context.fillStyle = "red";

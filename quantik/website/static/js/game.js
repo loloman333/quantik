@@ -43,7 +43,7 @@ Move.prototype.toHistoryLi = function (player) {
  * EVAL TEXT
  */
 Move.prototype.getStringForEval = function (value) {
-    if (value == 0) return "Draw";
+    if (value == 21) return "Draw";
     value--
     if (value == 0) return "Win!";
     if (value % 2 == 1) return "Lose in " + value;
@@ -166,6 +166,7 @@ Game.prototype.init = function () {
     $('#gamedate').html(
         String.format("Game has started at {0.4}-{1.2}-{2.2} {3.2}:{4.2}:{5.2}", d.getFullYear(), d.getMonth(), d
             .getDate(), d.getHours(), d.getMinutes(), d.getSeconds()));
+
 };
 
 /**
@@ -448,6 +449,7 @@ Game.prototype.getBestMove = function (piece_type = false, just_win = false) {
     let winMoves = [];
     let loseMoves = [];
     let noEval = [];
+    let drawMoves = [];
 
     let best_winning_eval = 17
     let best_loosing_eval = 0
@@ -457,11 +459,11 @@ Game.prototype.getBestMove = function (piece_type = false, just_win = false) {
 
             if (piece_type !== false && move.piece_type != piece_type) continue;
 
-            if (move.eval == -1) {
+            if (move.eval == 21){
+                drawMoves.push(move)
+            } else if (move.eval == -1) {
                 noEval.push(move);
-            }
-
-            if (move.eval % 2 == 1) {
+            } else if (move.eval % 2 == 1) {
                 if (move.eval <= best_winning_eval) {
                     best_winning_eval = move.eval;
                 }
@@ -486,6 +488,11 @@ Game.prototype.getBestMove = function (piece_type = false, just_win = false) {
             }
         }
     }
+
+    for (let move of drawMoves){
+        return move
+    }
+
     for (let move of loseMoves) {
         if (move.eval == best_loosing_eval) {
             return move;
