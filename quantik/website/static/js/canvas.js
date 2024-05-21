@@ -154,6 +154,8 @@ var drawBoard = function() {
     {
         if (val == PieceType.EMPTY) continue;
         
+        let best_move_with_piece = window.game.getBestMove(val);
+
         let pos = getSpareSquarePosition(val);
         let image = window.piece_images[val];
         let radii = getCornerRadii(Math.ceil(val - (val / 2)) - 1);
@@ -161,7 +163,7 @@ var drawBoard = function() {
         let color = BackgroundColor.INACTIVE;
         if (activeMove.piece_type == val){
             color = BackgroundColor.ACTIVE;
-        } else if (activeMove.piece_type == PieceType.EMPTY && window.game.turn == getPieceColor(val) && window.game.pieceCounter[val] < 2){
+        } else if (best_move_with_piece !== undefined){
             if (mouseOverType == val) color = BackgroundColor.ACTIVE;
             else color = BackgroundColor.POSSIBLE;
         }
@@ -180,7 +182,6 @@ var drawBoard = function() {
         if (window.game.recommendedMove){
             if (window.game.recommendedMove.piece_type == val) drawEval(pos, "!");
         } else {
-            let best_move_with_piece = window.game.getBestMove(val);
             if (window.game.showMoveInfos && best_move_with_piece !== undefined) drawEval(pos, best_move_with_piece.eval);
         }
     }

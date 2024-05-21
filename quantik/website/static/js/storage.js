@@ -57,17 +57,15 @@ Storage.prototype.saveGame = function (action) {
 			gameName = "Game " + freeIdx;
 		}
 
-		localStorage["ninemensmorris.games." + idx + ".name"] = gameName;
-		localStorage["ninemensmorris.games." + idx + ".rows"] = JSON.stringify(this.game.ROWS);
-		localStorage["ninemensmorris.games." + idx + ".cols"] = JSON.stringify(this.game.COLS);
-		localStorage["ninemensmorris.games." + idx + ".started"] = JSON.stringify(this.game.started);
-		localStorage["ninemensmorris.games." + idx + ".board"] = JSON.stringify(this.game.board);
-		localStorage["ninemensmorris.games." + idx + ".turn"] = JSON.stringify(this.game.turn);
-		localStorage["ninemensmorris.games." + idx + ".showMoveInfos"] = JSON.stringify(this.game.showMoveInfos);
-		localStorage["ninemensmorris.games." + idx + ".history"] = JSON.stringify(this.game.history);
-		localStorage["ninemensmorris.games." + idx + ".historyForward"] = JSON.stringify(this.game.historyForward);
+		localStorage["quantik.games." + idx + ".name"] = gameName;
+		localStorage["quantik.games." + idx + ".started"] = JSON.stringify(this.game.started);
+		localStorage["quantik.games." + idx + ".board"] = JSON.stringify(this.game.board);
+		localStorage["quantik.games." + idx + ".turn"] = JSON.stringify(this.game.turn);
+		localStorage["quantik.games." + idx + ".showMoveInfos"] = JSON.stringify(this.game.showMoveInfos);
+		localStorage["quantik.games." + idx + ".history"] = JSON.stringify(this.game.history);
+		localStorage["quantik.games." + idx + ".historyForward"] = JSON.stringify(this.game.historyForward);
 
-		localStorage["ninemensmorris.nSavedGames"] = savedGames;
+		localStorage["quantik.nSavedGames"] = savedGames;
 
 		window.output.showInfo(String.format("Game saved as '{0}'", gameName));
 	}
@@ -80,7 +78,7 @@ Storage.prototype.getFreeIdx = function () {
 	var maxIdx = this.getNumberSavedGames(1);
 
 	for (var idx = 1; idx <= maxIdx; idx++) {
-		var gameName = localStorage["ninemensmorris.games." + idx + ".name"];
+		var gameName = localStorage["quantik.games." + idx + ".name"];
 		if (gameName == undefined || gameName.length == 0) {
 			return idx;
 		}
@@ -92,7 +90,7 @@ Storage.prototype.getFreeIdx = function () {
  * Reads number of saved games in local storage
  */
 Storage.prototype.getNumberSavedGames = function (defaultVal) {
-	var savedGamesStr = localStorage["ninemensmorris.nSavedGames"];
+	var savedGamesStr = localStorage["quantik.nSavedGames"];
 	return savedGamesStr == undefined ? defaultVal : parseInt(savedGamesStr, 10);
 };
 
@@ -100,16 +98,14 @@ Storage.prototype.getNumberSavedGames = function (defaultVal) {
  * Really deletes a single game with given index from the local storage
  */
 Storage.prototype.clearSingleGameHandler = function (idx) {
-	var gameName = localStorage["ninemensmorris.games." + idx + ".name"];
-	localStorage["ninemensmorris.games." + idx + ".name"] = "";
-	localStorage["ninemensmorris.games." + idx + ".rows"] = "";
-	localStorage["ninemensmorris.games." + idx + ".cols"] = "";
-	localStorage["ninemensmorris.games." + idx + ".started"] = "";
-	localStorage["ninemensmorris.games." + idx + ".board"] = "";
-	localStorage["ninemensmorris.games." + idx + ".turn"] = "";
-	localStorage["ninemensmorris.games." + idx + ".showMoveInfos"] = "";
-	localStorage["ninemensmorris.games." + idx + ".history"] = "";
-	localStorage["ninemensmorris.games." + idx + ".historyForward"] = "";
+	var gameName = localStorage["quantik.games." + idx + ".name"];
+	localStorage["quantik.games." + idx + ".name"] = "";
+	localStorage["quantik.games." + idx + ".started"] = "";
+	localStorage["quantik.games." + idx + ".board"] = "";
+	localStorage["quantik.games." + idx + ".turn"] = "";
+	localStorage["quantik.games." + idx + ".showMoveInfos"] = "";
+	localStorage["quantik.games." + idx + ".history"] = "";
+	localStorage["quantik.games." + idx + ".historyForward"] = "";
 	hideAllActions();
 	window.output.showInfo(String.format("Game '{0}' deleted", gameName));
 	return false;
@@ -136,7 +132,7 @@ Storage.prototype.clearGame = function () {
 	var nGames = 0;
 
 	for (var idx = 1; idx <= maxIdx; idx++) {
-		var gameName = localStorage["ninemensmorris.games." + idx + ".name"];
+		var gameName = localStorage["quantik.games." + idx + ".name"];
 		if (gameName == undefined || gameName.length == 0) {
 			continue;
 		}
@@ -163,31 +159,26 @@ Storage.prototype.clearGame = function () {
  * Really loads a single game with specified index from the local storage
  */
 Storage.prototype.loadSingleGameHandler = function (idx) {
-	var gameName = localStorage["ninemensmorris.games." + idx + ".name"];
-	// this.game.rows = JSON.parse(localStorage["ninemensmorris.games." + idx + ".rows"]);
-	// this.game.cols = JSON.parse(localStorage["ninemensmorris.games." + idx + ".cols"]);
-	// document.getElementById("rows").value = JSON.parse(localStorage["ninemensmorris.games." + idx + ".rows"]);
-	// document.getElementById("cols").value = JSON.parse(localStorage["ninemensmorris.games." + idx + ".cols"]);
-
-	this.game.started = JSON.parse(localStorage["ninemensmorris.games." + idx + ".started"]);
-	this.game.board = JSON.parse(localStorage["ninemensmorris.games." + idx + ".board"]);
-	this.game.turn = JSON.parse(localStorage["ninemensmorris.games." + idx + ".turn"]);
-	this.game.showMoveInfos = localStorage["ninemensmorris.games." + idx + ".showMoveInfos"] == "true";
+	var gameName = localStorage["quantik.games." + idx + ".name"];
+	this.game.started = JSON.parse(localStorage["quantik.games." + idx + ".started"]);
+	this.game.board = JSON.parse(localStorage["quantik.games." + idx + ".board"]);
+	this.game.turn = JSON.parse(localStorage["quantik.games." + idx + ".turn"]);
+	this.game.showMoveInfos = localStorage["quantik.games." + idx + ".showMoveInfos"] == "true";
 	this.game.aiA = false;
 	this.game.aiAlevel = LevelEnum.Perfect;
 	this.game.aiB = false;
 	this.game.aiBlevel = LevelEnum.Perfect;
 
-	var hist = JSON.parse(localStorage["ninemensmorris.games." + idx + ".history"]);
-	var histRedo = JSON.parse(localStorage["ninemensmorris.games." + idx + ".historyForward"]);
+	var hist = JSON.parse(localStorage["quantik.games." + idx + ".history"]);
+	var histRedo = JSON.parse(localStorage["quantik.games." + idx + ".historyForward"]);
 	this.game.history = [];
 	for (var i = 0; i < hist.length; ++i) {
-		this.game.history.push(new Move(hist[i].source_row, hist[i].source_col, hist[i].target_row, hist[i].target_col, hist[i].eval));
+		this.game.history.push(new Move(hist[i].target_row, hist[i].target_col, hist[i].piece_type, hist[i].eval));
 	}
 	window.output.showHistoryList();
 	this.game.historyForward = [];
 	for (var i = 0; i < histRedo.length; ++i) {
-		this.game.historyForward.push(new Move(histRedo[i].source_row, histRedo[i].source_col, histRedo[i].target_row, histRedo[i].target_col, histRedo[i].eval));
+		this.game.historyForward.push(new Move(hist[i].target_row, hist[i].target_col, hist[i].piece_type, hist[i].eval));
 	}
 	window.output.showHistoryRedoList();
 
@@ -199,8 +190,8 @@ Storage.prototype.loadSingleGameHandler = function (idx) {
 	} else {
 		$('.histvalue').hide();
 	}
-	this.game.network.requestMoveInfo();
 	this.game.calcMoves();
+	this.game.network.requestMoveInfo();
 	drawBoard();
 	return false;
 };
@@ -225,7 +216,7 @@ Storage.prototype.loadGame = function () {
 	var nGames = 0;
 
 	for (var idx = 1; idx <= maxIdx; idx++) {
-		var gameName = localStorage["ninemensmorris.games." + idx + ".name"];
+		var gameName = localStorage["quantik.games." + idx + ".name"];
 		if (gameName == undefined || gameName.length == 0) {
 			continue;
 		}

@@ -23,7 +23,7 @@ Move.prototype.compute_all_moves = function () {
     return moves;
 };
 
-/** TODO
+/**
  * Shows information about the move (player, col, row, value of move) in a list element for history
  */
 Move.prototype.toHistoryLi = function (player) {
@@ -77,7 +77,7 @@ function Game() {
     /**
      * List of the Pieces of all squares
      */
-    this.pieceCounter = [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,] // TODO: fine ?
+    this.pieceCounter = [16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,]
     /**
      * Row of the square the mouse is pointing to
      */
@@ -362,12 +362,15 @@ Game.prototype.revertMove = function () {
 Game.prototype.squareClicked = function (row, col, type) {
 
     if (row == -1) {
+        let shape = this.activeMove.piece_type == PieceType.EMPTY ? false : this.activeMove.piece_type;
+        let best_move_with_piece = this.getBestMove(shape);
+
         if (this.activeMove.piece_type == type) this.activeMove.piece_type = PieceType.EMPTY;
-        else if (this.turn == getPieceColor(type) && this.pieceCounter[type] < 2) this.activeMove.piece_type = type;
+        else if (best_move_with_piece !== undefined && 
+            getPieceColor(best_move_with_piece.piece_type) == getPieceColor(type)) this.activeMove.piece_type = type;
         
         if (this.recommendedMove){
-            let shape = this.activeMove.piece_type == PieceType.EMPTY ? false : this.activeMove.piece_type;
-            this.recommendedMove = this.getBestMove(shape);
+            this.recommendedMove = best_move_with_piece;
         }
     } else {
         if (this.activeMove.piece_type != PieceType.EMPTY) {
@@ -501,6 +504,7 @@ Game.prototype.getBestMove = function (piece_type = false, just_win = false) {
  * Tries to revert the last move (the last entry in the history list)
  */
 Game.prototype.historyRevert = function () {
+    this.recommendedMove = false;
     if (this.history.length == 0) {
         window.output.showError("No move to revert");
         return;
@@ -515,6 +519,7 @@ Game.prototype.historyRevert = function () {
  * Tries to redo a move (the last entry in the history-forward list)
  */
 Game.prototype.historyRedo = function () {
+    this.recommendedMove = false;
     if (this.historyForward.length == 0) {
         window.output.showError("No move to redo");
         return;
@@ -524,7 +529,7 @@ Game.prototype.historyRedo = function () {
     window.output.showInfo("Move redone");
 };
 
-/** TODO: check if correct order traversing
+/**
  * Encodes the board into an integer representing the state
  */
 Game.prototype.encode = function (board = this.board) {
