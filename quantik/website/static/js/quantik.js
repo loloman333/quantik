@@ -25,6 +25,8 @@ var hideAllActions = function (resetAI) {
 	}
 };
 
+// TODO: untie moveinfos and game logic? Right now one cannot really play if moveinfo server is down
+
 /**
  * Initializes the client (game object) and sets click functions for all actions on the GUI
  */

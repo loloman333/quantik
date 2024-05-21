@@ -182,6 +182,13 @@ Storage.prototype.loadSingleGameHandler = function (idx) {
 	}
 	window.output.showHistoryRedoList();
 
+	this.game.pieceCounter = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+	for (let row of this.game.board){
+		for (let square of row) {
+			this.game.pieceCounter[square] += 1
+		}
+	}
+
 	hideAllActions();
 	window.output.showInfo(String.format("Game '{0}' loaded", gameName));
 

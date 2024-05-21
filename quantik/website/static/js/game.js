@@ -185,12 +185,6 @@ Game.prototype.initBoard = function () {
         }
         this.board.push(row);
     }
-    // this.board = [
-    //     [PieceType.WHITE_SQUARE, PieceType.EMPTY, PieceType.BLACK_SQUARE, PieceType.EMPTY],
-    //     [PieceType.EMPTY, PieceType.EMPTY, PieceType.EMPTY, PieceType.EMPTY],
-    //     [PieceType.WHITE_TRIANGLE, PieceType.EMPTY, PieceType.BLACK_TRIANGLE, PieceType.EMPTY],
-    //     [PieceType.EMPTY, PieceType.EMPTY, PieceType.EMPTY, PieceType.EMPTY],
-    // ]
 }
 
 /**
@@ -367,7 +361,8 @@ Game.prototype.squareClicked = function (row, col, type) {
 
         if (this.activeMove.piece_type == type) this.activeMove.piece_type = PieceType.EMPTY;
         else if (best_move_with_piece !== undefined && 
-            getPieceColor(best_move_with_piece.piece_type) == getPieceColor(type)) this.activeMove.piece_type = type;
+            getPieceColor(best_move_with_piece.piece_type) == getPieceColor(type) &&
+            this.pieceCounter[type] < 2) this.activeMove.piece_type = type;
         
         if (this.recommendedMove){
             this.recommendedMove = best_move_with_piece;
@@ -428,7 +423,11 @@ Game.prototype.nextPlayer = function (advance = true) {
 Game.prototype.takeAiMove = function () {
     var aiLevel = this.turn == PieceColor.WHITE ? this.aiAlevel : this.aiBlevel;
     if (aiLevel == LevelEnum.Random) {
-        var move = this.possibleMoves[Math.floor(Math.random() * this.possibleMoves.length)]
+        let possibleMoves = [];
+        for (let moves of this.possibleMoves){
+            possibleMoves.push.apply(possibleMoves, moves);
+        }
+        var move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)]
     }
     else if (aiLevel == LevelEnum.Perfect) {
         var move = this.getBestMove(false, false);
