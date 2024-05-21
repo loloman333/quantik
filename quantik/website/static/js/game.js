@@ -89,7 +89,7 @@ function Game() {
     /**
      * Index of the recommended move
      */
-    this.recommendedMoveIndex = -1;
+    this.recommendedMove = false;
     /**
      * The active move
      */
@@ -324,6 +324,8 @@ Game.prototype.calcMoves = function () {
  * Takes the move in this.activeMove
  */
 Game.prototype.takeMove = function (isRedoMove = false) {
+    this.recommendedMove = false;
+
     this.started = true;
     let move = this.activeMove;;
 
@@ -357,6 +359,11 @@ Game.prototype.squareClicked = function (row, col, type) {
     if (row == -1) {
         if (this.activeMove.piece_type == type) this.activeMove.piece_type = PieceType.EMPTY;
         else if (this.turn == getPieceColor(type) && this.pieceCounter[type] < 2) this.activeMove.piece_type = type;
+        
+        if (this.recommendedMove){
+            let shape = this.activeMove.piece_type == PieceType.EMPTY ? false : this.activeMove.piece_type;
+            this.recommendedMove = this.getBestMove(shape);
+        }
     } else {
         if (this.activeMove.piece_type != PieceType.EMPTY) {
             this.activeMove.target_row = row;
@@ -365,7 +372,6 @@ Game.prototype.squareClicked = function (row, col, type) {
     }
 
     if (this.isLegalMove(this.activeMove)) {
-        this.recommendedMoveIndex = -1;
         window.game.takeMove();
         window.output.showInfo("");
     }
@@ -373,34 +379,16 @@ Game.prototype.squareClicked = function (row, col, type) {
 }
 
 /**
- * Returns if the recommended move is still possible
- */
-Game.prototype.recommendationPossible = function () {
-    return (((this.activeMove.source_row == -1) ||
-        ((this.activeMove.source_row == this.possibleMoves[this.recommendedMoveIndex].source_row) &&
-            (this.activeMove.source_col == this.possibleMoves[this.recommendedMoveIndex].source_col))) &&
-        ((this.activeMove.target_row == -1) ||
-            ((this.activeMove.target_row == this.possibleMoves[this.recommendedMoveIndex].target_row) &&
-                (this.activeMove.target_col == this.possibleMoves[this.recommendedMoveIndex].target_col))));
-}
-
-/**
  * Give the player a hint, which column to choose for her next move
  */
 Game.prototype.moveRecommender = function () {
-    if (this.recommendedMoveIndex == -1) {
-        this.nextPlayer(false);
-        var move = this.getBestMove(false);
-        for (var i = 0; i < this.possibleMoves.length; i++) {
-            var possibleMove = this.possibleMoves[i]
-            if ((move.source_row == possibleMove.source_row) && (move.source_col == possibleMove.source_col) &&
-                (move.target_row == possibleMove.target_row) && (move.target_col == possibleMove.target_col)) {
-                this.recommendedMoveIndex = i;
-                drawBoard();
-                return;
-            }
-        }
+    if (this.recommendedMove){
+        this.recommendedMove = false;
+    } else {
+        let shape = this.activeMove.piece_type == PieceType.EMPTY ? false : this.activeMove.piece_type
+        this.recommendedMove = this.getBestMove(shape);
     }
+    drawBoard();
 };
 
 /**
@@ -415,7 +403,6 @@ Game.prototype.nextPlayer = function (advance = true) {
     // AI to move ?
     this.waitingForMove = (this.aiA && this.turn == PieceColor.WHITE) || (this.aiB && this.turn == PieceColor.BLACK);
 
-    this.recommendedMoveIndex = -1;
     this.activeMove = new Move(-1, -1, PieceType.EMPTY, -1);
     drawBoard();
     this.network.requestMoveInfo();
@@ -433,10 +420,10 @@ Game.prototype.takeAiMove = function () {
         var move = this.possibleMoves[Math.floor(Math.random() * this.possibleMoves.length)]
     }
     else if (aiLevel == LevelEnum.Perfect) {
-        var move = this.getBestMove(false);
+        var move = this.getBestMove(false, false);
     }
     else {
-        var move = this.getBestMove(true);
+        var move = this.getBestMove(false, true);
     }
     this.activeMove = move;
     this.takeMove();

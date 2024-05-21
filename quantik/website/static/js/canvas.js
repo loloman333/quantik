@@ -69,9 +69,8 @@ var drawEval = function(position, eval) {
     let x = position.x + PIECE_SIZE * 0.15;
     let y = position.y + PIECE_SIZE * 0.25;
 
-    if (window.game.recommendedMoveIndex !== -1)
+    if (eval == '!')
     {
-        eval = "!";
         window.context.fillStyle = "red";
         window.context.font = "bold 20px Arial";
         window.context.textAlign = "center";
@@ -124,9 +123,6 @@ function getCornerRadii(first_index, second_index = false){
  * Draw  the board on the canvas
  */
 var drawBoard = function() {
-
-    // Clear old
-    // window.context.clearRect(0, 0, window.canvas.width, window.canvas.height); // TODO: needed?
 
     let activeMove = window.game.activeMove;
 
@@ -181,8 +177,12 @@ var drawBoard = function() {
             pos.y + PIECE_SIZE * 0.55
         );
 
-        let best_move_with_piece = window.game.getBestMove(val);
-        if (best_move_with_piece !== undefined) drawEval(pos, best_move_with_piece.eval)
+        if (window.game.recommendedMove){
+            if (window.game.recommendedMove.piece_type == val) drawEval(pos, "!");
+        } else {
+            let best_move_with_piece = window.game.getBestMove(val);
+            if (window.game.showMoveInfos && best_move_with_piece !== undefined) drawEval(pos, best_move_with_piece.eval);
+        }
     }
 
     // Board
@@ -206,74 +206,12 @@ var drawBoard = function() {
         let radii = getCornerRadii(move.target_row, move.target_col);
 
         drawSquare(image, position.x, position.y, color, radii);
-        drawEval(position, move.eval)
-    }
-};
-
-/**
- * Draw all classifications
- */
-var drawEvals = function() {
-    if (((!window.game.showMoveInfos) || (window.game.waitingForMove)) && (window.game.recommendedMoveIndex == -1) ||
-        (window.game.activeMove.target_row !== -1)) return;
-
-    var bestEval = [];
-    for(var i = 0; i < window.game.COLS; i++){
-        var col = []
-        for(var j = 0; j < window.game.ROWS; j++){
-            col.push(-2);
-        }
-        bestEval.push(col);
-    }
-
-    if(window.game.activeMove.source_row !== -1){
-        for (const move of window.game.possibleMoves)
-        {
-            if ((move.source_row == window.game.activeMove.source_row) && (move.source_col == window.game.activeMove.source_col) && 
-                isBetterEval(move.eval, bestEval[move.target_col][move.target_row]))
-            {
-                bestEval[move.target_col][move.target_row] = move.eval;
-            }
-        }
-        for (var i = 0; i < window.game.COLS; i++)
-        {
-            for(var j = 0; j < window.game.ROWS; j++){
-                if (bestEval[i][j] !== -2)
-                {
-                    if ((window.game.recommendedMoveIndex == -1) ||
-                        ((window.game.possibleMoves[window.game.recommendedMoveIndex].target_col == i) && 
-                        (window.game.possibleMoves[window.game.recommendedMoveIndex].target_row == j)))
-                    {
-                        var position = getSquarePosition(j, i);
-                        drawEval(position, bestEval[i][j]);
-                    }
-                }
-            }
-        }
-    }
-    else
-    {
-        for (const move of window.game.possibleMoves)
-        {
-            if (isBetterEval(move.eval, bestEval[move.source_col][move.source_row]))
-            {
-                bestEval[move.source_col][move.source_row] = move.eval;
-            }
-        }
-        for (var i = 0; i < window.game.COLS; i++)
-        {
-            for(var j = 0; j < window.game.ROWS; j++){
-                if (bestEval[i][j] !== -2)
-                {
-                    if ((window.game.recommendedMoveIndex == -1) ||
-                        ((window.game.possibleMoves[window.game.recommendedMoveIndex].target_col == i) && 
-                        (window.game.possibleMoves[window.game.recommendedMoveIndex].target_row == j)))
-                    {
-                        var position = getSquarePosition(j, i);
-                        drawEval(position, bestEval[i][j]);
-                    }
-                }
-            }
+        if (window.game.recommendedMove) {
+            if (window.game.recommendedMove.target_row == move.target_row && 
+                window.game.recommendedMove.target_col == move.target_col)
+                drawEval(position, "!");
+        } else if (window.game.showMoveInfos)  {
+            drawEval(position, move.eval)
         }
     }
 };
