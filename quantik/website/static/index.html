@@ -34,7 +34,7 @@
                 target="_blank">Quantik</a>
             by the publisher <a href="https://en.gigamic.com/" target="_blank">Gigamic</a>. It is an abstract strategy
             game, where on their
-            turn a player will place a piece on an empty space of the board, respecting one single rule: They are not
+            turn each player will place a piece on an empty space of the board, respecting one single rule: They are not
             allowed to place a shape
             in a row, column, or region in which your opponent has a piece of the same shape. The first player to place
             the fourth different
@@ -48,20 +48,17 @@
             Christoph
             Reinisch.
         </p>
-        <!-- TODO -->
         <p>
-            The server is written in Java 11, using the <a href="https://spring.io" target="_blank">Spring
+            The server is written in Python, using the <a href="https://flask.palletsprojects.com/en/3.0.x/" target="_blank">Flask
                 framework</a>. The client is written in
-            HTML and JavaScript, using <a href="https://jquery.com" target="_blank">jQuery</a>. Compatibility was tested
-            in Chromium and Mozilla
-            Firefox running on Linux, Android and Windows. Nevertheless the application should be compatible with any
-            browser like
-            Microsoft Internet Explorer.
+                HTML and JavaScript, using <a href="https://jquery.com" target="_blank">jQuery</a>. Compatibility was tested
+                in Chrome and Mozilla Firefox running on Linux, Android and Windows. 
+                Nevertheless the application should be compatible with any browser like Microsoft Edge.
         </p>
+        <!-- TODO -->
         <h4>Features</h4>
         <ul>
-            <li>Choose the number of rows and columns for the playing field</li>
-            <li>Either player (A and B) can be controlled by a human or the computer (AI)</li>
+            <li>Either player (WHITE and BLACK) can be controlled by a human or the computer (AI)</li>
             <li>Choose the level of the AI: &ldquo;Perfect&rdquo; will always make an optimal move (which might not be
                 unique), &ldquo;Just win&rdquo; will randomly choose a winning move (if available, and not necessary
                 optimal),
@@ -131,15 +128,15 @@
                 <h3>Options</h3>
                 <form>
                     <label for="optionsaia"> <input id="optionsaia" name="optionsaia" value="aia" type="checkbox">AI
-                        for Player A
-                    </label> <label for="optionsaialevel">AI Level A &nbsp;<select id="optionsaialevel">
+                        for Player WHITE
+                    </label> <label for="optionsaialevel">AI Level WHITE &nbsp;<select id="optionsaialevel">
                             <option value="perfect">Perfect</option>
                             <option value="justwin">Just win</option>
                             <option value="random">Random</option>
                         </select></label> <label for="optionsaib"> <input id="optionsaib" name="optionsaib" value="aib"
                             type="checkbox">AI
-                        for Player B
-                    </label> <label for="optionsaiblevel">AI Level B &nbsp;<select id="optionsaiblevel">
+                        for Player BLACK
+                    </label> <label for="optionsaiblevel">AI Level BLACK &nbsp;<select id="optionsaiblevel">
                             <option value="perfect">Perfect</option>
                             <option value="justwin">Just win</option>
                             <option value="random">Random</option>

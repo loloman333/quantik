@@ -38,7 +38,7 @@ def getCodesForEncodings(encodings):
     if len(encodings) == 0: return []
     
     level = 16 - sum(_.count(0) for _ in decode(encodings[0])) 
-    filename = f'../../data/level{level}.qtk'
+    filename = f'../data/level{level}.qtk'
     
     codes = []
     with open(filename, 'rb') as f:
