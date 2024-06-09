@@ -67,7 +67,7 @@ var drawSquare = function(image, x, y, color, radii = 0, borders = true) {
 var drawEval = function(position, eval) {
 
     let x = position.x + PIECE_SIZE * 0.15;
-    let y = position.y + PIECE_SIZE * 0.25;
+    let y = position.y + PIECE_SIZE * 0.20;
 
     if (eval == '!')
     {
