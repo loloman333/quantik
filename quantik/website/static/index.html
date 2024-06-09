@@ -45,8 +45,7 @@
             supervised by <a href="http://www.ist.tugraz.at/oaich/" target="_blank">Oswin Aichholzer</a>, at <a
                 href="http://www.tugraz.at/" target="_blank">Graz University of Technology</a>.
             The webapp is based on a <a href="http://ninemensmorris.ist.tugraz.at:8080/" target="_blank">project</a> by
-            Christoph
-            Reinisch.
+            Christoph Reinisch.
         </p>
         <p>
             The server is written in Python, using the <a href="https://flask.palletsprojects.com/en/3.0.x/" target="_blank">Flask
@@ -55,15 +54,14 @@
                 in Chrome and Mozilla Firefox running on Linux, Android and Windows. 
                 Nevertheless the application should be compatible with any browser like Microsoft Edge.
         </p>
-        <!-- TODO -->
         <h4>Features</h4>
         <ul>
-            <li>Either player (WHITE and BLACK) can be controlled by a human or the computer (AI)</li>
+            <li>Both player 1 (WHITE) and player 2 (BLACK) can be controlled by a human or the computer (AI)</li>
             <li>Choose the level of the AI: &ldquo;Perfect&rdquo; will always make an optimal move (which might not be
                 unique), &ldquo;Just win&rdquo; will randomly choose a winning move (if available, and not necessary
                 optimal),
                 &ldquo;Random&rdquo; will randomly pick a move</li>
-            <li>Move info: Optionally display the number of half-moves till the end of the game for the possible moves
+            <li>Move info: Display the number of half-moves until the end of the game if both sides play optimally for the possible moves
             </li>
             <li>Recommend move: Shows a perfect move for the current player</li>
             <li>Undo/Redo: Revert or redo the last move made by either player</li>
@@ -73,16 +71,13 @@
         <p>The AI of this game is based on an exhaustive evaluation of all possible game positions stored in a large
             data base.
             For each possible board its status (current player win, opponent player win) is known, as well as as the
-            maximum number of half
-            moves needed to force a win from this board. A green even number shows in how many further half-moves the
-            game can be won
+            number of half moves needed to force a win with optimal play from this board. 
+            A green even number shows in how many half-moves the game can be won
             by taking this move (assuming optimal play of the opponent, otherwise you can win faster). A red odd
             number shows the maximum number of half-moves you can delay the victory of the opponent (again assuming
-            optimal
-            play of the opponent). So an even number shows a winning move, which guarantees a win for the current player
-            (when continuing
-            to play optimal) in at most this number of half-moves. An optimal winning move is a move which guarantees
-            the shortest
+            optimal play of the opponent). So an even number shows a winning move, which guarantees a win for the current player
+            (when continuing to play optimal) in at most this number of half-moves. 
+            An optimal winning move is a move which guarantees the shortest
             available sequence of half-moves till the player wins.</p>
         </ul>
     </div>
@@ -128,15 +123,15 @@
                 <h3>Options</h3>
                 <form>
                     <label for="optionsaia"> <input id="optionsaia" name="optionsaia" value="aia" type="checkbox">AI
-                        for Player WHITE
-                    </label> <label for="optionsaialevel">AI Level WHITE &nbsp;<select id="optionsaialevel">
+                        for Player 1
+                    </label> <label for="optionsaialevel">AI Level 1 &nbsp;<select id="optionsaialevel">
                             <option value="perfect">Perfect</option>
                             <option value="justwin">Just win</option>
                             <option value="random">Random</option>
                         </select></label> <label for="optionsaib"> <input id="optionsaib" name="optionsaib" value="aib"
                             type="checkbox">AI
-                        for Player BLACK
-                    </label> <label for="optionsaiblevel">AI Level BLACK &nbsp;<select id="optionsaiblevel">
+                        for Player 2
+                    </label> <label for="optionsaiblevel">AI Level 2 &nbsp;<select id="optionsaiblevel">
                             <option value="perfect">Perfect</option>
                             <option value="justwin">Just win</option>
                             <option value="random">Random</option>
