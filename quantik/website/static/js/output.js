@@ -39,10 +39,10 @@ Output.prototype.showHistoryList = function () {
  * Shows which player's turn it is
  */
 Output.prototype.showTurn = function () {
-	if (this.game.possibleMoves.length == 0) {
+	if (this.game.finished) {
 		let player_won = !(this.game.turn == 2) + 1;
 		$('#gameinfo').html(
-			String.format("Player {0} has won!", Object.keys(PieceColor).find(key => PieceColor[key] === player_won)));
+			String.format("Player {0} has won!", player_won));
 		window.lastRequest = new Date().getTime();
 	}
 	else if (window.game.waitingForMove) {

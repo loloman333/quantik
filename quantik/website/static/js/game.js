@@ -32,8 +32,8 @@ Move.prototype.toHistoryLi = function (player) {
     let color_string = Object.keys(PieceColor).find(key => PieceColor[key] === getPieceColor(this.piece_type));
     let shape_string = Object.keys(PieceShape).find(key => PieceShape[key] === getPieceShape(this.piece_type));
 
-    str = str + String.format(" placed a {0} {1} on x:{2} y:{3}.", color_string, shape_string, this.target_col, this.target_row);
-    
+    str = str + String.format(" placed a {0} {1} on x:{2} y:{3}.", color_string, shape_string, this.target_col + 1, this.target_row + 1);
+
     if (this.eval !== -1) {
         str = str + String.format("<span class='histvalue'> ({0})</span>", this.getStringForEval(this.eval));
     }
@@ -50,14 +50,18 @@ Move.prototype.toHistoryLi = function (player) {
 Move.prototype.getStringForEval = function (value) {
     if (value == 21) return "Draw";
     if (value == 0) return "Win!";
-    if (value % 2 == 1) return "Lose in " + value;
-    return "Win in " + value;
+    if (value % 2 == 1) return "Win in " + value;
+    return "Loose in " + value;
 }
 
 /**
  * Store information about the current game
  */
 function Game() {
+    /**
+     * True if any player has won
+     */
+    this.finished = false;
     /**
      * Number of rows on board
      */
@@ -261,6 +265,8 @@ Game.prototype.getPieceShape = function (piece) {
  * Checks if one player has already won
  */
 Game.prototype.isFinished = function () {
+    if (this.finished) return true;
+
     for (let row = 0; row < this.ROWS; row++) {
         let shapes_in_row = new Set();
         let shapes_in_col = new Set();
@@ -274,8 +280,10 @@ Game.prototype.isFinished = function () {
             if (shape_2 != PieceShape.NONE) shapes_in_col.add(shape_2);
         }
 
-        if (shapes_in_col.size == 4) return true;
-        if (shapes_in_row.size == 4) return true;
+        if (shapes_in_col.size == 4 || shapes_in_row.size == 4) {
+            this.finished = true;
+            return true;
+        }
     }
 
     let sectors = [this.getBoardSector(0, 0), this.getBoardSector(3, 0), this.getBoardSector(0, 3), this.getBoardSector(3, 3)]
@@ -288,8 +296,10 @@ Game.prototype.isFinished = function () {
             if (shape != PieceShape.NONE) shapes_in_sector.add(shape);
         }
 
-        if (shapes_in_sector.size == 4)
+        if (shapes_in_sector.size == 4){
+            this.finished = true;
             return true;
+        }
     }
 
     return false;
@@ -342,6 +352,7 @@ Game.prototype.takeMove = function (isRedoMove = false) {
  */
 Game.prototype.revertMove = function () {
     var move = this.history.pop();
+    this.finished = false;
 
     this.board[move.target_row][move.target_col] = PieceType.EMPTY;
     this.pieceCounter[move.piece_type] -= 1;
@@ -360,11 +371,11 @@ Game.prototype.squareClicked = function (row, col, type) {
         let best_move_with_piece = this.getBestMove(shape);
 
         if (this.activeMove.piece_type == type) this.activeMove.piece_type = PieceType.EMPTY;
-        else if (best_move_with_piece !== undefined && 
+        else if (best_move_with_piece !== undefined &&
             getPieceColor(best_move_with_piece.piece_type) == getPieceColor(type) &&
             this.pieceCounter[type] < 2) this.activeMove.piece_type = type;
-        
-        if (this.recommendedMove){
+
+        if (this.recommendedMove) {
             this.recommendedMove = best_move_with_piece;
         }
     } else {
@@ -388,7 +399,7 @@ Game.prototype.squareClicked = function (row, col, type) {
  * Give the player a hint, which column to choose for her next move
  */
 Game.prototype.moveRecommender = function () {
-    if (this.recommendedMove){
+    if (this.recommendedMove) {
         this.recommendedMove = false;
     } else {
         let shape = this.activeMove.piece_type == PieceType.EMPTY ? false : this.activeMove.piece_type
@@ -424,7 +435,7 @@ Game.prototype.takeAiMove = function () {
     var aiLevel = this.turn == PieceColor.WHITE ? this.aiAlevel : this.aiBlevel;
     if (aiLevel == LevelEnum.Random) {
         let possibleMoves = [];
-        for (let moves of this.possibleMoves){
+        for (let moves of this.possibleMoves) {
             possibleMoves.push.apply(possibleMoves, moves);
         }
         var move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)]
@@ -456,7 +467,7 @@ Game.prototype.getBestMove = function (piece_type = false, just_win = false) {
 
             if (piece_type !== false && move.piece_type != piece_type) continue;
 
-            if (move.eval == 21){
+            if (move.eval == 21) {
                 drawMoves.push(move)
             } else if (move.eval == -1) {
                 noEval.push(move);
@@ -486,7 +497,7 @@ Game.prototype.getBestMove = function (piece_type = false, just_win = false) {
         }
     }
 
-    for (let move of drawMoves){
+    for (let move of drawMoves) {
         return move
     }
 
@@ -495,7 +506,7 @@ Game.prototype.getBestMove = function (piece_type = false, just_win = false) {
             return move;
         }
     }
-    
+
     return noEval[0];
 };
 
