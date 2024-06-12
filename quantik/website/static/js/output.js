@@ -39,7 +39,7 @@ Output.prototype.showHistoryList = function () {
  * Shows which player's turn it is
  */
 Output.prototype.showTurn = function () {
-	if (this.game.finished) {
+	if (this.game.win_squares.length != 0) {
 		let player_won = !(this.game.turn == 2) + 1;
 		$('#gameinfo').html(
 			String.format("Player {0} has won!", player_won));

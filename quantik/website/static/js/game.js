@@ -59,9 +59,9 @@ Move.prototype.getStringForEval = function (value) {
  */
 function Game() {
     /**
-     * True if any player has won
+     * Holds indices of squares that are currently part of a winning position
      */
-    this.finished = false;
+    this.win_squares = [];
     /**
      * Number of rows on board
      */
@@ -199,10 +199,10 @@ Game.prototype.getBoardSector = function (rowIndex, colIndex) {
     let startCol = Math.floor(colIndex / 2) * 2;
 
     return [
-        this.board[startRow][startCol],
-        this.board[startRow + 1][startCol],
-        this.board[startRow][startCol + 1],
-        this.board[startRow + 1][startCol + 1]
+        {x: startRow , y: startCol},
+        {x: startRow + 1 , y: startCol},
+        {x: startRow , y: startCol + 1},
+        {x: startRow + 1 , y: startCol + 1}
     ];
 }
 
@@ -265,24 +265,37 @@ Game.prototype.getPieceShape = function (piece) {
  * Checks if one player has already won
  */
 Game.prototype.isFinished = function () {
-    if (this.finished) return true;
+    if (this.win_squares.length != 0) return true;
 
-    for (let row = 0; row < this.ROWS; row++) {
+    for (let i = 0; i < this.ROWS; i++) {
         let shapes_in_row = new Set();
         let shapes_in_col = new Set();
 
-        for (let col = 0; col < this.COLS; col++) {
+        for (let j = 0; j < this.COLS; j++) {
 
-            let shape_1 = this.getPieceShape(this.board[row][col]);
-            let shape_2 = this.getPieceShape(this.board[col][row]);
+            let shape_1 = this.getPieceShape(this.board[i][j]);
+            let shape_2 = this.getPieceShape(this.board[j][i]);
 
             if (shape_1 != PieceShape.NONE) shapes_in_row.add(shape_1);
             if (shape_2 != PieceShape.NONE) shapes_in_col.add(shape_2);
         }
 
-        if (shapes_in_col.size == 4 || shapes_in_row.size == 4) {
-            this.finished = true;
-            return true;
+        if (shapes_in_col.size == 4){
+            this.win_squares.push(
+                {x: i, y: 0},
+                {x: i, y: 1},
+                {x: i, y: 2},
+                {x: i, y: 3},
+            );
+        }
+
+        if (shapes_in_row.size == 4) {
+            this.win_squares.push(
+                {x: 0, y: i},
+                {x: 1, y: i},
+                {x: 2, y: i},
+                {x: 3, y: i},
+            );
         }
     }
 
@@ -290,19 +303,18 @@ Game.prototype.isFinished = function () {
     for (let sector of sectors) {
         let shapes_in_sector = new Set();
 
-        for (let piece of sector) {
-
-            let shape = this.getPieceShape(piece);
+        for (let indices of sector) {
+            
+            let shape = this.getPieceShape(this.board[indices.x][indices.y]);
             if (shape != PieceShape.NONE) shapes_in_sector.add(shape);
         }
 
         if (shapes_in_sector.size == 4){
-            this.finished = true;
-            return true;
+            this.win_squares.push.apply(this.win_squares, sector);
         }
     }
 
-    return false;
+    return this.win_squares.length != 0;
 }
 
 /**
@@ -310,7 +322,6 @@ Game.prototype.isFinished = function () {
  */
 Game.prototype.calcMoves = function () {
     var activePlayer = this.turn;
-    var passivePlayer = activePlayer == PieceColor.WHITE ? PieceColor.BLACK : PieceColor.WHITE;
 
     var moves = [];
     for (let _ = 0; _ < Object.keys(PieceType).length; _++) moves.push([]);
@@ -352,7 +363,7 @@ Game.prototype.takeMove = function (isRedoMove = false) {
  */
 Game.prototype.revertMove = function () {
     var move = this.history.pop();
-    this.finished = false;
+    this.win_squares = [];
 
     this.board[move.target_row][move.target_col] = PieceType.EMPTY;
     this.pieceCounter[move.piece_type] -= 1;

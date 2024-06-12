@@ -215,6 +215,17 @@ var drawBoard = function() {
             drawEval(position, move.eval)
         }
     }
+
+    // Winning Positions
+    for (let indices of window.game.win_squares){
+
+        let position = getSquarePosition(indices.y, indices.x);
+        let image = window.piece_images[window.game.board[indices.y][indices.x]];
+        let color = BackgroundColor.WIN;
+        let radii = getCornerRadii(indices.y, indices.x);
+
+        drawSquare(image, position.x, position.y, color, radii);
+    }
 };
 
 /**

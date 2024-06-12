@@ -85,7 +85,7 @@ function getPieceShape(piece_type){
 var BackgroundColor = {
 	INACTIVE: "transparent",
 	ACTIVE: "grey",
-	// HOVER: "gainsboro",
+	WIN: "lightgreen",
 	POSSIBLE: "yellow"
 };
 
