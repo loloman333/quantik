@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request, send_from_directory
-# from flask_cors import CORS
-from math import floor
-import mmap
+# from flask_cors import CORS  # TODO: CORS ?
+import mmap # TODO: use mmap ??
 import os
 
 app = Flask(__name__)
@@ -85,4 +84,5 @@ def decode(encoding):
 
     return state
 
-app.run(debug=True)
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)

@@ -2,7 +2,7 @@
 
 bool FileManager::save_level_tmp(state_map& current_level, char depth)
 {
-    string file_path = "_level" + STR(depth) + ".qtk";
+    string file_path = "level" + STR(depth) + ".tmp";
     std::ofstream out_file(file_path, std::ios::out | std::ios::binary);
     if (! out_file.is_open()) return false;
 
@@ -34,7 +34,7 @@ bool FileManager::save_level_final(map<encoding, win_code>& current_level, char 
 
 bool FileManager::read_level(map<encoding, win_code>& level, char depth)
 {
-    string filename = "_level" + STR(depth) + ".qtk";
+    string filename = "level" + STR(depth) + ".tmp";
     std::ifstream file(filename, std::ios::binary);
 
     if (! file.is_open()) return false;
@@ -75,7 +75,7 @@ void FileManager::delete_all_files()
     for (int i = 0; i <= MAX_DEPTH; i++)
     {
         string file1 = ("level" + STR(i) + ".qtk"); 
-        string file2 = ("_level" + STR(i) + ".qtk"); 
+        string file2 = ("level" + STR(i) + ".tmp"); 
         std::remove(file1.c_str());
         std::remove(file2.c_str());
     }

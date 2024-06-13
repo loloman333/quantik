@@ -180,7 +180,7 @@ bool generate_codes(char max_depth)
 
 int main()
 {
-    char depth = 16;
+    char depth = 4;
 
     FileManager::delete_all_files();
 

@@ -244,8 +244,8 @@ Game.prototype.isLegalMove = function (move) {
     }
 
     // Sector
-    for (let square of this.getBoardSector(move.target_row, move.target_col)) {
-        if (square == counterpart) return false;
+    for (let indices of this.getBoardSector(move.target_row, move.target_col)) {
+        if (this.board[indices.x][indices.y] == counterpart) return false;
     }
 
     // Try to play on a final board
