@@ -86,16 +86,18 @@ var drawEval = function(position, eval) {
         window.context.fillStyle = "blue";
         if (eval == 21) eval = "D";
     } else {
+        eval -= 1;
         if (eval % 2 == 0)
-        {
-            window.context.fillStyle = "red";
-        }
-        else
         {
             window.context.fillStyle = "green";
         }
+        else
+        {
+            window.context.fillStyle = "red";
+        }
     }
-    if (eval == 1) eval = "Win";
+    if (eval === 0) eval = "Win"; 
+    
     window.context.font = "bold 16px Arial";
     window.context.textAlign = "center";
     window.context.fillText(eval, x, y);

@@ -169,6 +169,9 @@ Storage.prototype.loadSingleGameHandler = function (idx) {
 	this.game.aiB = false;
 	this.game.aiBlevel = LevelEnum.Perfect;
 
+	this.game.win_squares = [];
+	this.game.isFinished();
+
 	var hist = JSON.parse(localStorage["quantik.games." + idx + ".history"]);
 	var histRedo = JSON.parse(localStorage["quantik.games." + idx + ".historyForward"]);
 	this.game.history = [];

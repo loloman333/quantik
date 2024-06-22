@@ -58,7 +58,7 @@ $(document).ready(function () {
 		window.game = new Game();
 		window.game.init();
 		window.game.showMoveInfos = showInfo;
-		hideAllActions(true);
+		hideAllActions(false);
 		window.game.aiA = $('#optionsaia').is(':checked');
 		window.game.aiB = $('#optionsaib').is(':checked');
 		window.game.aiAlevel = $('#optionsaialevel').find("option:selected").val();
@@ -67,7 +67,7 @@ $(document).ready(function () {
 		return false;
 	});
 	$('#togglemoveinfos').click(function () {
-		hideAllActions(true);
+		hideAllActions(false);
 		window.game.showMoveInfos = !window.game.showMoveInfos;
 		if (window.game.showMoveInfos) {
 			$('.histvalue').show();
@@ -83,17 +83,17 @@ $(document).ready(function () {
 		return false;
 	});
 	$('#historyrevert').click(function () {
-		hideAllActions(true);
+		hideAllActions(false);
 		window.game.historyRevert();
 		return false;
 	});
 	$('#historyredo').click(function () {
-		hideAllActions(true);
+		hideAllActions(false);
 		window.game.historyRedo();
 		return false;
 	});
 	$('#savegameStart').click(function () {
-		hideAllActions(true);
+		hideAllActions(false);
 		window.game.storage.saveGame("start");
 		return false;
 	});

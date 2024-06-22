@@ -49,9 +49,9 @@ Move.prototype.toHistoryLi = function (player) {
  */
 Move.prototype.getStringForEval = function (value) {
     if (value == 21) return "Draw";
-    if (value == 0) return "Win!";
-    if (value % 2 == 1) return "Win in " + value;
-    return "Loose in " + value;
+    if (value == 1) return "Win!";
+    if (value % 2 == 1) return "Win in " + (value - 1);
+    return "Loose in " + (value - 1);
 }
 
 /**
