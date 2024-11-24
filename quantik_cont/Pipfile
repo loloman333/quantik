@@ -4,10 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-numpy = "*"
+flask = "==3.1.0"
+flask-cors = "==5.0.0"
 torch = "*"
+numpy = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.10"
+python_version = "3.12"

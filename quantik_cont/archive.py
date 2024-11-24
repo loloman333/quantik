@@ -22,6 +22,6 @@ def merge_files(input_folder, output_file):
     print(f"All files merged into {output_file}")
 
 # Example usage
-# input_folder = "./data/original"  # Replace with your folder path
+# input_folder = "../quantik/data"  # Replace with your folder path
 # output_file = "./data/data.qtk"
 # merge_files(input_folder, output_file)
