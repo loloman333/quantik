@@ -4,6 +4,7 @@ from torch.utils.data import Dataset, DataLoader
 import numpy as np
 import torch
 from torch.utils.data import Dataset
+import matplotlib.pyplot as plt
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
@@ -76,9 +77,14 @@ import torch.nn as nn
 import torch.optim as optim
 
 model = nn.Sequential(
-    nn.Linear(8, 64),
+    nn.Linear(8, 128),
+    nn.BatchNorm1d(128),
+    nn.ReLU(),
+    nn.Linear(128, 64),
+    nn.BatchNorm1d(64),
     nn.ReLU(),
     nn.Linear(64, 32),
+    nn.BatchNorm1d(32),
     nn.ReLU(),
     nn.Linear(32, 1)
 )
@@ -87,6 +93,9 @@ model = model.to(device)
 criterion = nn.MSELoss()
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
+
+losses = []
+avg_losses = []
 for epoch in range(10):
     for i, (states, targets) in enumerate(data_loader):
         optimizer.zero_grad()
@@ -96,6 +105,17 @@ for epoch in range(10):
         optimizer.step()
         if i % 100 == 0:
             print(f"Epoch {epoch}, Batch {i}, Loss: {loss.item()}")
-            
+            losses.append(loss.item())
+            avg_loss = np.mean(losses[-5:])
+            avg_losses.append(avg_loss)
+            plt.cla()
+            plt.plot(losses, label='loss', color='blue')
+            plt.plot(avg_losses, label='moving avg of last 100 losses', color='orange')
+            plt.legend()
+            plt.draw()
+            plt.pause(0.01)
+        
     torch.save(model.state_dict(), f"model_epoch_{epoch}.pth")
+    
+plt.show()
 
